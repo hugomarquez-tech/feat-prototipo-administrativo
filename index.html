@@ -689,13 +689,13 @@ tbody tr:hover{background:#FCF8F9}
 <script>
 function createRequirementCatalog(){
   return [
-    {id:"REQ-001",name:"Identificaci&oacute;n oficial vigente",description:"INE, IFE o pasaporte vigente.",type:"Identificación oficial",formats:"PDF, JPG, PNG",weight:10,condition:"Siempre",mandatory:true,active:true,help:"Carga una identificaci&oacute;n oficial vigente. El archivo debe ser legible y coincidir con los datos capturados en tu solicitud."},
-    {id:"REQ-002",name:"Documento probatorio de identidad",description:"Documento complementario para acreditar identidad.",type:"Documento probatorio de identidad",formats:"PDF",weight:5,condition:"Siempre",mandatory:true,active:true,help:"Adjunta el documento probatorio de identidad completo y legible."},
-    {id:"REQ-003",name:"Comprobante de domicilio",description:"Con antig&uuml;edad no mayor a tres meses.",type:"Comprobante de domicilio",formats:"PDF, JPG, PNG",weight:10,condition:"Siempre",mandatory:true,active:true,help:"Carga un comprobante de domicilio con antig&uuml;edad m&aacute;xima de tres meses."},
-    {id:"REQ-004",name:"CURP",description:"Constancia oficial de la CURP.",type:"CURP",formats:"PDF",weight:5,condition:"Siempre",mandatory:true,active:true,help:"Adjunta la constancia oficial de tu CURP en formato PDF."},
-    {id:"REQ-005",name:"Constancia de situaci&oacute;n fiscal",description:"Documento oficial que contiene el RFC.",type:"Constancia de situación fiscal",formats:"PDF",weight:5,condition:"Siempre",mandatory:true,active:true,help:"Adjunta tu constancia de situaci&oacute;n fiscal vigente."},
-    {id:"REQ-006",name:"Nombramiento o constancia de adscripci&oacute;n",description:"Documento para acreditar el cargo p&uacute;blico.",type:"Nombramiento o adscripción",formats:"PDF, JPG, PNG",weight:10,condition:"Servidor p&uacute;blico",mandatory:false,active:true,help:"Si eres servidor p&uacute;blico, adjunta tu nombramiento o constancia de adscripci&oacute;n vigente."},
-    {id:"REQ-007",name:"Documento de representaci&oacute;n legal",description:"Acredita la representaci&oacute;n con la que act&uacute;a.",type:"Representación legal",formats:"PDF",weight:10,condition:"Act&uacute;a en representaci&oacute;n",mandatory:false,active:true,help:"Adjunta el documento que acredita la representaci&oacute;n legal con la que act&uacute;as."}
+    {id:"REQ-001",name:"Identificaci&oacute;n oficial vigente",description:"INE, IFE o pasaporte vigente.",type:"Imagen o PDF",formats:"PDF, JPG, PNG",weight:5,condition:"Siempre",mandatory:true,active:true,help:"Carga una identificaci&oacute;n oficial vigente. El archivo debe ser legible y coincidir con los datos capturados en tu solicitud."},
+    {id:"REQ-002",name:"Documento probatorio de identidad",description:"Documento complementario para acreditar identidad.",type:"Imagen o PDF",formats:"PDF, JPG, PNG",weight:5,condition:"Siempre",mandatory:true,active:true,help:"Adjunta el documento probatorio de identidad completo y legible."},
+    {id:"REQ-003",name:"Comprobante de domicilio",description:"Con antig&uuml;edad no mayor a tres meses.",type:"Imagen o PDF",formats:"PDF, JPG, PNG",weight:5,condition:"Siempre",mandatory:true,active:true,help:"Carga un comprobante de domicilio con antig&uuml;edad m&aacute;xima de tres meses."},
+    {id:"REQ-004",name:"CURP",description:"Constancia oficial de la CURP.",type:"Archivo PDF",formats:"PDF",weight:5,condition:"Siempre",mandatory:true,active:true,help:"Adjunta la constancia oficial de tu CURP en formato PDF."},
+    {id:"REQ-005",name:"Constancia de situaci&oacute;n fiscal",description:"Documento oficial que contiene el RFC.",type:"Archivo PDF",formats:"PDF",weight:5,condition:"Siempre",mandatory:true,active:true,help:"Adjunta tu constancia de situaci&oacute;n fiscal vigente."},
+    {id:"REQ-006",name:"Nombramiento o constancia de adscripci&oacute;n",description:"Documento para acreditar el cargo p&uacute;blico.",type:"Imagen o PDF",formats:"PDF, JPG, PNG",weight:5,condition:"Servidor p&uacute;blico",mandatory:false,active:true,help:"Si eres servidor p&uacute;blico, adjunta tu nombramiento o constancia de adscripci&oacute;n vigente."},
+    {id:"REQ-007",name:"Documento de representaci&oacute;n legal",description:"Acredita la representaci&oacute;n con la que act&uacute;a.",type:"Archivo PDF",formats:"PDF",weight:5,condition:"Act&uacute;a en representaci&oacute;n",mandatory:false,active:true,help:"Adjunta el documento que acredita la representaci&oacute;n legal con la que act&uacute;as."}
   ];
 }
 
@@ -833,27 +833,24 @@ const catalogDefinitions = [
     description:"Documentos requeridos, condiciones de aplicación y reglas de carga.",
     columns:["Clave","Requisito","Trámite","Condición","Obligatorio","Tipo documental","Formatos permitidos","Peso máximo"],
     rows:[
-      ["REQ-001","Identificación oficial con fotografía","Emisión / Renovación","Todos los perfiles","Sí","Identificación oficial","PDF, JPG, PNG","10 MB"],
-      ["REQ-002","Documento probatorio de identidad","Emisión","Todos los perfiles","Sí","Documento probatorio de identidad","PDF","5 MB"],
-      ["REQ-003","Comprobante de domicilio","Emisión / Renovación","Antigüedad máxima de 3 meses","Sí","Comprobante de domicilio","PDF, JPG, PNG","10 MB"],
-      ["REQ-004","CURP","Emisión / Renovación","Todos los perfiles","Sí","CURP","PDF","5 MB"],
-      ["REQ-005","Constancia de situación fiscal","Emisión / Renovación","Todos los perfiles","Sí","Constancia de situación fiscal","PDF","5 MB"],
-      ["REQ-006","Nombramiento o constancia de adscripción","Emisión / Renovación","Solo servidor público","Condicional","Nombramiento o adscripción","PDF, JPG, PNG","10 MB"],
-      ["REQ-007","Documento de representación legal","Emisión","Cuando actúe en representación","Condicional","Representación legal","PDF","10 MB"]
+      ["REQ-001","Identificación oficial con fotografía","Emisión / Renovación","Todos los perfiles","Sí","Imagen o PDF","PDF, JPG, PNG","5 MB"],
+      ["REQ-002","Documento probatorio de identidad","Emisión","Todos los perfiles","Sí","Imagen o PDF","PDF, JPG, PNG","5 MB"],
+      ["REQ-003","Comprobante de domicilio","Emisión / Renovación","Antigüedad máxima de 3 meses","Sí","Imagen o PDF","PDF, JPG, PNG","5 MB"],
+      ["REQ-004","CURP","Emisión / Renovación","Todos los perfiles","Sí","Archivo PDF","PDF","5 MB"],
+      ["REQ-005","Constancia de situación fiscal","Emisión / Renovación","Todos los perfiles","Sí","Archivo PDF","PDF","5 MB"],
+      ["REQ-006","Nombramiento o constancia de adscripción","Emisión / Renovación","Solo servidor público","Condicional","Imagen o PDF","PDF, JPG, PNG","5 MB"],
+      ["REQ-007","Documento de representación legal","Emisión","Cuando actúe en representación","Condicional","Archivo PDF","PDF","5 MB"]
     ]
   },
   {
     id:"documentos", icon:"file-check", title:"Tipos de documento", group:"Documental",
-    description:"Formatos, tamaño y medio de captura permitido.",
-    columns:["Clave","Tipo documental","Formatos","Peso máximo","Captura"],
+    description:"Controla extensiones, MIME, peso máximo y uso recomendado para carga y validación documental.",
+    columns:["Nombre","Extensiones","MIME permitido","Peso máximo sugerido","Uso recomendado","Estatus"],
     rows:[
-      ["DOC-INE","Identificación oficial","PDF, JPG, PNG","10 MB","Archivo o cámara"],
-      ["DOC-IDP","Documento probatorio de identidad","PDF","5 MB","Solo archivo"],
-      ["DOC-DOM","Comprobante de domicilio","PDF, JPG, PNG","10 MB","Archivo o cámara"],
-      ["DOC-CURP","CURP","PDF","5 MB","Solo archivo"],
-      ["DOC-RFC","Constancia de situación fiscal","PDF","5 MB","Solo archivo"],
-      ["DOC-ADS","Nombramiento o adscripción","PDF","10 MB","Archivo o cámara"],
-      ["DOC-REP","Representación legal","PDF","10 MB","Solo archivo"]
+      ["Imagen o PDF","PDF, JPG, PNG","application/pdf, image/jpeg, image/png","5 MB","Carga de identificación, domicilio y evidencias","Activo"],
+      ["Archivo PDF","PDF","application/pdf","5 MB","Constancias y documentos oficiales","Activo"],
+      ["Documento firmado","PDF, XML, P7M","application/pdf, application/xml, application/pkcs7-mime","10 MB","Validación de documentos firmados","Activo"],
+      ["XML firmado","XML","application/xml, text/xml","5 MB","Firma electrónica sobre archivos XML","Activo"]
     ]
   },
   {
@@ -1611,7 +1608,7 @@ function documentCatalog(){
 }
 function documentCatalogOptions(value=""){
   const documents=documentCatalog()?.rows||[];
-  return documents.map(row=>`<option value="${row[1]}" ${row[1]===value?"selected":""}>${row[0]} · ${row[1]}</option>`).join("");
+  return documents.filter(row=>row[5]!=="Inactivo").map(row=>`<option value="${row[0]}" ${row[0]===value?"selected":""}>${row[0]} · ${row[1]}</option>`).join("");
 }
 
 function renderCatalogTable(id){
@@ -1625,6 +1622,7 @@ function renderCatalogTable(id){
   const start=(state.catalogPage-1)*pageSize;
   const visible=indexedRows.slice(start,start+pageSize);
   const statusColumn=catalogStatusColumn(catalog);
+  const visibleColumnIndexes=catalog.id==="documentos"?catalog.columns.map((_,index)=>index).filter(index=>index!==2):catalog.columns.map((_,index)=>index);
   content.innerHTML=pageHeader(catalog.title,catalog.description,`<button class="button ghost" id="backToCatalogs">${icon("library")}Todos los catálogos</button><button class="button primary" id="newCatalogRecord">${icon("plus")}Nuevo</button>`)+
   `<section class="catalog-detail-context">
     <span class="catalog-icon">${icon(catalog.icon)}</span>
@@ -1632,15 +1630,15 @@ function renderCatalogTable(id){
   </section>
   <article class="card table-card frest-table-card catalog-detail-table">
     ${dataTableToolbar("catalogs","catalogRecordSearch",state.catalogRecordSearch,"exportCatalog",catalog.rows.length)}
-    <div class="table-wrap"><table class="catalog-admin-table"><thead><tr><th>No.</th>${catalog.columns.map(column=>`<th>${column}</th>`).join("")}<th>Acciones</th></tr></thead>
+    <div class="table-wrap"><table class="catalog-admin-table"><thead><tr><th>No.</th>${visibleColumnIndexes.map(index=>`<th>${catalog.columns[index]}</th>`).join("")}<th>Acciones</th></tr></thead>
       <tbody>${visible.length?visible.map(({row,index},visibleIndex)=>`<tr>
-        <td>${start+visibleIndex+1}</td>${row.map((value,column)=>`<td class="${column===0?"folio":""}">${catalogCell(value)}</td>`).join("")}
+        <td>${start+visibleIndex+1}</td>${visibleColumnIndexes.map(column=>`<td class="${column===0?"folio":""}">${catalogCell(row[column])}</td>`).join("")}
         <td><div class="actions-cell">
           <button class="action-icon warning" data-edit-catalog-record="${index}" title="Editar registro" aria-label="Editar registro">${icon("edit")}</button>
           ${statusColumn>=0?`<button class="action-icon ${/inactiv/i.test(row[statusColumn])?"success":"neutral"}" data-toggle-catalog-record="${index}" title="${/inactiv/i.test(row[statusColumn])?"Activar":"Desactivar"} registro" aria-label="${/inactiv/i.test(row[statusColumn])?"Activar":"Desactivar"} registro">${icon(/inactiv/i.test(row[statusColumn])?"check-circle":"ban")}</button>`:""}
           <button class="action-icon danger" data-delete-catalog-record="${index}" title="Eliminar registro" aria-label="Eliminar registro">${icon("trash")}</button>
         </div></td>
-      </tr>`).join(""):`<tr><td colspan="${catalog.columns.length+2}"><div class="empty-table">No hay registros que coincidan con la búsqueda.</div></td></tr>`}</tbody>
+      </tr>`).join(""):`<tr><td colspan="${visibleColumnIndexes.length+2}"><div class="empty-table">No hay registros que coincidan con la búsqueda.</div></td></tr>`}</tbody>
     </table></div>
     <div class="pagination"><span>Mostrando ${visible.length?start+1:0} a ${Math.min(start+visible.length,indexedRows.length)} de ${indexedRows.length} registros</span><div class="pagination-buttons">
       <button data-catalog-page="${state.catalogPage-1}" ${state.catalogPage===1?"disabled":""}>Anterior</button>
@@ -1681,17 +1679,47 @@ function catalogFieldControl(catalog,column,value,index){
     return `<div class="field"><label for="${fieldId}">${column}</label><select id="${fieldId}">${[...new Set(values)].map(option=>`<option ${option===value?"selected":""}>${option}</option>`).join("")}</select></div>`;
   }
   const isLong=["descripción","significado","siguiente acción","motivo","condición","datos adicionales","requisito condicional","aplica a"].some(term=>normalized.includes(term));
-  const placeholder=normalized.includes("formatos")?"Ej. PDF, JPG, PNG":normalized.includes("peso")?"Ej. 5 MB":"";
-  return `<div class="field ${isLong?"full":""}"><label for="${fieldId}">${column}</label>${isLong?`<textarea id="${fieldId}" rows="3">${value||""}</textarea>`:`<input id="${fieldId}" value="${value||""}" placeholder="${placeholder}" ${index===0?"maxlength=\"20\"":""}>`}</div>`;
+  const placeholder=normalized.includes("extensiones")||normalized.includes("formatos")?"Ej. PDF, JPG, PNG":normalized.includes("mime")?"Ej. application/pdf, image/jpeg":normalized.includes("peso")?"Ej. 5 MB":normalized.includes("uso recomendado")?"Ej. Identificación, domicilio y evidencias":"";
+  return `<div class="field ${isLong?"full":""}"><label for="${fieldId}">${column}</label>${isLong?`<textarea id="${fieldId}" rows="3">${value||""}</textarea>`:`<input id="${fieldId}" value="${value||""}" placeholder="${placeholder}" ${normalized==="clave"?"maxlength=\"20\"":""}>`}</div>`;
 }
 
 function applyRequirementDocumentRules(){
   const typeField=$("#catalogField5");
   if(!typeField)return;
-  const documentRow=documentCatalog()?.rows.find(row=>row[1]===typeField.value);
+  const documentRow=documentCatalog()?.rows.find(row=>row[0]===typeField.value);
   if(!documentRow)return;
-  $("#catalogField6").value=documentRow[2];
+  $("#catalogField6").value=documentRow[1];
   $("#catalogField7").value=documentRow[3];
+}
+
+function syncDocumentTypeRecord(values,previousName=null){
+  const [name,extensions,,weightLabel]=values;
+  const weight=Number(String(weightLabel).replace(/[^\d.]/g,""))||5;
+  const oldName=previousName||name;
+  const requirementCatalog=catalogDefinitions.find(item=>item.id==="requisitos");
+  requirementCatalog.rows.forEach(row=>{
+    if(row[5]===oldName){
+      row[5]=name;
+      row[6]=extensions;
+      row[7]=`${weight} MB`;
+    }
+  });
+  state.requirementCatalog.forEach(item=>{
+    if(item.type===oldName){
+      item.type=name;
+      item.formats=extensions;
+      item.weight=weight;
+    }
+  });
+  state.procedureConfigurations.forEach(procedure=>{
+    procedure.requirements.forEach(item=>{
+      if(item.type===oldName){
+        item.type=name;
+        item.formats=extensions;
+        item.weight=weight;
+      }
+    });
+  });
 }
 
 function syncRequirementCatalogRecord(values,previousId=null){
@@ -1812,20 +1840,25 @@ function openCatalogRecordModal(id,rowIndex=null){
   if(id==="tramites")return openProcedureCatalogModal(rowIndex);
   const catalog=catalogDefinitions.find(item=>item.id===id);
   const editing=Number.isInteger(rowIndex);
-  const row=editing?[...catalog.rows[rowIndex]]:catalog.columns.map(()=>"");
+  const row=editing?[...catalog.rows[rowIndex]]:catalog.columns.map(column=>column.toLowerCase().includes("estatus")?"Activo":"");
+  const modalTitle=id==="documentos"?(editing?"Editar tipo de documento":"Nuevo tipo de documento"):(editing?`Editar ${catalog.title.toLowerCase()}`:`Nuevo registro de ${catalog.title.toLowerCase()}`);
+  const modalSubtitle=id==="documentos"?"Controla nombre, extensiones, MIME, peso máximo y uso recomendado.":(editing?`Actualiza la información del registro ${row[0]}.`:"Captura los campos requeridos para agregar el registro al catálogo.");
   openModal({
-    title:editing?`Editar ${catalog.title.toLowerCase()}`:`Nuevo registro de ${catalog.title.toLowerCase()}`,
-    subtitle:editing?`Actualiza la información del registro ${row[0]}.`:"Captura los campos requeridos para agregar el registro al catálogo.",
+    title:modalTitle,
+    subtitle:modalSubtitle,
     confirm:editing?"Guardar cambios":"Crear registro",
     size:"large",
     body:`<div class="catalog-record-modal-intro"><span class="catalog-icon">${icon(catalog.icon)}</span><div><strong>${catalog.title}</strong><small>${catalog.description}</small></div></div><div class="form-grid catalog-record-form">${catalog.columns.map((column,index)=>catalogFieldControl(catalog,column,row[index],index)).join("")}</div><div class="notice"><strong>Uso administrativo:</strong> verifica la información antes de guardar. Este catálogo puede ser utilizado por otros módulos del sistema.</div>`,
     onConfirm:()=>{
       const values=catalog.columns.map((_,index)=>$(`#catalogField${index}`).value.trim());
       if(values.some(value=>!value)){toast("Completa todos los campos del registro.","warning");return}
+      if(id==="documentos"&&!values[2].split(",").every(mime=>mime.trim().includes("/"))){toast("Captura tipos MIME válidos separados por comas.","warning");return}
+      if(id==="documentos"&&!(Number(values[3].replace(/[^\d.]/g,""))>0)){toast("El peso máximo debe ser mayor a cero.","warning");return}
       const duplicate=catalog.rows.some((item,index)=>index!==rowIndex&&item[0].toLowerCase()===values[0].toLowerCase());
       if(duplicate){toast(`La clave ${values[0]} ya existe en este catálogo.`,"warning");return}
       if(editing) catalog.rows.splice(rowIndex,1,values); else catalog.rows.unshift(values);
       if(id==="requisitos") syncRequirementCatalogRecord(values,editing?row[0]:null);
+      if(id==="documentos") syncDocumentTypeRecord(values,editing?row[0]:null);
       closeModal();
       state.catalogPage=1;
       renderCatalogTable(id);
@@ -1862,6 +1895,19 @@ function confirmToggleCatalogRecord(id,rowIndex){
 function confirmDeleteCatalogRecord(id,rowIndex){
   const catalog=catalogDefinitions.find(item=>item.id===id);
   const row=catalog.rows[rowIndex];
+  if(id==="documentos"){
+    const references=state.requirementCatalog.filter(item=>item.type===row[0]).length;
+    if(references){
+      openModal({
+        title:"Tipo documental en uso",
+        subtitle:row[0],
+        confirm:"Cerrar",
+        body:`<div class="notice"><strong>No puede eliminarse este tipo documental.</strong> Está relacionado con ${references} requisito${references===1?"":"s"}. Primero reasigna esos requisitos o desactiva el tipo documental.</div>`,
+        onConfirm:closeModal
+      });
+      return;
+    }
+  }
   openModal({
     title:"Eliminar registro",
     subtitle:`${row[0]} · ${row[1]||catalog.title}`,
