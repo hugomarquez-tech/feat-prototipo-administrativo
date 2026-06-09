@@ -742,6 +742,8 @@ const state = {
   pageSize: { requests:10, appointments:10, procedures:10, certificates:10, catalogs:10, procedureConfig:10, agents:10 },
   selectedConfiguredProcedure: "EMI",
   procedureConfigSearch: "",
+  procedureDetailView: false,
+  procedureStatusFilter: "all",
   procedureRequirementSearch: "",
   procedureRequirementStatus: "all",
   procedureRequirementMandatory: "all",
@@ -1958,104 +1960,137 @@ function procedureRequirementRows(procedure){
 }
 
 function renderProcedureManagement(){
-  const procedure=selectedProcedureConfiguration();
-  if(!procedure){
-    content.innerHTML=pageHeader("Gesti&oacute;n de tr&aacute;mites y requisitos","Administra los tr&aacute;mites disponibles y los documentos que solicita el portal ciudadano.")+
-      `<section class="card empty-state"><h2>No hay tr&aacute;mites configurados</h2><p>Agrega un tr&aacute;mite existente del cat&aacute;logo para comenzar.</p><button class="button primary" id="addConfiguredProcedure">${icon("plus")}Agregar tr&aacute;mite</button></section>`;
-    $("#addConfiguredProcedure").onclick=openAddProcedureModal;
-    return;
+  // Nivel 2: detalle de requisitos de un trámite seleccionado
+  if(state.selectedConfiguredProcedure && state.procedureDetailView){
+    return renderProcedureRequirementsTable();
   }
-  const procedureSearch=state.procedureConfigSearch.trim().toLowerCase();
-  const procedures=state.procedureConfigurations.filter(item=>!procedureSearch||`${item.name} ${item.id} ${item.status}`.toLowerCase().includes(procedureSearch));
+  // Nivel 1: tabla de trámites
+  const query=state.procedureConfigSearch.trim().toLowerCase();
+  const filtered=state.procedureConfigurations.filter(item=>
+    !query||`${item.name} ${item.id} ${item.status} ${item.validity}`.toLowerCase().includes(query)
+  );
+  const totalReqs=state.procedureConfigurations.reduce((s,p)=>s+p.requirements.length,0);
+  const active=state.procedureConfigurations.filter(p=>p.status==="Vigente").length;
+  content.innerHTML=pageHeader("Gestión de trámites","Administra los trámites habilitados y los requisitos documentales que solicita el portal ciudadano.",
+    `<button class="button primary" id="addConfiguredProcedure">${icon("plus")}Agregar trámite</button>`)+
+  `<section class="stats-grid" style="margin-bottom:22px">
+    <article class="stat-card"><span class="stat-icon">${icon("clipboard")}</span><div><h3>Trámites configurados</h3><strong>${state.procedureConfigurations.length}</strong></div><small>${active} vigentes</small></article>
+    <article class="stat-card blue"><span class="stat-icon" style="background:var(--blue-bg);color:var(--blue)">${icon("file-check")}</span><div><h3>Requisitos totales</h3><strong>${totalReqs}</strong></div><small>Entre todos los trámites</small></article>
+    <article class="stat-card green"><span class="stat-icon" style="background:var(--green-bg);color:var(--green)">${icon("check-circle")}</span><div><h3>Requisitos reutilizables</h3><strong>${state.requirementCatalog.length}</strong></div><small>En catálogo base</small></article>
+    <article class="stat-card amber"><span class="stat-icon" style="background:var(--amber-bg);color:var(--amber)">${icon("refresh")}</span><div><h3>Última actualización</h3><strong>08 jun 2026</strong></div><small>Configuración vigente</small></article>
+  </section>
+  ${filterDisclosure("procedureConfig","Filtros","Filtra por nombre, clave o estatus.",`
+    <div class="filter-panel embedded" style="display:grid;grid-template-columns:1fr 1fr auto;gap:12px;padding:16px 0 0">
+      <div class="field"><label>Estatus</label><select id="filterProcStatus"><option value="all">Todos</option>${["Vigente","Suspendido"].map(s=>`<option ${state.procedureStatusFilter===s?"selected":""}>${s}</option>`).join("")}</select></div>
+      <button class="button secondary" id="clearProcFilters" style="align-self:end">Limpiar filtros</button>
+    </div>`)}
+  <section class="card table-card frest-table-card" style="margin-top:16px">
+    <div class="card-header"><div><h2>Trámites configurados</h2><p>Haz clic en "Ver requisitos" para administrar los documentos de cada trámite.</p></div></div>
+    ${dataTableToolbar("procedureConfig","procedureConfigSearch",state.procedureConfigSearch,"exportProcedures",state.procedureConfigurations.length)}
+    <div class="table-wrap"><table><thead><tr><th>Trámite</th><th>Clave</th><th>Requisitos</th><th>Vigencia</th><th>Estatus</th><th>Acciones</th></tr></thead>
+    <tbody>${filtered.length?filtered.map(p=>`<tr>
+      <td><strong>${p.name}</strong></td>
+      <td><span class="folio">${p.id}</span></td>
+      <td><strong style="color:var(--blue)">${p.requirements.length}</strong><span class="subtext">${p.requirements.filter(r=>r.active).length} activos</span></td>
+      <td>${p.validity}</td>
+      <td>${badge(p.status)}</td>
+      <td><div class="actions-cell">
+        <button class="button secondary small" data-proc-detail="${p.id}">${icon("eye")}Ver requisitos</button>
+        <button class="action-icon warning" data-edit-proc="${p.id}" title="Editar trámite">${icon("edit")}</button>
+        <button class="action-icon neutral" data-proc-catalog="${p.id}" title="Ver en catálogo">${icon("library")}</button>
+      </div></td>
+    </tr>`).join(""):`<tr><td colspan="6" class="empty-state">No hay trámites con estos criterios.</td></tr>`}
+    </tbody></table></div>
+    <div class="pagination"><span>Mostrando ${filtered.length} de ${state.procedureConfigurations.length} trámites</span><div class="pagination-buttons"><button disabled>Anterior</button><button class="active">1</button><button disabled>Siguiente</button></div></div>
+  </section>`;
+  $("#addConfiguredProcedure").onclick=openAddProcedureModal;
+  $("#procedureConfigSearch").oninput=e=>{state.procedureConfigSearch=e.target.value;renderProcedureManagement()};
+  if($("#procedureConfigPageSize")) $("#procedureConfigPageSize").onchange=()=>renderProcedureManagement();
+  if($("#exportProcedures")) $("#exportProcedures").onclick=()=>exportTable("tramites-feat",["Clave","Nombre","Requisitos","Vigencia","Estatus"],filtered.map(p=>[p.id,p.name,p.requirements.length,p.validity,p.status]));
+  if($("#filterProcStatus")) $("#filterProcStatus").onchange=e=>{state.procedureStatusFilter=e.target.value;renderProcedureManagement()};
+  if($("#clearProcFilters")) $("#clearProcFilters").onclick=()=>{state.procedureConfigSearch="";state.procedureStatusFilter="all";renderProcedureManagement()};
+  $$("[data-proc-detail]").forEach(b=>b.onclick=()=>{
+    state.selectedConfiguredProcedure=b.dataset.procDetail;
+    state.procedureDetailView=true;
+    state.procedureRequirementSearch="";
+    renderProcedureManagement();
+  });
+  $$("[data-edit-proc]").forEach(b=>b.onclick=()=>{
+    const p=state.procedureConfigurations.find(x=>x.id===b.dataset.editProc);
+    if(!p) return;
+    openModal({title:"Editar trámite",subtitle:p.name,confirm:"Guardar",body:`
+      <div class="form-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:14px 20px">
+        <div class="field full" style="grid-column:1/-1"><label>Nombre</label><input id="editProcName" value="${p.name}"></div>
+        <div class="field"><label>Vigencia</label><input id="editProcValidity" value="${p.validity}"></div>
+        <div class="field"><label>Estatus</label><select id="editProcStatus">${["Vigente","Suspendido"].map(s=>`<option ${p.status===s?"selected":""}>${s}</option>`).join("")}</select></div>
+      </div>`,
+      onConfirm:()=>{
+        p.name=$("#editProcName").value.trim()||p.name;
+        p.validity=$("#editProcValidity").value.trim()||p.validity;
+        p.status=$("#editProcStatus").value;
+        closeModal();renderProcedureManagement();toast("Trámite actualizado.");
+      }
+    });
+  });
+  $$("[data-proc-catalog]").forEach(b=>b.onclick=()=>{state.expandedMenus.catalogs=true;selectCatalogSubmodule("tramites")});
+  bindCommonActions();
+}
+
+function renderProcedureRequirementsTable(){
+  const procedure=selectedProcedureConfiguration();
+  if(!procedure){state.procedureDetailView=false;return renderProcedureManagement();}
   const rows=procedureRequirementRows(procedure);
-  const filterBody=`<div class="filter-panel embedded procedure-requirement-filters">
-    <div class="field"><label>Requisito</label><input id="procedureRequirementSearch" value="${state.procedureRequirementSearch}" placeholder="Nombre, formato o condici&oacute;n"></div>
+  const filterBody=`<div class="filter-panel embedded" style="display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:12px;padding:16px 0 0">
+    <div class="field"><label>Requisito</label><input id="procedureRequirementSearch" value="${state.procedureRequirementSearch}" placeholder="Nombre, formato o condición"></div>
     <div class="field"><label>Estado</label><select id="procedureRequirementStatus"><option value="all">Todos</option><option value="true" ${state.procedureRequirementStatus==="true"?"selected":""}>Activos</option><option value="false" ${state.procedureRequirementStatus==="false"?"selected":""}>Inactivos</option></select></div>
     <div class="field"><label>Obligatoriedad</label><select id="procedureRequirementMandatory"><option value="all">Todos</option><option value="true" ${state.procedureRequirementMandatory==="true"?"selected":""}>Obligatorios</option><option value="false" ${state.procedureRequirementMandatory==="false"?"selected":""}>Condicionales</option></select></div>
-    <button class="button ghost" id="clearProcedureRequirementFilters">Limpiar</button>
-    <button class="button primary" id="applyProcedureRequirementFilters">Aplicar</button>
+    <button class="button ghost" id="clearProcedureRequirementFilters" style="align-self:end">Limpiar</button>
   </div>`;
-  content.innerHTML=pageHeader("Gesti&oacute;n de tr&aacute;mites y requisitos","Administra los tr&aacute;mites, sus documentos requeridos, formatos permitidos y reglas de carga.",`<button class="button ghost" id="restoreProcedureConfiguration">${icon("refresh")}Restaurar predeterminado</button><button class="button primary" id="saveProcedureConfiguration">Guardar</button>`)+
-  `<section class="procedure-management-grid">
-    <aside class="card procedure-selector-card">
-      <div class="card-header"><div><h2>Tr&aacute;mites configurados</h2><p>Selecciona un tr&aacute;mite para administrar sus requisitos.</p></div></div>
-      <label class="procedure-search">${icon("search")}<input id="configuredProcedureSearch" value="${state.procedureConfigSearch}" placeholder="Buscar tr&aacute;mite"></label>
-      <button class="button primary wide" id="addConfiguredProcedure">${icon("plus")}Agregar tr&aacute;mite</button>
-      <div class="procedure-list" id="configuredProcedureList">
-        ${procedures.length?procedures.map(item=>`<button class="procedure-list-item ${item.id===procedure.id?"active":""}" data-configured-procedure="${item.id}">
-          <span><strong>${item.name}</strong><small>${item.requirements.length} requisitos asociados</small></span>${badge(item.status)}
-        </button>`).join(""):`<div class="procedure-list-empty">No hay coincidencias.</div>`}
-      </div>
-      <div class="procedure-summary"><strong>Resumen</strong><span>${state.procedureConfigurations.length} tr&aacute;mites configurados</span><span>${state.requirementCatalog.length} requisitos reutilizables</span></div>
-    </aside>
-    <div class="procedure-management-content">
-      <article class="card procedure-readonly-card">
-        <div class="card-header"><div><h2>Informaci&oacute;n del tr&aacute;mite</h2><p>Datos de solo lectura provenientes del Cat&aacute;logo de tr&aacute;mites.</p></div><button class="button secondary small" id="viewProcedureCatalog">Ver en cat&aacute;logo</button></div>
-        <div class="procedure-readonly-grid">
-          <div class="procedure-name"><small>Nombre del tr&aacute;mite</small><strong>${procedure.name}</strong></div>
-          <div><small>Clave</small><strong>${procedure.id}</strong></div>
-          <div><small>Estatus</small>${badge(procedure.status)}</div>
-          <div><small>Vigencia</small><strong>${procedure.validity}</strong></div>
-        </div>
-      </article>
-      ${filterDisclosure("procedureConfig","Filtros de requisitos","Filtra por nombre, estado u obligatoriedad.",filterBody)}
-      <article class="card table-card frest-table-card procedure-requirements-card">
-        <div class="card-header"><div><h2>Requisitos del tr&aacute;mite</h2><p>Configura c&oacute;mo aplica cada requisito sin modificar su registro base.</p></div><button class="button primary small" id="addProcedureRequirement">${icon("plus")}Agregar requisito</button></div>
-        ${dataTableToolbar("procedureConfig","procedureRequirementTableSearch",state.procedureRequirementSearch,"exportProcedureRequirements",procedure.requirements.length)}
-        <div class="table-wrap"><table class="procedure-requirements-table"><thead><tr><th>Requisito</th><th>Tipo / formatos</th><th>Peso m&aacute;ximo</th><th>Condici&oacute;n de aplicaci&oacute;n</th><th>Estado</th><th>Acciones</th></tr></thead>
-          <tbody>${rows.length?rows.map(requirement=>`<tr>
-            <td><strong>${requirement.name}</strong><small>${requirement.description}</small></td>
-            <td><span>${requirement.type}</span><small class="format-list">${requirement.formats}</small></td>
-            <td>${requirement.weight} MB</td>
-            <td><span class="${requirement.condition!=="Siempre"?"conditional-text":""}">${requirement.condition}</span><small>${requirement.mandatory?"Obligatorio":"Condicional"}</small></td>
-            <td>${badge(requirement.active?"Activo":"Inactivo")}</td>
-            <td><div class="actions-cell">
-              <button class="action-icon warning" data-edit-requirement="${requirement.id}" title="Editar requisito" aria-label="Editar requisito">${icon("edit")}</button>
-              <button class="action-icon ${requirement.active?"neutral":"success"}" data-toggle-requirement="${requirement.id}" title="${requirement.active?"Desactivar":"Activar"} requisito" aria-label="${requirement.active?"Desactivar":"Activar"} requisito">${icon(requirement.active?"ban":"check-circle")}</button>
-              <button class="action-icon danger" data-delete-requirement="${requirement.id}" title="Eliminar requisito" aria-label="Eliminar requisito">${icon("trash")}</button>
-            </div></td>
-          </tr>`).join(""):`<tr><td colspan="6"><div class="empty-table">No hay requisitos que coincidan con los filtros.</div></td></tr>`}</tbody>
-        </table></div>
-        <div class="pagination"><span>Mostrando ${rows.length} de ${procedure.requirements.length} requisitos</span><div class="pagination-buttons"><button disabled>Anterior</button><button class="active">1</button><button disabled>Siguiente</button></div></div>
-      </article>
+  content.innerHTML=pageHeader(procedure.name,"Requisitos documentales configurados para este trámite.",
+    `<button class="button ghost" id="backToProcedures">${icon("library")}Todos los trámites</button><button class="button primary" id="addProcedureRequirement">${icon("plus")}Agregar requisito</button>`)+
+  `<article class="card procedure-readonly-card" style="margin-bottom:16px">
+    <div class="procedure-readonly-grid">
+      <div class="procedure-name"><small>Trámite</small><strong>${procedure.name}</strong></div>
+      <div><small>Clave</small><strong>${procedure.id}</strong></div>
+      <div><small>Estatus</small>${badge(procedure.status)}</div>
+      <div><small>Vigencia</small><strong>${procedure.validity}</strong></div>
     </div>
+  </article>
+  ${filterDisclosure("procedureConfig","Filtros de requisitos","Filtra por nombre, estado u obligatoriedad.",filterBody)}
+  <section class="card table-card frest-table-card" style="margin-top:16px">
+    <div class="card-header"><div><h2>Requisitos del trámite</h2><p>${rows.length} de ${procedure.requirements.length} requisitos configurados.</p></div></div>
+    ${dataTableToolbar("procedureReqs","procedureRequirementTableSearch",state.procedureRequirementSearch,"exportProcedureRequirements",procedure.requirements.length)}
+    <div class="table-wrap"><table class="procedure-requirements-table"><thead><tr><th>Requisito</th><th>Tipo / formatos</th><th>Peso máximo</th><th>Condición de aplicación</th><th>Estado</th><th>Acciones</th></tr></thead>
+      <tbody>${rows.length?rows.map(requirement=>`<tr>
+        <td><strong>${requirement.name}</strong><small>${requirement.description}</small></td>
+        <td><span>${requirement.type}</span><small class="format-list">${requirement.formats}</small></td>
+        <td>${requirement.weight} MB</td>
+        <td><span class="${requirement.condition!=="Siempre"?"conditional-text":""}">${requirement.condition}</span><small>${requirement.mandatory?"Obligatorio":"Condicional"}</small></td>
+        <td>${badge(requirement.active?"Activo":"Inactivo")}</td>
+        <td><div class="actions-cell">
+          <button class="action-icon warning" data-edit-requirement="${requirement.id}" title="Editar requisito">${icon("edit")}</button>
+          <button class="action-icon ${requirement.active?"neutral":"success"}" data-toggle-requirement="${requirement.id}" title="${requirement.active?"Desactivar":"Activar"}">${icon(requirement.active?"ban":"check-circle")}</button>
+          <button class="action-icon danger" data-delete-requirement="${requirement.id}" title="Eliminar requisito">${icon("trash")}</button>
+        </div></td>
+      </tr>`).join(""):`<tr><td colspan="6"><div class="empty-table">No hay requisitos que coincidan con los filtros.</div></td></tr>`}</tbody>
+    </table></div>
+    <div class="pagination"><span>Mostrando ${rows.length} de ${procedure.requirements.length} requisitos</span><div class="pagination-buttons"><button disabled>Anterior</button><button class="active">1</button><button disabled>Siguiente</button></div></div>
   </section>`;
-  bindProcedureManagementActions(procedure,rows);
+  $("#backToProcedures").onclick=()=>{state.procedureDetailView=false;state.procedureRequirementSearch="";renderProcedureManagement()};
+  $("#addProcedureRequirement").onclick=()=>openProcedureRequirementModal();
+  if($("#procedureRequirementSearch")) $("#procedureRequirementSearch").oninput=e=>{state.procedureRequirementSearch=e.target.value;renderProcedureRequirementsTable()};
+  if($("#procedureRequirementStatus")) $("#procedureRequirementStatus").onchange=e=>{state.procedureRequirementStatus=e.target.value;renderProcedureRequirementsTable()};
+  if($("#procedureRequirementMandatory")) $("#procedureRequirementMandatory").onchange=e=>{state.procedureRequirementMandatory=e.target.value;renderProcedureRequirementsTable()};
+  if($("#clearProcedureRequirementFilters")) $("#clearProcedureRequirementFilters").onclick=()=>{state.procedureRequirementSearch="";state.procedureRequirementStatus="all";state.procedureRequirementMandatory="all";renderProcedureRequirementsTable()};
+  if($("#exportProcedureRequirements")) $("#exportProcedureRequirements").onclick=()=>exportTable(`requisitos-${procedure.id}`,["Requisito","Tipo","Formatos","Peso","Condición","Estado"],rows.map(r=>[r.name,r.type,r.formats,r.weight,r.condition,r.active?"Activo":"Inactivo"]));
+  if($("#procedureReqsPageSize")) $("#procedureReqsPageSize").onchange=()=>renderProcedureRequirementsTable();
+  $$("[data-edit-requirement]").forEach(b=>b.onclick=()=>openProcedureRequirementModal(b.dataset.editRequirement));
+  $$("[data-toggle-requirement]").forEach(b=>b.onclick=()=>confirmToggleProcedureRequirement(b.dataset.toggleRequirement));
+  $$("[data-delete-requirement]").forEach(b=>b.onclick=()=>confirmDeleteProcedureRequirement(b.dataset.deleteRequirement));
   bindCommonActions();
 }
 
 function bindProcedureManagementActions(procedure,rows){
-  $("#configuredProcedureSearch").oninput=e=>{
-    state.procedureConfigSearch=e.target.value;
-    const search=e.target.value.trim().toLowerCase();
-    $$("[data-configured-procedure]").forEach(button=>button.hidden=!button.textContent.toLowerCase().includes(search));
-  };
-  $$("[data-configured-procedure]").forEach(button=>button.onclick=()=>{
-    state.selectedConfiguredProcedure=button.dataset.configuredProcedure;
-    state.procedureRequirementSearch="";
-    renderProcedureManagement();
-  });
-  $("#addConfiguredProcedure").onclick=openAddProcedureModal;
-  $("#viewProcedureCatalog").onclick=()=>{
-    state.expandedMenus.catalogs=true;
-    selectCatalogSubmodule("tramites");
-  };
-  $("#addProcedureRequirement").onclick=()=>openProcedureRequirementModal();
-  $("#saveProcedureConfiguration").onclick=()=>toast("Configuraci&oacute;n de tr&aacute;mites guardada durante esta sesi&oacute;n.");
-  $("#restoreProcedureConfiguration").onclick=()=>openModal({
-    title:"Restaurar configuraci&oacute;n",
-    subtitle:"Se recuperar&aacute;n los requisitos predeterminados.",
-    confirm:"Restaurar",
-    confirmClass:"danger",
-    body:`<div class="notice"><strong>Se perder&aacute;n los cambios de esta sesi&oacute;n.</strong> Los tr&aacute;mites y requisitos regresar&aacute;n a su configuraci&oacute;n inicial.</div>`,
-    onConfirm:()=>{
-      state.procedureConfigurations=createDefaultProcedureConfigurations();
-      state.selectedConfiguredProcedure="EMI";
-      closeModal();
-      renderProcedureManagement();
-      toast("Configuraci&oacute;n predeterminada restaurada.","warning");
-    }
-  });
   $("#applyProcedureRequirementFilters")?.addEventListener("click",()=>{
     state.procedureRequirementSearch=$("#procedureRequirementSearch").value;
     state.procedureRequirementStatus=$("#procedureRequirementStatus").value;
@@ -2502,6 +2537,7 @@ function renderSettings(){
 function selectSettingSubmodule(id){
   state.activeSettingNav=id;
   state.settingsScreen=id==="general"?"general":["sites","calendar"].includes(id)?"calendar":id;
+  state.procedureDetailView=false;
   navigate("settings");
 }
 
