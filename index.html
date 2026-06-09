@@ -797,13 +797,13 @@ const state = {
     { id:"FEAT-2024-000088", citizen:"Carlos Sánchez Vega", type:"Revocación", status:"Revocado", validity:"Revocado 02/05/2026" }
   ],
   agents: [
-    { id:"AG-00001", name:"Luis Hernandez Perez", email:"luis.hernandez@tamaulipas.gob.mx", site:"Victoria", load:12, status:"Disponible", role:"Agente certificador", availability:"Disponible", since:"15 enero 2026", requests:12 },
-    { id:"AG-00002", name:"Sofia Torres Diaz", email:"sofia.torres@tamaulipas.gob.mx", site:"Tampico", load:18, status:"Alta carga", role:"Agente certificador", availability:"Alta carga", since:"10 febrero 2026", requests:18 },
-    { id:"AG-00003", name:"Carlos Ramirez Soto", email:"carlos.ramirez@tamaulipas.gob.mx", site:"Reynosa", load:7, status:"Disponible", role:"Agente certificador", availability:"Disponible", since:"03 marzo 2026", requests:7 },
-    { id:"AG-00004", name:"Ana Lopez Mendez", email:"ana.lopez@tamaulipas.gob.mx", site:"Victoria", load:0, status:"Inactivo", role:"Agente certificador", availability:"Inactivo", since:"20 enero 2026", requests:0 },
-    { id:"AG-00005", name:"Ricardo Gonzalez Ruiz", email:"ricardo.gonzalez@tamaulipas.gob.mx", site:"Mante", load:10, status:"Disponible", role:"Agente certificador", availability:"Disponible", since:"05 enero 2026", requests:10 },
-    { id:"AG-00006", name:"Patricia Fernandez Cruz", email:"patricia.fernandez@tamaulipas.gob.mx", site:"Tampico", load:15, status:"Alta carga", role:"Agente certificador", availability:"Alta carga", since:"12 febrero 2026", requests:15 },
-    { id:"AG-00007", name:"Miguel Santos Mora", email:"miguel.santos@tamaulipas.gob.mx", site:"Victoria", load:8, status:"Disponible", role:"Agente certificador", availability:"Disponible", since:"18 enero 2026", requests:8 }
+    { id:"AG-00001", name:"Luis Hernandez Perez", email:"luis.hernandez@tamaulipas.gob.mx", site:"Victoria", load:12, status:"Disponible", role:"Agente certificador", availability:"Disponible", since:"15 enero 2026", requests:12, curp:"HEPL850312HTCRNC09", photo:null },
+    { id:"AG-00002", name:"Sofia Torres Diaz", email:"sofia.torres@tamaulipas.gob.mx", site:"Tampico", load:18, status:"Alta carga", role:"Agente certificador", availability:"Alta carga", since:"10 febrero 2026", requests:18, curp:"TODS920814MTCRZF04", photo:null },
+    { id:"AG-00003", name:"Carlos Ramirez Soto", email:"carlos.ramirez@tamaulipas.gob.mx", site:"Reynosa", load:7, status:"Disponible", role:"Agente certificador", availability:"Disponible", since:"03 marzo 2026", requests:7, curp:"RASC780601HTCMTL02", photo:null },
+    { id:"AG-00004", name:"Ana Lopez Mendez", email:"ana.lopez@tamaulipas.gob.mx", site:"Victoria", load:0, status:"Inactivo", role:"Agente certificador", availability:"Inactivo", since:"20 enero 2026", requests:0, curp:"LOMA910423MVZPDN01", photo:null },
+    { id:"AG-00005", name:"Ricardo Gonzalez Ruiz", email:"ricardo.gonzalez@tamaulipas.gob.mx", site:"Mante", load:10, status:"Disponible", role:"Agente certificador", availability:"Disponible", since:"05 enero 2026", requests:10, curp:"GORR830915HTCNZC07", photo:null },
+    { id:"AG-00006", name:"Patricia Fernandez Cruz", email:"patricia.fernandez@tamaulipas.gob.mx", site:"Tampico", load:15, status:"Alta carga", role:"Agente certificador", availability:"Alta carga", since:"12 febrero 2026", requests:15, curp:"FECP770228MVZRRT03", photo:null },
+    { id:"AG-00007", name:"Miguel Santos Mora", email:"miguel.santos@tamaulipas.gob.mx", site:"Victoria", load:8, status:"Disponible", role:"Agente certificador", availability:"Disponible", since:"18 enero 2026", requests:8, curp:"SAMM940710HTCNRG05", photo:null }
   ],
   agentSearch: "",
   agentSite: "all",
@@ -2213,6 +2213,7 @@ function agentStatusBadge(status){
 
 function openAddAgentModal(){
   const today = new Date().toLocaleDateString("es-MX",{day:"numeric",month:"long",year:"numeric"});
+  let capturedPhoto = null;
   openModal({
     title:"Agregar nuevo agente certificador",
     subtitle:"Registra sus datos, sede de atención, permisos y carga inicial de solicitudes.",
@@ -2220,43 +2221,85 @@ function openAddAgentModal(){
     confirmClass:"primary",
     size:"large",
     body:`
-      <div class="form-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:16px 20px">
-        <div style="grid-column:1/-1"><h3 style="color:var(--brand);font-size:15px;margin:0 0 4px">Datos del agente</h3></div>
-        <div class="field"><label>Nombre completo *</label><input id="agentName" placeholder="Ej. Laura Martinez Rivera"></div>
-        <div class="field"><label>CURP *</label><input id="agentCurp" placeholder="Clave única de registro"></div>
-        <div class="field"><label>Correo institucional *</label><input id="agentEmail" placeholder="nombre@tamaulipas.gob.mx" type="email"></div>
-        <div class="field"><label>Teléfono / Extensión</label><input id="agentPhone" placeholder="834 000 0000 ext. 0000"></div>
-        <div style="grid-column:1/-1;margin-top:8px"><h3 style="color:var(--brand);font-size:15px;margin:0 0 4px">Asignación operativa</h3></div>
-        <div class="field"><label>Sede asignada *</label><select id="agentSiteNew"><option value="">Seleccionar...</option><option>Victoria</option><option>Tampico</option><option>Reynosa</option><option>Mante</option></select></div>
-        <div class="field"><label>Rol *</label><select id="agentRole"><option>Agente certificador</option><option>Supervisor</option></select></div>
-        <div class="field"><label>Carga inicial</label><input id="agentLoad" type="number" value="0" min="0"></div>
-        <div class="field"><label>Solicitudes iniciales asignadas</label><input id="agentRequests" type="number" value="0" min="0" readonly style="background:#F4F5F7"></div>
-        <div class="field"><label>Disponibilidad</label><select id="agentAvail"><option>Disponible</option><option>Alta carga</option><option>Inactivo</option></select></div>
-        <div class="field"><label>Fecha de alta</label><input id="agentDate" value="${today}" readonly style="background:#F4F5F7"></div>
+      <div style="display:grid;grid-template-columns:148px 1fr;gap:24px;align-items:start">
+        <div style="display:flex;flex-direction:column;align-items:center;gap:10px">
+          <div id="agentPhotoPreview" style="width:120px;height:120px;border-radius:50%;background:var(--brand);color:#fff;display:grid;place-items:center;font-size:36px;font-weight:800;border:3px solid var(--gold-light);overflow:hidden;flex-shrink:0">
+            <span id="agentPhotoInitials">?</span>
+          </div>
+          <label style="cursor:pointer;display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--brand);font-weight:700;border:1px solid var(--brand);border-radius:6px;padding:6px 10px">
+            ${icon("camera")} Capturar foto
+            <input type="file" id="agentPhotoInput" accept="image/*" style="display:none">
+          </label>
+          <small style="color:var(--muted);text-align:center;font-size:10px;line-height:1.4">JPG o PNG · Máx. 2 MB<br>Foto institucional del agente</small>
+        </div>
+        <div class="form-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:14px 20px">
+          <div style="grid-column:1/-1"><h3 style="color:var(--brand);font-size:15px;margin:0 0 4px">Datos del agente</h3></div>
+          <div class="field"><label>Nombre completo *</label><input id="agentName" placeholder="Ej. Laura Martinez Rivera"></div>
+          <div class="field"><label>CURP *</label><input id="agentCurp" placeholder="Clave única de registro" maxlength="18" style="text-transform:uppercase"></div>
+          <div class="field"><label>Correo institucional *</label><input id="agentEmail" placeholder="nombre@tamaulipas.gob.mx" type="email"></div>
+          <div class="field"><label>Teléfono / Extensión</label><input id="agentPhone" placeholder="834 000 0000 ext. 0000"></div>
+          <div style="grid-column:1/-1;margin-top:4px"><h3 style="color:var(--brand);font-size:15px;margin:0 0 4px">Asignación operativa</h3></div>
+          <div class="field"><label>Sede asignada *</label><select id="agentSiteNew"><option value="">Seleccionar...</option><option>Victoria</option><option>Tampico</option><option>Reynosa</option><option>Mante</option></select></div>
+          <div class="field"><label>Rol *</label><select id="agentRole"><option>Agente certificador</option><option>Supervisor</option></select></div>
+          <div class="field"><label>Carga inicial</label><input id="agentLoad" type="number" value="0" min="0"></div>
+          <div class="field"><label>Solicitudes iniciales asignadas</label><input id="agentRequests" type="number" value="0" min="0" readonly style="background:#F4F5F7"></div>
+          <div class="field"><label>Disponibilidad</label><select id="agentAvail"><option>Disponible</option><option>Alta carga</option><option>Inactivo</option></select></div>
+          <div class="field"><label>Fecha de alta</label><input id="agentDate" value="${today}" readonly style="background:#F4F5F7"></div>
+        </div>
       </div>`,
     onConfirm:()=>{
       const name=$("#agentName").value.trim();
       const email=$("#agentEmail").value.trim();
       const site=$("#agentSiteNew").value;
+      const curp=$("#agentCurp").value.trim().toUpperCase();
       if(!name||!email||!site){toast("Completa los campos obligatorios.","warning");return}
-      const newId="AG-"+String(state.agents.length+1).padStart("00001".length,"0");
+      const newId="AG-"+String(state.agents.length+1).padStart(5,"0");
       state.agents.push({
-        id:newId, name, email,
-        site, load:Number($("#agentLoad").value)||0,
+        id:newId, name, email, curp, site,
+        load:Number($("#agentLoad").value)||0,
         status:$("#agentAvail").value, role:$("#agentRole").value,
         availability:$("#agentAvail").value,
-        since:today, requests:Number($("#agentRequests").value)||0
+        since:today, requests:Number($("#agentRequests").value)||0,
+        photo: capturedPhoto
       });
       closeModal();
       renderAgents();
       toast("Agente registrado correctamente.");
     }
   });
+  // Actualizar iniciales al escribir nombre
+  setTimeout(()=>{
+    const nameInput=$("#agentName");
+    if(nameInput) nameInput.oninput=e=>{
+      const parts=e.target.value.trim().split(" ").filter(Boolean);
+      const initials=parts.length>=2?parts[0][0]+parts[1][0]:parts[0]?parts[0][0]:"?";
+      const initialsEl=$("#agentPhotoInitials");
+      if(initialsEl&&!capturedPhoto) initialsEl.textContent=initials.toUpperCase();
+    };
+    const photoInput=$("#agentPhotoInput");
+    if(photoInput) photoInput.onchange=e=>{
+      const file=e.target.files[0];
+      if(!file) return;
+      if(file.size>2*1024*1024){toast("La imagen no debe superar 2 MB.","warning");return}
+      const reader=new FileReader();
+      reader.onload=ev=>{
+        capturedPhoto=ev.target.result;
+        const preview=$("#agentPhotoPreview");
+        if(preview) preview.innerHTML=`<img src="${capturedPhoto}" style="width:100%;height:100%;object-fit:cover">`;
+      };
+      reader.readAsDataURL(file);
+    };
+  },100);
 }
 
 function openEditAgentModal(agentId){
   const agent=state.agents.find(a=>a.id===agentId);
   if(!agent) return;
+  let capturedPhoto = agent.photo || null;
+  const initials=(()=>{const parts=agent.name.trim().split(" ").filter(Boolean);return parts.length>=2?parts[0][0]+parts[1][0]:parts[0]?parts[0][0]:"?"})().toUpperCase();
+  const avatarHtml=capturedPhoto
+    ?`<img src="${capturedPhoto}" style="width:100%;height:100%;object-fit:cover">`
+    :`<span>${initials}</span>`;
   openModal({
     title:"Editar agente certificador",
     subtitle:"Modifica los datos del agente, sede de atención, permisos o carga de solicitudes.",
@@ -2264,19 +2307,31 @@ function openEditAgentModal(agentId){
     confirmClass:"primary",
     size:"large",
     body:`
-      <div class="form-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:16px 20px">
-        <div style="grid-column:1/-1"><h3 style="color:var(--brand);font-size:15px;margin:0 0 4px">Datos del agente</h3></div>
-        <div class="field"><label>Nombre completo *</label><input id="editAgentName" value="${agent.name}"></div>
-        <div class="field"><label>CURP</label><input id="editAgentCurp" placeholder="Clave única de registro"></div>
-        <div class="field"><label>Correo institucional *</label><input id="editAgentEmail" value="${agent.email}" type="email"></div>
-        <div class="field"><label>Teléfono / Extensión</label><input id="editAgentPhone" placeholder="834 000 0000 ext. 0000"></div>
-        <div style="grid-column:1/-1;margin-top:8px"><h3 style="color:var(--brand);font-size:15px;margin:0 0 4px">Asignación operativa</h3></div>
-        <div class="field"><label>Sede asignada *</label><select id="editAgentSite"><option value="">Seleccionar...</option>${["Victoria","Tampico","Reynosa","Mante"].map(s=>`<option ${agent.site===s?"selected":""}>${s}</option>`).join("")}</select></div>
-        <div class="field"><label>Rol</label><input id="editAgentRole" value="${agent.role}" readonly style="background:#F4F5F7"></div>
-        <div class="field"><label>Carga actual</label><input id="editAgentLoad" value="${agent.load}" readonly style="background:#F4F5F7"></div>
-        <div class="field"><label>Disponibilidad</label><select id="editAgentAvail">${["Disponible","Alta carga","Inactivo"].map(s=>`<option ${agent.availability===s?"selected":""}>${s}</option>`).join("")}</select></div>
-        <div class="field"><label>ID del agente</label><input value="${agent.id}" readonly style="background:#F4F5F7"></div>
-        <div class="field"><label>Fecha de alta</label><input value="${agent.since}" readonly style="background:#F4F5F7"></div>
+      <div style="display:grid;grid-template-columns:148px 1fr;gap:24px;align-items:start">
+        <div style="display:flex;flex-direction:column;align-items:center;gap:10px">
+          <div id="agentPhotoPreview" style="width:120px;height:120px;border-radius:50%;background:var(--brand);color:#fff;display:grid;place-items:center;font-size:36px;font-weight:800;border:3px solid var(--gold-light);overflow:hidden;flex-shrink:0">
+            ${avatarHtml}
+          </div>
+          <label style="cursor:pointer;display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--brand);font-weight:700;border:1px solid var(--brand);border-radius:6px;padding:6px 10px">
+            ${icon("camera")} ${capturedPhoto?"Cambiar foto":"Capturar foto"}
+            <input type="file" id="agentPhotoInput" accept="image/*" style="display:none">
+          </label>
+          <small style="color:var(--muted);text-align:center;font-size:10px;line-height:1.4">JPG o PNG · Máx. 2 MB</small>
+        </div>
+        <div class="form-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:14px 20px">
+          <div style="grid-column:1/-1"><h3 style="color:var(--brand);font-size:15px;margin:0 0 4px">Datos del agente</h3></div>
+          <div class="field"><label>Nombre completo *</label><input id="editAgentName" value="${agent.name}"></div>
+          <div class="field"><label>CURP</label><input id="editAgentCurp" value="${agent.curp||""}" maxlength="18" style="text-transform:uppercase" placeholder="Clave única de registro"></div>
+          <div class="field"><label>Correo institucional *</label><input id="editAgentEmail" value="${agent.email}" type="email"></div>
+          <div class="field"><label>Teléfono / Extensión</label><input id="editAgentPhone" placeholder="834 000 0000 ext. 0000"></div>
+          <div style="grid-column:1/-1;margin-top:4px"><h3 style="color:var(--brand);font-size:15px;margin:0 0 4px">Asignación operativa</h3></div>
+          <div class="field"><label>Sede asignada *</label><select id="editAgentSite">${["Victoria","Tampico","Reynosa","Mante"].map(s=>`<option ${agent.site===s?"selected":""}>${s}</option>`).join("")}</select></div>
+          <div class="field"><label>Rol</label><input id="editAgentRole" value="${agent.role}" readonly style="background:#F4F5F7"></div>
+          <div class="field"><label>Carga actual</label><input value="${agent.load}" readonly style="background:#F4F5F7"></div>
+          <div class="field"><label>Disponibilidad</label><select id="editAgentAvail">${["Disponible","Alta carga","Inactivo"].map(s=>`<option ${agent.availability===s?"selected":""}>${s}</option>`).join("")}</select></div>
+          <div class="field"><label>ID del agente</label><input value="${agent.id}" readonly style="background:#F4F5F7"></div>
+          <div class="field"><label>Fecha de alta</label><input value="${agent.since}" readonly style="background:#F4F5F7"></div>
+        </div>
       </div>
       <div class="notice" style="margin-top:16px">${icon("file-text")}<strong> Registro en bitácora</strong><br><small>Los cambios realizados quedarán registrados automáticamente en la bitácora del sistema con fecha, hora y usuario que ejecuta la modificación.</small></div>`,
     onConfirm:()=>{
@@ -2285,13 +2340,30 @@ function openEditAgentModal(agentId){
       const site=$("#editAgentSite").value;
       if(!name||!email||!site){toast("Completa los campos obligatorios.","warning");return}
       agent.name=name; agent.email=email; agent.site=site;
+      agent.curp=$("#editAgentCurp").value.trim().toUpperCase();
       agent.availability=$("#editAgentAvail").value;
       agent.status=agent.availability;
+      agent.photo=capturedPhoto;
       closeModal();
       renderAgents();
       toast("Datos del agente actualizados.");
     }
   });
+  setTimeout(()=>{
+    const photoInput=$("#agentPhotoInput");
+    if(photoInput) photoInput.onchange=e=>{
+      const file=e.target.files[0];
+      if(!file) return;
+      if(file.size>2*1024*1024){toast("La imagen no debe superar 2 MB.","warning");return}
+      const reader=new FileReader();
+      reader.onload=ev=>{
+        capturedPhoto=ev.target.result;
+        const preview=$("#agentPhotoPreview");
+        if(preview) preview.innerHTML=`<img src="${capturedPhoto}" style="width:100%;height:100%;object-fit:cover">`;
+      };
+      reader.readAsDataURL(file);
+    };
+  },100);
 }
 
 function openDeactivateAgentModal(agentId){
@@ -2376,9 +2448,16 @@ function renderAgents(){
       </div>
     </div>
     ${dataTableToolbar("agents","agentSearch",state.agentSearch,"exportAgentsToolbar",state.agents.length)}
-    <div class="table-wrap"><table><thead><tr><th>Agente</th><th>Sede</th><th>Carga</th><th>Estatus</th><th>Acciones</th></tr></thead>
-    <tbody>${filtered.length?filtered.map(a=>`<tr>
-      <td><strong>${a.name}</strong><span class="subtext">${a.email}</span></td>
+    <div class="table-wrap"><table><thead><tr><th>Agente</th><th>CURP</th><th>Sede</th><th>Carga</th><th>Estatus</th><th>Acciones</th></tr></thead>
+    <tbody>${filtered.length?filtered.map(a=>{
+      const parts=a.name.trim().split(" ").filter(Boolean);
+      const initials=(parts.length>=2?parts[0][0]+parts[1][0]:parts[0]?parts[0][0]:"?").toUpperCase();
+      const avatar=a.photo
+        ?`<img src="${a.photo}" style="width:36px;height:36px;border-radius:50%;object-fit:cover;border:2px solid var(--gold-light);flex-shrink:0">`
+        :`<span style="width:36px;height:36px;border-radius:50%;background:var(--brand);color:#fff;display:grid;place-items:center;font-size:13px;font-weight:800;flex-shrink:0;border:2px solid var(--gold-light)">${initials}</span>`;
+      return `<tr>
+      <td><div style="display:flex;align-items:center;gap:10px">${avatar}<div><strong>${a.name}</strong><span class="subtext">${a.email}</span></div></div></td>
+      <td><span style="font-family:monospace;font-size:12px;color:var(--gray)">${a.curp||`<span style="color:var(--muted);font-style:italic">No registrada</span>`}</span></td>
       <td>${a.site}</td>
       <td><strong style="color:${a.load>=15?"var(--red)":a.load>=10?"var(--amber)":"var(--blue)"}">${a.load}</strong></td>
       <td>${agentStatusBadge(a.status)}</td>
@@ -2386,7 +2465,7 @@ function renderAgents(){
         <button class="action-icon warning" data-edit-agent="${a.id}" title="Editar agente">${icon("edit")}</button>
         <button class="action-icon danger" data-deactivate-agent="${a.id}" title="Dar de baja">${icon("ban")}</button>
       </div></td>
-    </tr>`).join(""):`<tr><td colspan="5" class="empty-state">No hay agentes con estos criterios.</td></tr>`}
+    </tr>`}).join(""):`<tr><td colspan="6" class="empty-state">No hay agentes con estos criterios.</td></tr>`}
     </tbody></table></div>
     <div class="pagination"><span>Mostrando ${filtered.length?1:0} a ${filtered.length} de ${filtered.length} registros</span><div class="pagination-buttons"><button disabled>Anterior</button><button class="active">1</button><button disabled>Siguiente</button></div></div>
   </section>
