@@ -739,7 +739,7 @@ const state = {
   settingsDay: 21,
   settingsSite: "Victoria, Tamaulipas",
   filtersOpen: { requests:false, appointments:false, procedures:false, certificates:false, procedureConfig:false },
-  pageSize: { requests:10, appointments:10, procedures:10, certificates:10, catalogs:10, procedureConfig:10 },
+  pageSize: { requests:10, appointments:10, procedures:10, certificates:10, catalogs:10, procedureConfig:10, agents:10 },
   selectedConfiguredProcedure: "EMI",
   procedureConfigSearch: "",
   procedureRequirementSearch: "",
@@ -796,6 +796,18 @@ const state = {
     { id:"FEAT-2025-000312", citizen:"Ana Laura Martínez", type:"Emisión", status:"Por vencer", validity:"01/06/2024 - 01/06/2026" },
     { id:"FEAT-2024-000088", citizen:"Carlos Sánchez Vega", type:"Revocación", status:"Revocado", validity:"Revocado 02/05/2026" }
   ],
+  agents: [
+    { id:"AG-00001", name:"Luis Hernandez Perez", email:"luis.hernandez@tamaulipas.gob.mx", site:"Victoria", load:12, status:"Disponible", role:"Agente certificador", availability:"Disponible", since:"15 enero 2026", requests:12 },
+    { id:"AG-00002", name:"Sofia Torres Diaz", email:"sofia.torres@tamaulipas.gob.mx", site:"Tampico", load:18, status:"Alta carga", role:"Agente certificador", availability:"Alta carga", since:"10 febrero 2026", requests:18 },
+    { id:"AG-00003", name:"Carlos Ramirez Soto", email:"carlos.ramirez@tamaulipas.gob.mx", site:"Reynosa", load:7, status:"Disponible", role:"Agente certificador", availability:"Disponible", since:"03 marzo 2026", requests:7 },
+    { id:"AG-00004", name:"Ana Lopez Mendez", email:"ana.lopez@tamaulipas.gob.mx", site:"Victoria", load:0, status:"Inactivo", role:"Agente certificador", availability:"Inactivo", since:"20 enero 2026", requests:0 },
+    { id:"AG-00005", name:"Ricardo Gonzalez Ruiz", email:"ricardo.gonzalez@tamaulipas.gob.mx", site:"Mante", load:10, status:"Disponible", role:"Agente certificador", availability:"Disponible", since:"05 enero 2026", requests:10 },
+    { id:"AG-00006", name:"Patricia Fernandez Cruz", email:"patricia.fernandez@tamaulipas.gob.mx", site:"Tampico", load:15, status:"Alta carga", role:"Agente certificador", availability:"Alta carga", since:"12 febrero 2026", requests:15 },
+    { id:"AG-00007", name:"Miguel Santos Mora", email:"miguel.santos@tamaulipas.gob.mx", site:"Victoria", load:8, status:"Disponible", role:"Agente certificador", availability:"Disponible", since:"18 enero 2026", requests:8 }
+  ],
+  agentSearch: "",
+  agentSite: "all",
+  agentStatus: "all",
   documents: {
     identity:{name:"Identificación oficial",file:"ine-frente-reverso.pdf",status:"Pendiente"},
     domicilio:{name:"Comprobante de domicilio",file:"domicilio.pdf",status:"Pendiente"},
@@ -983,7 +995,8 @@ const adminSubmenus = {
     ["general","General"],
     ["sites","Por sede"],
     ["procedures","Gestión de trámites"],
-    ["notifications","Notificaciones"]
+    ["notifications","Notificaciones"],
+    ["agents","Agentes"]
   ]
 };
 
@@ -2191,11 +2204,213 @@ function confirmDeleteProcedureRequirement(id){
   });
 }
 
+function agentStatusBadge(status){
+  if(status==="Disponible") return `<span class="badge approved">${status}</span>`;
+  if(status==="Alta carga") return `<span class="badge pending">${status}</span>`;
+  if(status==="Inactivo") return `<span class="badge neutral">${status}</span>`;
+  return `<span class="badge neutral">${status}</span>`;
+}
+
+function openAddAgentModal(){
+  const today = new Date().toLocaleDateString("es-MX",{day:"numeric",month:"long",year:"numeric"});
+  openModal({
+    title:"Agregar nuevo agente certificador",
+    subtitle:"Registra sus datos, sede de atención, permisos y carga inicial de solicitudes.",
+    confirm:"Guardar agente",
+    confirmClass:"primary",
+    size:"large",
+    body:`
+      <div class="form-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:16px 20px">
+        <div style="grid-column:1/-1"><h3 style="color:var(--brand);font-size:15px;margin:0 0 4px">Datos del agente</h3></div>
+        <div class="field"><label>Nombre completo *</label><input id="agentName" placeholder="Ej. Laura Martinez Rivera"></div>
+        <div class="field"><label>CURP *</label><input id="agentCurp" placeholder="Clave única de registro"></div>
+        <div class="field"><label>Correo institucional *</label><input id="agentEmail" placeholder="nombre@tamaulipas.gob.mx" type="email"></div>
+        <div class="field"><label>Teléfono / Extensión</label><input id="agentPhone" placeholder="834 000 0000 ext. 0000"></div>
+        <div style="grid-column:1/-1;margin-top:8px"><h3 style="color:var(--brand);font-size:15px;margin:0 0 4px">Asignación operativa</h3></div>
+        <div class="field"><label>Sede asignada *</label><select id="agentSiteNew"><option value="">Seleccionar...</option><option>Victoria</option><option>Tampico</option><option>Reynosa</option><option>Mante</option></select></div>
+        <div class="field"><label>Rol *</label><select id="agentRole"><option>Agente certificador</option><option>Supervisor</option></select></div>
+        <div class="field"><label>Carga inicial</label><input id="agentLoad" type="number" value="0" min="0"></div>
+        <div class="field"><label>Solicitudes iniciales asignadas</label><input id="agentRequests" type="number" value="0" min="0" readonly style="background:#F4F5F7"></div>
+        <div class="field"><label>Disponibilidad</label><select id="agentAvail"><option>Disponible</option><option>Alta carga</option><option>Inactivo</option></select></div>
+        <div class="field"><label>Fecha de alta</label><input id="agentDate" value="${today}" readonly style="background:#F4F5F7"></div>
+      </div>`,
+    onConfirm:()=>{
+      const name=$("#agentName").value.trim();
+      const email=$("#agentEmail").value.trim();
+      const site=$("#agentSiteNew").value;
+      if(!name||!email||!site){toast("Completa los campos obligatorios.","warning");return}
+      const newId="AG-"+String(state.agents.length+1).padStart("00001".length,"0");
+      state.agents.push({
+        id:newId, name, email,
+        site, load:Number($("#agentLoad").value)||0,
+        status:$("#agentAvail").value, role:$("#agentRole").value,
+        availability:$("#agentAvail").value,
+        since:today, requests:Number($("#agentRequests").value)||0
+      });
+      closeModal();
+      renderAgents();
+      toast("Agente registrado correctamente.");
+    }
+  });
+}
+
+function openEditAgentModal(agentId){
+  const agent=state.agents.find(a=>a.id===agentId);
+  if(!agent) return;
+  openModal({
+    title:"Editar agente certificador",
+    subtitle:"Modifica los datos del agente, sede de atención, permisos o carga de solicitudes.",
+    confirm:"Guardar cambios",
+    confirmClass:"primary",
+    size:"large",
+    body:`
+      <div class="form-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:16px 20px">
+        <div style="grid-column:1/-1"><h3 style="color:var(--brand);font-size:15px;margin:0 0 4px">Datos del agente</h3></div>
+        <div class="field"><label>Nombre completo *</label><input id="editAgentName" value="${agent.name}"></div>
+        <div class="field"><label>CURP</label><input id="editAgentCurp" placeholder="Clave única de registro"></div>
+        <div class="field"><label>Correo institucional *</label><input id="editAgentEmail" value="${agent.email}" type="email"></div>
+        <div class="field"><label>Teléfono / Extensión</label><input id="editAgentPhone" placeholder="834 000 0000 ext. 0000"></div>
+        <div style="grid-column:1/-1;margin-top:8px"><h3 style="color:var(--brand);font-size:15px;margin:0 0 4px">Asignación operativa</h3></div>
+        <div class="field"><label>Sede asignada *</label><select id="editAgentSite"><option value="">Seleccionar...</option>${["Victoria","Tampico","Reynosa","Mante"].map(s=>`<option ${agent.site===s?"selected":""}>${s}</option>`).join("")}</select></div>
+        <div class="field"><label>Rol</label><input id="editAgentRole" value="${agent.role}" readonly style="background:#F4F5F7"></div>
+        <div class="field"><label>Carga actual</label><input id="editAgentLoad" value="${agent.load}" readonly style="background:#F4F5F7"></div>
+        <div class="field"><label>Disponibilidad</label><select id="editAgentAvail">${["Disponible","Alta carga","Inactivo"].map(s=>`<option ${agent.availability===s?"selected":""}>${s}</option>`).join("")}</select></div>
+        <div class="field"><label>ID del agente</label><input value="${agent.id}" readonly style="background:#F4F5F7"></div>
+        <div class="field"><label>Fecha de alta</label><input value="${agent.since}" readonly style="background:#F4F5F7"></div>
+      </div>
+      <div class="notice" style="margin-top:16px">${icon("file-text")}<strong> Registro en bitácora</strong><br><small>Los cambios realizados quedarán registrados automáticamente en la bitácora del sistema con fecha, hora y usuario que ejecuta la modificación.</small></div>`,
+    onConfirm:()=>{
+      const name=$("#editAgentName").value.trim();
+      const email=$("#editAgentEmail").value.trim();
+      const site=$("#editAgentSite").value;
+      if(!name||!email||!site){toast("Completa los campos obligatorios.","warning");return}
+      agent.name=name; agent.email=email; agent.site=site;
+      agent.availability=$("#editAgentAvail").value;
+      agent.status=agent.availability;
+      closeModal();
+      renderAgents();
+      toast("Datos del agente actualizados.");
+    }
+  });
+}
+
+function openDeactivateAgentModal(agentId){
+  const agent=state.agents.find(a=>a.id===agentId);
+  if(!agent) return;
+  openModal({
+    title:"Dar de baja agente certificador",
+    subtitle:"Esta acción revocará inmediatamente todos los permisos de acceso del agente.",
+    confirm:"Confirmar baja",
+    confirmClass:"danger",
+    size:"large",
+    body:`
+      <div style="border:1px solid #F8D0D8;background:#FEF0F3;border-radius:8px;padding:14px 16px;margin-bottom:16px">
+        <small style="color:var(--brand);font-weight:800;font-size:11px">Agente a dar de baja:</small>
+        <strong style="display:block;margin-top:6px;font-size:15px">${agent.name}</strong>
+        <span style="color:var(--muted);font-size:12px">${agent.email}</span>
+      </div>
+      <div style="border:1px solid #F0D98E;background:#FFFBEA;border-radius:8px;padding:14px 16px;margin-bottom:16px">
+        <strong style="color:#9A6E00;display:flex;align-items:center;gap:6px;margin-bottom:10px">${icon("alert")} Consecuencias de esta acción:</strong>
+        <ul style="margin:0;padding-left:20px;color:var(--gray);font-size:13px;line-height:1.8">
+          <li>Revocación inmediata de todos los permisos de acceso al sistema</li>
+          <li>Las solicitudes asignadas deberán ser reasignadas manualmente</li>
+          <li>El agente no podrá iniciar sesión ni realizar operaciones</li>
+          <li>Se generará un registro permanente en la bitácora del sistema</li>
+        </ul>
+      </div>
+      <div class="field"><label>Motivo de la baja *</label><input id="deactivateReason" placeholder=""></div>
+      <div class="field" style="margin-top:12px"><label>Observaciones adicionales *</label><textarea id="deactivateObs" rows="4" placeholder="Describe el motivo de la baja y cualquier detalle relevante..." style="width:100%;resize:vertical"></textarea></div>
+      <label style="display:flex;align-items:flex-start;gap:10px;border:1px solid var(--line);border-radius:8px;padding:13px 15px;margin-top:12px;cursor:pointer">
+        <input type="checkbox" id="deactivateConfirm" style="margin-top:2px;accent-color:var(--brand)">
+        <span style="font-size:13px">Confirmo que deseo dar de baja a este agente y revocar todos sus permisos de acceso de forma inmediata</span>
+      </label>`,
+    onConfirm:()=>{
+      if(!$("#deactivateConfirm").checked){toast("Debes confirmar la acción antes de continuar.","warning");return}
+      if(!$("#deactivateReason").value.trim()){toast("Captura el motivo de la baja.","warning");return}
+      agent.status="Inactivo"; agent.availability="Inactivo"; agent.load=0;
+      closeModal();
+      renderAgents();
+      toast("Agente dado de baja correctamente.","warning");
+    }
+  });
+}
+
+function renderAgents(){
+  const active=state.agents.filter(a=>a.status!=="Inactivo");
+  const totalLoad=state.agents.reduce((sum,a)=>sum+a.load,0);
+  const sites=[...new Set(state.agents.filter(a=>a.status!=="Inactivo").map(a=>a.site))];
+  const incidents=state.agents.filter(a=>a.status==="Alta carga");
+
+  const filtered=state.agents.filter(a=>{
+    const matchSearch=(a.name+" "+a.email).toLowerCase().includes(state.agentSearch.toLowerCase());
+    const matchSite=state.agentSite==="all"||a.site===state.agentSite;
+    const matchStatus=state.agentStatus==="all"||a.status===state.agentStatus;
+    return matchSearch&&matchSite&&matchStatus;
+  });
+
+  content.innerHTML=pageHeader("Agentes certificadores","Administra altas, bajas, sedes, carga operativa, permisos y reasignación de solicitudes.",
+    `<button class="button primary" id="newAgentBtn">${icon("plus")}Nuevo Agente</button>`)+
+  `<section class="stats-grid" style="margin-bottom:22px">
+    <article class="stat-card"><span class="stat-icon">${icon("file-check")}</span><div><h3>Agentes activos</h3><strong>${active.length}</strong></div><small class="positive">${active.length-incidents.length} disponibles</small></article>
+    <article class="stat-card blue"><span class="stat-icon" style="background:var(--blue-bg);color:var(--blue)">${icon("clipboard")}</span><div><h3>Solicitudes asignadas</h3><strong>${totalLoad}</strong></div><small>Carga operativa actual</small></article>
+    <article class="stat-card amber"><span class="stat-icon" style="background:var(--amber-bg);color:var(--amber)">${icon("calendar")}</span><div><h3>Sedes activas</h3><strong>${sites.length}</strong></div><small>${sites.join(", ")}</small></article>
+    <article class="stat-card"><span class="stat-icon">${icon("alert")}</span><div><h3>Incidencias</h3><strong>${incidents.length}</strong></div><small style="color:var(--red)">Requieren reasignación</small></article>
+  </section>
+  <section class="filter-disclosure" id="agentFilterSection">
+    <button class="filter-disclosure-trigger" id="agentFilterToggle" style="width:100%">
+      <span><strong style="display:flex;align-items:center;gap:8px">${icon("search")}Filtros</strong></span>
+      <span class="filter-chevron">${icon("chevron-down")}</span>
+    </button>
+    <div class="filter-disclosure-body" id="agentFilterBody" hidden>
+      <div class="filter-panel embedded" style="display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:12px;padding:16px 0 0">
+        <div class="field"><label>Sede</label><select id="filterAgentSite"><option value="all">Todas</option>${["Victoria","Tampico","Reynosa","Mante"].map(s=>`<option ${state.agentSite===s?"selected":""}>${s}</option>`).join("")}</select></div>
+        <div class="field"><label>Estatus</label><select id="filterAgentStatus"><option value="all">Todos</option>${["Disponible","Alta carga","Inactivo"].map(s=>`<option ${state.agentStatus===s?"selected":""}>${s}</option>`).join("")}</select></div>
+        <button class="button secondary" id="clearAgentFilters" style="align-self:end">Limpiar filtros</button>
+      </div>
+    </div>
+  </section>
+  <section class="card table-card frest-table-card" style="margin-top:16px">
+    <div class="card-header"><div><h2>Listado de agentes</h2></div>
+      <div style="display:flex;gap:10px;align-items:center">
+        <button class="button ghost small" id="exportAgents">${icon("download")}Export</button>
+      </div>
+    </div>
+    ${dataTableToolbar("agents","agentSearch",state.agentSearch,"exportAgentsToolbar",state.agents.length)}
+    <div class="table-wrap"><table><thead><tr><th>Agente</th><th>Sede</th><th>Carga</th><th>Estatus</th><th>Acciones</th></tr></thead>
+    <tbody>${filtered.length?filtered.map(a=>`<tr>
+      <td><strong>${a.name}</strong><span class="subtext">${a.email}</span></td>
+      <td>${a.site}</td>
+      <td><strong style="color:${a.load>=15?"var(--red)":a.load>=10?"var(--amber)":"var(--blue)"}">${a.load}</strong></td>
+      <td>${agentStatusBadge(a.status)}</td>
+      <td><div class="actions-cell">
+        <button class="action-icon warning" data-edit-agent="${a.id}" title="Editar agente">${icon("edit")}</button>
+        <button class="action-icon danger" data-deactivate-agent="${a.id}" title="Dar de baja">${icon("ban")}</button>
+      </div></td>
+    </tr>`).join(""):`<tr><td colspan="5" class="empty-state">No hay agentes con estos criterios.</td></tr>`}
+    </tbody></table></div>
+    <div class="pagination"><span>Mostrando ${filtered.length?1:0} a ${filtered.length} de ${filtered.length} registros</span><div class="pagination-buttons"><button disabled>Anterior</button><button class="active">1</button><button disabled>Siguiente</button></div></div>
+  </section>
+  <div class="notice" style="margin-top:16px"><strong>Acciones de administrador:</strong> Dar de alta/baja agentes, asignar sede, cambiar permisos, distribuir solicitudes y reasignar carga por incidencia o disponibilidad.</div>`;
+
+  $("#newAgentBtn").onclick=openAddAgentModal;
+  $("#agentSearch").oninput=e=>{state.agentSearch=e.target.value;renderAgents()};
+  if($("#filterAgentSite")) $("#filterAgentSite").onchange=e=>{state.agentSite=e.target.value;renderAgents()};
+  if($("#filterAgentStatus")) $("#filterAgentStatus").onchange=e=>{state.agentStatus=e.target.value;renderAgents()};
+  if($("#clearAgentFilters")) $("#clearAgentFilters").onclick=()=>{state.agentSearch="";state.agentSite="all";state.agentStatus="all";renderAgents()};
+  if($("#agentFilterToggle")) $("#agentFilterToggle").onclick=()=>{const body=$("#agentFilterBody");body.hidden=!body.hidden;$("#agentFilterSection").classList.toggle("open",!body.hidden)};
+  if($("#exportAgents")) $("#exportAgents").onclick=()=>exportTable("agentes-feat",["ID","Nombre","Correo","Sede","Carga","Estatus"],filtered.map(a=>[a.id,a.name,a.email,a.site,a.load,a.status]));
+  if($("#exportAgentsToolbar")) $("#exportAgentsToolbar").onclick=()=>exportTable("agentes-feat",["ID","Nombre","Correo","Sede","Carga","Estatus"],filtered.map(a=>[a.id,a.name,a.email,a.site,a.load,a.status]));
+  if($("#agentsPageSize")) $("#agentsPageSize").onchange=e=>{renderAgents()};
+  $$("[data-edit-agent]").forEach(b=>b.onclick=()=>openEditAgentModal(b.dataset.editAgent));
+  $$("[data-deactivate-agent]").forEach(b=>b.onclick=()=>openDeactivateAgentModal(b.dataset.deactivateAgent));
+}
+
 function renderSettings(){
   if(state.settingsScreen==="exception") return renderNewException();
   if(["sites","calendar"].includes(state.activeSettingNav)) return renderSiteCalendar();
   if(state.activeSettingNav==="general") return renderGeneralSettings();
   if(state.activeSettingNav==="procedures") return renderProcedureManagement();
+  if(state.activeSettingNav==="agents") return renderAgents();
   const labels={
     procedures:["Gestión de trámites","Trámites habilitados y asignación de requisitos documentales."],
     notifications:["Notificaciones","Plantillas, eventos de envío y recordatorios automáticos."]
