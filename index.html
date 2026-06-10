@@ -29,7 +29,7 @@
 *{box-sizing:border-box}
 .icon-sprite{position:absolute;width:0;height:0;overflow:hidden}
 .icon{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;display:block}
-html,body{margin:0;min-height:100%;font-family:Arial,Helvetica,sans-serif;color:var(--ink);background:var(--page)}
+html,body{margin:0;min-height:100%;font-family:'Encode Sans',Arial,Helvetica,sans-serif;color:var(--ink);background:var(--page)}
 button,input,select,textarea{font:inherit}
 button{cursor:pointer}
 [hidden]{display:none!important}
@@ -474,22 +474,49 @@ tbody tr:hover{background:#FCF8F9}
 .summary-banner{background:var(--brand);color:#fff;border-radius:8px;padding:20px 25px;display:grid;grid-template-columns:1.4fr repeat(4,1fr);gap:18px;margin-bottom:18px;align-items:center}
 .summary-banner h2{margin:0 0 6px;font-size:21px}
 .summary-item small{display:block;text-transform:uppercase;font-size:10px;opacity:.8;margin-bottom:7px}
-.review-layout{display:grid;grid-template-columns:370px minmax(0,1fr);gap:18px}
-.tabs{display:flex;border-bottom:1px solid var(--line);margin-bottom:16px;overflow:auto}
-.tab-button{border:0;background:transparent;padding:14px 18px;color:var(--gray);white-space:nowrap;border-bottom:3px solid transparent}
-.tab-button.active{color:var(--brand);border-color:var(--brand);font-weight:700}
-.info-panel{background:#F7F8FA;padding:17px;border-radius:7px}
-.info-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.review-layout{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start}
+/* Tabs */
+.tabs{display:flex;border-bottom:2px solid var(--line);margin-bottom:0;overflow:auto;gap:2px}
+.tab-button{border:0;background:transparent;padding:12px 20px;color:var(--muted);white-space:nowrap;border-bottom:3px solid transparent;font-size:13px;font-weight:600;margin-bottom:-2px}
+.tab-button.active{color:var(--brand);border-color:var(--brand);font-weight:800}
+.tab-button:hover:not(.active){color:var(--ink);background:#F7F8FA}
+/* Info panel tabs */
+.info-panel{padding:18px 0 4px}
+.info-section-title{font-size:11px;font-weight:800;color:var(--brand);text-transform:uppercase;letter-spacing:.06em;margin:0 0 14px;padding:0 2px}
+.info-grid{display:grid;grid-template-columns:1fr 1fr;gap:0}
 .info-grid div.full{grid-column:1/-1}
-.info-grid small{display:block;color:var(--muted);margin-bottom:5px}
-.document-list{display:grid;gap:8px;margin-top:16px}
-.document-button{border:1px solid var(--line);background:#fff;padding:12px;border-radius:6px;text-align:left;display:flex;justify-content:space-between;gap:12px}
-.document-button.active{border-color:var(--brand);background:#FCF3F5}
-.document-viewer{background:#9199A5;border-radius:8px;padding:18px;min-height:520px}
-.viewer-toolbar{display:flex;justify-content:space-between;color:#fff;margin-bottom:14px;gap:10px}
-.document-paper{background:#fff;max-width:650px;min-height:410px;margin:auto;padding:45px;box-shadow:0 5px 18px rgba(0,0,0,.16)}
-.document-paper h3{text-align:center;border-bottom:2px solid var(--brand);padding-bottom:15px}
-.document-highlight{border:2px solid var(--amber);background:var(--amber-bg);padding:15px;margin-top:24px}
+.info-field{padding:10px 12px;border-radius:6px}
+.info-field:hover{background:#F7F8FA}
+.info-field small{display:block;color:var(--muted);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px}
+.info-field strong{font-size:13px;color:var(--ink);font-weight:600;word-break:break-word}
+.info-divider{grid-column:1/-1;height:1px;background:var(--line);margin:8px 0}
+/* Log bitácora */
+.log-list{display:grid;gap:10px;padding:4px 0}
+.log-item{display:flex;gap:10px;align-items:flex-start;font-size:13px}
+.log-dot{width:8px;height:8px;border-radius:50%;background:var(--brand);flex-shrink:0;margin-top:4px}
+.log-item span{color:var(--gray);line-height:1.45}
+/* Lista de documentos */
+.document-list{display:grid;gap:6px;margin-top:0}
+.document-button{border:1px solid var(--line);background:#fff;padding:11px 14px;border-radius:7px;text-align:left;display:flex;justify-content:space-between;align-items:center;gap:12px;transition:border-color .15s,background .15s}
+.document-button:hover{border-color:#C8CDD6;background:#FAFAFA}
+.document-button.active{border-color:var(--brand);background:#FCF3F5;box-shadow:0 0 0 1px var(--brand)}
+.document-button strong{font-size:13px;display:block;margin-bottom:2px}
+.document-button small{font-size:11px;color:var(--muted)}
+/* Visor */
+.document-viewer{background:#6E7580;border-radius:10px;padding:20px;min-height:480px;display:flex;flex-direction:column}
+.viewer-toolbar{display:flex;justify-content:space-between;align-items:center;color:#fff;margin-bottom:16px;gap:10px;flex-shrink:0}
+.viewer-toolbar span{font-size:12px;opacity:.85}
+.viewer-toolbar .viewer-controls{display:flex;align-items:center;gap:8px}
+.viewer-toolbar .viewer-controls strong{color:#fff;font-size:13px;min-width:42px;text-align:center}
+.document-paper{background:#fff;width:100%;max-width:680px;margin:0 auto;padding:40px 48px;box-shadow:0 8px 28px rgba(0,0,0,.22);border-radius:2px;flex:1}
+.document-paper h3{text-align:center;font-size:15px;letter-spacing:.06em;border-bottom:2px solid var(--brand);padding-bottom:14px;margin:0 0 20px;color:var(--ink)}
+.document-paper p{margin:6px 0;font-size:13px;color:var(--gray)}
+.document-paper .doc-label{font-size:11px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-top:16px;margin-bottom:4px}
+.document-paper .doc-value{font-size:14px;font-weight:700;color:var(--ink);margin:0 0 10px}
+.document-highlight{border-left:4px solid var(--amber);background:var(--amber-bg);padding:14px 16px;margin-top:20px;border-radius:0 6px 6px 0}
+.document-highlight strong{font-size:12px;font-weight:800;color:#805E29;display:block;margin-bottom:4px}
+.document-highlight p{margin:0;font-size:12px;color:#6B4F20}
+/* Acciones de revisión */
 .review-actions{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:16px}
 .notice{border:1px solid #E8C77C;background:#FFF8E7;color:#785320;border-radius:7px;padding:14px 17px;font-size:13px}
 .notice strong{color:var(--brand)}
@@ -603,6 +630,9 @@ tbody tr:hover{background:#FCF8F9}
 }
 
 </style>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Encode+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
 <body>
 <svg class="icon-sprite" aria-hidden="true"><defs>
@@ -733,17 +763,15 @@ const state = {
   catalogGroup: "all",
   catalogPage: 1,
   expandedMenus: { catalogs:false, settings:false },
-  activeCatalogNav: "",
+  activeCatalogNav: "tramites",
   activeSettingNav: "general",
   settingsScreen: "general",
   settingsDay: 21,
   settingsSite: "Victoria, Tamaulipas",
   filtersOpen: { requests:false, appointments:false, procedures:false, certificates:false, procedureConfig:false },
-  pageSize: { requests:10, appointments:10, procedures:10, certificates:10, catalogs:10, procedureConfig:10, agents:10 },
+  pageSize: { requests:10, appointments:10, procedures:10, certificates:10, catalogs:10, procedureConfig:10 },
   selectedConfiguredProcedure: "EMI",
   procedureConfigSearch: "",
-  procedureDetailView: false,
-  procedureStatusFilter: "all",
   procedureRequirementSearch: "",
   procedureRequirementStatus: "all",
   procedureRequirementMandatory: "all",
@@ -751,6 +779,9 @@ const state = {
   procedureConfigurations: createDefaultProcedureConfigurations(),
   selectedAgendaDay: 22,
   activeRequest: null,
+  reviewDocsOpen: false,
+  actaZoom: 100,
+  lastActa: null,
   activeAppointment: null,
   activeTab: "general",
   attendTab: "onsite",
@@ -774,13 +805,13 @@ const state = {
     { id:"FEAT-2026-040981", name:"Patricia Ramírez Cruz", dependency:"Ciudadano", type:"Emisión", status:"Observada", agent:"Luis Hernández", site:"Victoria Centro", date:"18 may 2026", priority:"Alta", deadline:"5 h hábiles", appointment:"Pendiente", labor:"Ciudadano", observations:1 }
   ],
   appointments: [
-    { id:"CITA-2026-041001", request:"FEAT-2026-041001", name:"Juan Pérez García", type:"Emisión", date:"22 may 2026", time:"08:30", status:"Confirmada", agent:"Luis Hernández" },
-    { id:"CITA-2026-040995", request:"FEAT-2026-040995", name:"Roberto Hernández Cruz", type:"Renovación", date:"22 may 2026", time:"10:30", status:"Pendiente de confirmación", agent:"Luis Hernández" },
-    { id:"CITA-2026-040986", request:"FEAT-2026-040986", name:"Sofía Guadalupe Torres", type:"Emisión", date:"22 may 2026", time:"12:30", status:"Confirmada", agent:"Luis Hernández" },
-    { id:"CITA-2026-040980", request:"FEAT-2026-040980", name:"Miguel Ángel Ramírez", type:"Renovación", date:"22 may 2026", time:"15:00", status:"Confirmada", agent:"Luis Hernández" },
-    { id:"CITA-2026-040993", request:"FEAT-2026-040993", name:"Fernando López Díaz", type:"Emisión", date:"24 may 2026", time:"14:30", status:"Reprogramación requerida", agent:"Luis Hernández" },
-    { id:"CITA-2026-040991", request:"FEAT-2026-040991", name:"Diego Morales Cruz", type:"Emisión", date:"21 may 2026", time:"15:30", status:"Atendida", agent:"Luis Hernández" },
-    { id:"CITA-2026-040978", request:"FEAT-2026-040978", name:"Elena Martínez Soto", type:"Emisión", date:"20 may 2026", time:"11:30", status:"No se presentó", agent:"Luis Hernández" },
+    { id:"CITA-2026-041001", request:"FEAT-2026-041001", name:"Juan Pérez García", type:"Emisión", date:"22 may 2026", time:"08:30", status:"Confirmada", agent:"Luis Hernández", assignedAgent:"AG-00001" },
+    { id:"CITA-2026-040995", request:"FEAT-2026-040995", name:"Roberto Hernández Cruz", type:"Renovación", date:"22 may 2026", time:"10:30", status:"Pendiente de confirmación", agent:"Luis Hernández", assignedAgent:"AG-00001" },
+    { id:"CITA-2026-040986", request:"FEAT-2026-040986", name:"Sofía Guadalupe Torres", type:"Emisión", date:"22 may 2026", time:"12:30", status:"Confirmada", agent:"Luis Hernández", assignedAgent:"" },
+    { id:"CITA-2026-040980", request:"FEAT-2026-040980", name:"Miguel Ángel Ramírez", type:"Renovación", date:"22 may 2026", time:"15:00", status:"Confirmada", agent:"Luis Hernández", assignedAgent:"" },
+    { id:"CITA-2026-040993", request:"FEAT-2026-040993", name:"Fernando López Díaz", type:"Emisión", date:"24 may 2026", time:"14:30", status:"Reprogramación requerida", agent:"Luis Hernández", assignedAgent:"" },
+    { id:"CITA-2026-040991", request:"FEAT-2026-040991", name:"Diego Morales Cruz", type:"Emisión", date:"21 may 2026", time:"15:30", status:"Atendida", agent:"Luis Hernández", assignedAgent:"AG-00001" },
+    { id:"CITA-2026-040978", request:"FEAT-2026-040978", name:"Elena Martínez Soto", type:"Emisión", date:"20 may 2026", time:"11:30", status:"No se presentó", agent:"Luis Hernández", assignedAgent:"AG-00003" },
     { id:"CITA-2026-040970", request:"FEAT-2026-040970", name:"José Luis González", type:"Renovación", date:"19 may 2026", time:"13:00", status:"Cancelada", agent:"Luis Hernández" }
   ],
   procedures: [
@@ -798,18 +829,18 @@ const state = {
     { id:"FEAT-2025-000312", citizen:"Ana Laura Martínez", type:"Emisión", status:"Por vencer", validity:"01/06/2024 - 01/06/2026" },
     { id:"FEAT-2024-000088", citizen:"Carlos Sánchez Vega", type:"Revocación", status:"Revocado", validity:"Revocado 02/05/2026" }
   ],
-  agents: [
-    { id:"AG-00001", name:"Luis Hernandez Perez", email:"luis.hernandez@tamaulipas.gob.mx", site:"Victoria", load:12, status:"Disponible", role:"Agente certificador", availability:"Disponible", since:"15 enero 2026", requests:12, curp:"HEPL850312HTCRNC09", photo:null },
-    { id:"AG-00002", name:"Sofia Torres Diaz", email:"sofia.torres@tamaulipas.gob.mx", site:"Tampico", load:18, status:"Alta carga", role:"Agente certificador", availability:"Alta carga", since:"10 febrero 2026", requests:18, curp:"TODS920814MTCRZF04", photo:null },
-    { id:"AG-00003", name:"Carlos Ramirez Soto", email:"carlos.ramirez@tamaulipas.gob.mx", site:"Reynosa", load:7, status:"Disponible", role:"Agente certificador", availability:"Disponible", since:"03 marzo 2026", requests:7, curp:"RASC780601HTCMTL02", photo:null },
-    { id:"AG-00004", name:"Ana Lopez Mendez", email:"ana.lopez@tamaulipas.gob.mx", site:"Victoria", load:0, status:"Inactivo", role:"Agente certificador", availability:"Inactivo", since:"20 enero 2026", requests:0, curp:"LOMA910423MVZPDN01", photo:null },
-    { id:"AG-00005", name:"Ricardo Gonzalez Ruiz", email:"ricardo.gonzalez@tamaulipas.gob.mx", site:"Mante", load:10, status:"Disponible", role:"Agente certificador", availability:"Disponible", since:"05 enero 2026", requests:10, curp:"GORR830915HTCNZC07", photo:null },
-    { id:"AG-00006", name:"Patricia Fernandez Cruz", email:"patricia.fernandez@tamaulipas.gob.mx", site:"Tampico", load:15, status:"Alta carga", role:"Agente certificador", availability:"Alta carga", since:"12 febrero 2026", requests:15, curp:"FECP770228MVZRRT03", photo:null },
-    { id:"AG-00007", name:"Miguel Santos Mora", email:"miguel.santos@tamaulipas.gob.mx", site:"Victoria", load:8, status:"Disponible", role:"Agente certificador", availability:"Disponible", since:"18 enero 2026", requests:8, curp:"SAMM940710HTCNRG05", photo:null }
+  agents:[
+    {id:"AG-00001",name:"Luis Hernández Pérez",email:"luis.hernandez@tamaulipas.gob.mx",site:"Victoria",load:12,status:"Disponible",role:"Agente certificador",availability:"Disponible",since:"15 enero 2026",curp:"HEPL850312HTCRNC09",photo:null},
+    {id:"AG-00002",name:"Sofía Torres Díaz",email:"sofia.torres@tamaulipas.gob.mx",site:"Tampico",load:18,status:"Alta carga",role:"Agente certificador",availability:"Alta carga",since:"10 febrero 2026",curp:"TODS920814MTCRZF04",photo:null},
+    {id:"AG-00003",name:"Carlos Ramírez Soto",email:"carlos.ramirez@tamaulipas.gob.mx",site:"Reynosa",load:7,status:"Disponible",role:"Agente certificador",availability:"Disponible",since:"03 marzo 2026",curp:"RASC780601HTCMTL02",photo:null},
+    {id:"AG-00004",name:"Ana López Méndez",email:"ana.lopez@tamaulipas.gob.mx",site:"Victoria",load:0,status:"Inactivo",role:"Agente certificador",availability:"Inactivo",since:"20 enero 2026",curp:"LOMA910423MVZPDN01",photo:null},
+    {id:"AG-00005",name:"Ricardo González Ruiz",email:"ricardo.gonzalez@tamaulipas.gob.mx",site:"Mante",load:10,status:"Disponible",role:"Agente certificador",availability:"Disponible",since:"05 enero 2026",curp:"GORR830915HTCNZC07",photo:null},
+    {id:"AG-00006",name:"Patricia Fernández Cruz",email:"patricia.fernandez@tamaulipas.gob.mx",site:"Tampico",load:15,status:"Alta carga",role:"Agente certificador",availability:"Alta carga",since:"12 febrero 2026",curp:"FECP770228MVZRRT03",photo:null},
+    {id:"AG-00007",name:"Miguel Santos Mora",email:"miguel.santos@tamaulipas.gob.mx",site:"Victoria",load:8,status:"Disponible",role:"Agente certificador",availability:"Disponible",since:"18 enero 2026",curp:"SAMM940710HTCNRG05",photo:null}
   ],
-  agentSearch: "",
-  agentSite: "all",
-  agentStatus: "all",
+  agentSearch:"",
+  agentSite:"all",
+  agentStatus:"all",
   documents: {
     identity:{name:"Identificación oficial",file:"ine-frente-reverso.pdf",status:"Pendiente"},
     domicilio:{name:"Comprobante de domicilio",file:"domicilio.pdf",status:"Pendiente"},
@@ -981,7 +1012,7 @@ const navigationItems = [
 ];
 const adminSubmenus = {
   catalogs:[
-    ["all","Todos los catálogos"],
+
     ["tramites","Trámites"],
     ["perfiles","Perfiles de solicitante"],
     ["requisitos","Requisitos"],
@@ -1113,48 +1144,59 @@ function renderAgentDashboard(){
   const observed=state.requests.filter(r=>r.status==="Observada");
   const todayAppointments=state.appointments.filter(a=>a.date==="22 may 2026");
   const confirmedToday=todayAppointments.filter(a=>a.status==="Confirmada");
+  const nextCita=confirmedToday[0]||todayAppointments[0];
   const queue=[...actionable].sort((a,b)=>{
     const priority={Alta:0,Media:1,Baja:2};
     return priority[a.priority]-priority[b.priority]||parseInt(a.deadline)-parseInt(b.deadline);
   });
-  content.innerHTML=pageHeader("Mi espacio de trabajo","Prioriza revisiones, atiende citas y completa los pendientes operativos de tu jornada.",`<span class="dashboard-date">${icon("calendar")} Viernes, 22 de mayo de 2026</span><button class="button ghost" data-action="refresh">${icon("refresh")}Actualizar</button>`) +
-  `<section class="work-context dashboard-context">
-    <div><span class="work-context-icon">${icon("file-check")}</span><div><strong>Luis Hernández Pérez</strong><small>Agente certificador · Sede Victoria Centro · Jornada 08:30 a 16:30</small></div></div>
-    <div class="agent-availability"><span class="availability-dot"></span><div><strong>Disponible</strong><small>Última sincronización: 09:42 h</small></div></div>
+  content.innerHTML=pageHeader("Mi espacio de trabajo","Prioriza revisiones, atiende citas y completa los pendientes operativos de tu jornada.",
+    `<span class="dashboard-date">${icon("calendar")} Viernes, 22 de mayo de 2026</span><button class="button ghost" data-action="refresh">${icon("refresh")}Actualizar</button>`) +
+  // ── CITAS DE HOY primero ──────────────────────────────────────────────
+  `<section class="card" style="margin-bottom:20px;padding:0;overflow:hidden">
+    <div style="padding:16px 22px 12px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between">
+      <div style="display:flex;align-items:center;gap:10px">
+        <span style="width:32px;height:32px;border-radius:8px;background:var(--blue-bg);color:var(--blue);display:grid;place-items:center;flex-shrink:0">${icon("calendar")}</span>
+        <div><strong style="font-size:15px">Citas de hoy</strong><p style="margin:2px 0 0;font-size:12px;color:var(--muted)">${todayAppointments.length} programadas · ${confirmedToday.length} confirmadas · 22 de mayo de 2026</p></div>
+      </div>
+      <button class="button ghost small" data-view-link="appointments">${icon("eye")}Ver agenda completa</button>
+    </div>
+    ${todayAppointments.length?`<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:0;border-top:0">
+      ${todayAppointments.map((a,i)=>`<div style="padding:14px 20px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);${i===0?"background:#F9F4FB":""}">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+          <strong style="font-size:16px;color:${i===0?"var(--brand)":"var(--ink)"}">${a.time}</strong>
+          ${badge(a.status)}
+        </div>
+        <strong style="display:block;font-size:13px;margin-bottom:2px">${a.name}</strong>
+        <small style="color:var(--muted)">${a.request} · ${a.type}</small>
+        <div style="margin-top:10px">
+          ${a.status==="Confirmada"
+            ?`<button class="button ${i===0?"primary":"secondary"} small wide" data-attend="${a.id}">${icon("play")}${i===0?"Atender ahora":"Preparar atención"}</button>`
+            :`<button class="button ghost small wide" data-appointment-detail="${a.id}">${icon("eye")}Ver detalle</button>`}
+        </div>
+      </div>`).join("")}
+    </div>`:`<div style="padding:28px;text-align:center;color:var(--muted)">No hay citas programadas para hoy.</div>`}
   </section>
+  // ── STATS ──────────────────────────────────────────────────────────────
   <section class="stats-grid">
-    ${stat("file-check","Por revisar",actionable.filter(r=>r.status!=="Observada").length,"Solicitudes asignadas")}
-    ${stat("alert","Subsanaciones",observed.length,`${observed.filter(r=>parseInt(r.deadline)<=8).length} próximas a vencer`,"amber")}
+    ${stat("file-check","Solicitudes por revisar",actionable.filter(r=>r.status!=="Observada").length,"En tu bandeja asignada")}
+    ${stat("alert","Subsanaciones activas",observed.length,`${observed.filter(r=>parseInt(r.deadline)<=8).length} próximas a vencer`,"amber")}
     ${stat("calendar","Citas de hoy",todayAppointments.length,`${confirmedToday.length} confirmadas`,"blue")}
     ${stat("clipboard","Pendientes de cierre",state.procedures.filter(p=>p.result==="Por cerrar").length,"Requiere acta o firma","green")}
   </section>
-  <section class="priority-strip dashboard-priority">
-    <div><span class="priority-icon">${icon("alert")}</span><div><strong>Atención inmediata</strong><small>Una subsanación vence en 5 horas y tu próxima cita inicia a las 08:30 h.</small></div></div>
-    <div><button class="button warning small" data-review="FEAT-2026-040981">${icon("edit")}Revisar subsanación</button><button class="button secondary small" data-attend="${confirmedToday[0]?.id||state.appointments[0].id}">${icon("play")}Preparar cita</button></div>
-  </section>
+  // ── BANDEJA + PENDIENTES ──────────────────────────────────────────────
   <section class="dashboard-main-grid">
     <article class="card dashboard-queue">
-      <div class="card-header"><div><h2>Bandeja priorizada</h2><p>Ordenada por nivel de atención y vencimiento del plazo.</p></div><button class="button primary small" data-view-link="requests">Ver todas las solicitudes</button></div>
-      <div class="table-wrap"><table><thead><tr><th>Prioridad</th><th>Solicitud</th><th>Solicitante / trámite</th><th>Estatus</th><th>Plazo o siguiente paso</th><th>Acción</th></tr></thead>
-      <tbody>${queue.slice(0,6).map(r=>`<tr class="${r.priority==="Alta"?"priority-row":""}">
+      <div class="card-header"><div><h2>Solicitudes pendientes</h2><p>Ordenadas por prioridad y plazo de vencimiento.</p></div><button class="button primary small" data-view-link="requests">${icon("play")}Atender siguiente</button></div>
+      <div class="table-wrap"><table><thead><tr><th>Prioridad</th><th>Solicitud</th><th>Solicitante / trámite</th><th>Estatus</th><th>Plazo</th><th>Acción</th></tr></thead>
+      <tbody>${queue.slice(0,5).map(r=>`<tr class="${r.priority==="Alta"?"priority-row":""}">
         <td><span class="priority-label ${r.priority.toLowerCase()}">${r.priority}</span></td>
         <td><span class="folio">${r.id}</span><span class="subtext">${r.date}</span></td>
         <td><strong>${r.name}</strong><span class="subtext">${r.type} · ${r.labor}</span></td>
         <td>${badge(r.status)}</td>
-        <td><strong class="${r.priority==="Alta"?"deadline-critical":""}">${r.deadline}</strong><span class="subtext">${r.status==="Observada"?"Esperando corrección":"Plazo de revisión"}</span></td>
+        <td><strong class="${r.priority==="Alta"?"deadline-critical":""}">${r.deadline}</strong></td>
         <td>${requestPrimaryAction(r)}</td>
-      </tr>`).join("")}</tbody></table></div>
+      </tr>`).join("")||`<tr><td colspan="6" class="empty-state">Sin solicitudes pendientes. ✓</td></tr>`}</tbody></table></div>
     </article>
-    <article class="card dashboard-agenda">
-      <div class="card-header"><div><h2>Agenda de hoy</h2><p>${todayAppointments.length} citas programadas.</p></div><button class="action-icon" title="Ver agenda completa" data-view-link="appointments">${icon("calendar")}</button></div>
-      <div class="agenda-list">${todayAppointments.map((a,i)=>`<div class="agenda-item ${i===0?"next":""}">
-        <div class="agenda-heading"><span class="agenda-time">${a.time}</span>${badge(a.status)}</div>
-        <strong>${a.name}</strong><small>${a.request} · ${a.type}</small>
-        ${a.status==="Confirmada"?`<button class="button ${i===0?"warning":"secondary"} small wide" data-attend="${a.id}">${icon("play")}${i===0?"Iniciar atención":"Preparar atención"}</button>`:`<button class="button ghost small wide" data-appointment-detail="${a.id}">${icon("eye")}Ver detalle</button>`}
-      </div>`).join("")}</div>
-    </article>
-  </section>
-  <section class="dashboard-bottom-grid">
     <article class="card">
       <div class="card-header"><div><h2>Pendientes operativos</h2><p>Tareas que impiden cerrar procesos.</p></div></div>
       <div class="task-list">
@@ -1162,19 +1204,10 @@ function renderAgentDashboard(){
         <button data-view-link="procedures"><span class="task-icon amber">${icon("file-text")}</span><span><strong>Acta de emisión pendiente</strong><small>Trámite TRM-2026-000071</small></span><b>1</b></button>
         <button data-view-link="certificates"><span class="task-icon blue">${icon("bell")}</span><span><strong>Certificados próximos a vencer</strong><small>Notificación disponible</small></span><b>1</b></button>
       </div>
-    </article>
-    <article class="card">
-      <div class="card-header"><div><h2>Avance de la jornada</h2><p>Objetivos operativos del día.</p></div><strong class="day-progress-value">64%</strong></div>
-      <div class="day-progress"><span style="width:64%"></span></div>
-      <div class="progress-details"><span><b>8</b> solicitudes revisadas</span><span><b>1</b> cita atendida</span><span><b>4</b> pendientes</span></div>
-      <div class="notice"><strong>Ritmo esperado:</strong> quedan 4 h 20 min de atención en ventanilla.</div>
-    </article>
-    <article class="card">
-      <div class="card-header"><div><h2>Acciones frecuentes</h2><p>Accesos directos del agente.</p></div></div>
-      <div class="quick-actions">
-        <button class="button primary" data-view-link="requests">${icon("file-check")}Continuar revisión documental</button>
-        <button class="button secondary" data-view-link="appointments">${icon("calendar")}Consultar agenda completa</button>
-        <button class="button ghost" data-view-link="procedures">${icon("clipboard")}Revisar trámites atendidos</button>
+      <div style="border-top:1px solid var(--line);margin-top:12px;padding-top:14px">
+        <div class="card-header" style="padding:0 0 10px"><div><h2>Avance de la jornada</h2></div><strong class="day-progress-value">64%</strong></div>
+        <div class="day-progress"><span style="width:64%"></span></div>
+        <div class="progress-details"><span><b>8</b> revisiones</span><span><b>1</b> cita atendida</span><span><b>4</b> pendientes</span></div>
       </div>
     </article>
   </section>`;
@@ -1230,19 +1263,16 @@ function renderRequests(){
     return matchesSearch && matchesType && matchesPerson && (state.requestFilter==="all" || r.status===state.requestFilter);
   });
   const visible=filtered.slice(0,state.pageSize.requests);
-  const priority=state.requests.filter(r=>["Pendiente","Observada"].includes(r.status)&&r.priority==="Alta");
-  content.innerHTML=pageHeader("Solicitudes","Revisa las solicitudes asignadas, controla sus plazos y determina si avanzan a la agenda de citas.")+
-  `<section class="work-context">
-    <div><span class="work-context-icon">${icon("file-check")}</span><div><strong>Mi bandeja asignada</strong><small>Agente: Luis Hernández Pérez · Sede Victoria Centro</small></div></div>
-    <div class="work-context-switch"><span>Solo mis solicitudes</span><span class="toggle-on"></span></div>
-  </section>`+
+  const nextPending=state.requests.find(r=>r.status==="Pendiente"||r.status==="En revisión"||r.status==="Observada");
+  content.innerHTML=pageHeader("Solicitudes","Revisa las solicitudes asignadas, controla sus plazos y determina si avanzan a la agenda de citas.",
+    nextPending?`<button class="button primary" id="attendNextBtn">${icon("play")}Atender siguiente</button>`:
+    `<button class="button primary" disabled>${icon("check-circle")}Sin solicitudes pendientes</button>`)+
   `<section class="stats-grid">
     ${stat("clock","Pendientes de iniciar",state.requests.filter(r=>r.status==="Pendiente").length,"Sin revisión documental","amber")}
     ${stat("edit","En revisión",state.requests.filter(r=>r.status==="En revisión").length,"Con actividad del agente","blue")}
     ${stat("alert","Observadas",state.requests.filter(r=>r.status==="Observada").length,"Esperando subsanación")}
     ${stat("check-circle","Aprobadas para cita",state.requests.filter(r=>r.status==="Aprobada").length,"Documentación completa","green")}
   </section>
-  ${priority.length?`<section class="priority-strip"><div><span class="priority-icon">${icon("alert")}</span><div><strong>Atención prioritaria</strong><small>${priority.length} solicitudes requieren acción antes de que venza su plazo.</small></div></div><div>${priority.map(r=>`<button class="priority-request" data-review="${r.id}"><b>${r.id}</b><span>${r.deadline}</span></button>`).join("")}</div></section>`:""}
   ${filterDisclosure("requests","Filtros de solicitudes","Filtra por estatus, trámite y tipo de solicitante.",`<div class="filter-panel embedded">
     <div class="field"><label>Estatus</label><select id="requestStatus"><option value="all">Todos</option>${["Pendiente","En revisión","Observada","Aprobada","Rechazada"].map(s=>`<option ${state.requestFilter===s?"selected":""}>${s}</option>`).join("")}</select></div>
     <div class="field"><label>Tipo de trámite</label><select id="requestType"><option value="all">Todos</option>${["Emisión","Renovación","Revocación"].map(s=>`<option ${state.requestType===s?"selected":""}>${s}</option>`).join("")}</select></div>
@@ -1272,6 +1302,31 @@ function renderRequests(){
   if($("#clearRequestFilters")) $("#clearRequestFilters").onclick=()=>{state.requestFilter="all";state.requestType="all";state.requestPerson="all";renderRequests()};
   $("#requestsPageSize").onchange=e=>{state.pageSize.requests=Number(e.target.value);renderRequests()};
   $("#exportRequests").onclick=()=>exportTable("solicitudes-feat",["Folio","Solicitante","Trámite","Estatus","Plazo"],filtered.map(r=>[r.id,r.name,r.type,r.status,r.deadline]));
+  if($("#attendNextBtn")) $("#attendNextBtn").onclick=()=>{
+    const next=state.requests.find(r=>["Pendiente","En revisión","Observada"].includes(r.status));
+    if(!next){toast("No hay solicitudes pendientes en la fila.","warning");return;}
+    openModal({
+      title:"Atender siguiente solicitud",
+      subtitle:`${next.id} · ${next.name}`,
+      confirm:"Iniciar revisión",
+      confirmClass:"primary",
+      body:`<div style="display:grid;gap:14px">
+        <div class="notice" style="display:flex;align-items:center;gap:12px;padding:14px 16px">
+          <span style="width:36px;height:36px;border-radius:8px;background:var(--brand);color:#fff;display:grid;place-items:center;flex-shrink:0">${icon("play")}</span>
+          <div><strong style="display:block;margin-bottom:3px">Siguiente en la fila</strong><span style="font-size:13px;color:var(--gray)">La solicitud con mayor prioridad y plazo más próximo.</span></div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px 20px;background:#F7F8FA;border-radius:8px;padding:16px">
+          <div><small style="font-size:11px;color:var(--muted);text-transform:uppercase;font-weight:700;letter-spacing:.04em">Folio</small><strong style="display:block;margin-top:4px;color:var(--brand)">${next.id}</strong></div>
+          <div><small style="font-size:11px;color:var(--muted);text-transform:uppercase;font-weight:700;letter-spacing:.04em">Solicitante</small><strong style="display:block;margin-top:4px">${next.name}</strong></div>
+          <div><small style="font-size:11px;color:var(--muted);text-transform:uppercase;font-weight:700;letter-spacing:.04em">Trámite</small><strong style="display:block;margin-top:4px">${next.type}</strong></div>
+          <div><small style="font-size:11px;color:var(--muted);text-transform:uppercase;font-weight:700;letter-spacing:.04em">Plazo</small><strong style="display:block;margin-top:4px;color:${next.priority==="Alta"?"var(--red)":"var(--ink)"}">${next.deadline}</strong></div>
+          <div><small style="font-size:11px;color:var(--muted);text-transform:uppercase;font-weight:700;letter-spacing:.04em">Prioridad</small><strong style="display:block;margin-top:4px">${next.priority}</strong></div>
+          <div><small style="font-size:11px;color:var(--muted);text-transform:uppercase;font-weight:700;letter-spacing:.04em">Estatus</small><strong style="display:block;margin-top:4px">${next.status}</strong></div>
+        </div>
+      </div>`,
+      onConfirm:()=>{closeModal();renderReview(next.id);}
+    });
+  };
   bindCommonActions();
 }
 function requestPrimaryAction(request){
@@ -1287,31 +1342,99 @@ function renderReview(id=state.activeRequest){
   const request=requestById(id)||state.requests[0]; state.activeRequest=request.id;
   if(request.status==="Pendiente") request.status="En revisión";
   const docs=Object.entries(state.documents);
-  const allValidated=docs.every(([,d])=>d.status==="Validado");
+  const validated=docs.filter(([,d])=>d.status==="Validado").length;
+  const allValidated=validated===docs.length;
   const isClosed=["Aprobada","Rechazada"].includes(request.status);
-  content.innerHTML=pageHeader("Detalle de solicitud","Valida la información capturada y cada documento antes de aprobar u observar la solicitud.",`<button class="button secondary" data-view-link="requests">Regresar</button>`) +
-  `<section class="summary-banner"><div><h2>Solicitud ${request.id}</h2><span>${request.name}</span></div><div class="summary-item"><small>Tipo de trámite</small><strong>${request.type}</strong></div><div class="summary-item"><small>Estatus</small>${badge(request.status)}</div><div class="summary-item"><small>Fecha de cita</small><strong>${request.appointment}</strong></div><div class="summary-item"><small>Plazo restante</small><strong>${request.deadline}</strong></div></section>
-  <div class="workflow-steps"><div class="workflow-step done">1. Solicitud recibida</div><div class="workflow-step current">2. Revisión documental</div><div class="workflow-step">3. Aprobación para cita</div><div class="workflow-step">4. Atención presencial</div><div class="workflow-step">5. Certificado</div></div>
-  <section class="review-layout">
-    <article class="card">
-      <div class="tabs"><button class="tab-button ${state.activeTab==="general"?"active":""}" data-tab="general">Datos generales</button><button class="tab-button ${state.activeTab==="labor"?"active":""}" data-tab="labor">Datos laborales</button><button class="tab-button ${state.activeTab==="log"?"active":""}" data-tab="log">Bitácora</button></div>
-      <div id="requestTabContent">${requestTab(request)}</div>
-      <h2 style="margin-top:20px">Documentos</h2>
-      <div class="document-list">${docs.map(([key,d])=>`<button class="document-button ${state.activeDocument===key?"active":""}" data-document="${key}"><span><strong>${d.name}</strong><small class="subtext">${d.file}</small></span>${badge(d.status)}</button>`).join("")}</div>
-      <div class="decision-actions">
-        <button class="button danger-outline wide" id="rejectRequest" ${isClosed?"disabled":""}>${icon("alert")}Rechazar solicitud</button>
-        <button class="button primary wide" id="approveRequest" ${allValidated&&!isClosed?"":"disabled"}>${icon("check-circle")}Aprobar documentación y enviar a Citas</button>
-      </div>
-      <small class="subtext" style="margin-top:9px">${isClosed?`La solicitud se encuentra cerrada con estatus ${request.status}.`:allValidated?"Todos los documentos están validados.":"Todos los documentos deben quedar en estado Validado antes de aprobar."}</small>
-    </article>
-    <article class="card">
-      <div class="card-header"><div><h2>Visualización de documento</h2><p>${state.documents[state.activeDocument].file}</p></div><div class="table-tools"><button class="action-icon" id="downloadActiveDocument" title="Descargar">${icon("download")}</button><button class="button ghost small" id="zoomOut">Zoom −</button><strong>${state.viewerZoom}%</strong><button class="button ghost small" id="zoomIn">Zoom +</button></div></div>
-      <div class="document-viewer"><div class="viewer-toolbar"><span>${state.documents[state.activeDocument].file}</span><span>Pág. 1 / 2</span></div><div style="transform:scale(${state.viewerZoom/100});transform-origin:top center;transition:transform .15s">${documentPaper(state.activeDocument)}</div></div>
-      <div class="review-actions"><button class="button secondary" id="observeDocument" ${isClosed?"disabled":""}>${icon("alert")}Observar documento</button><button class="button success" id="validateDocument" ${isClosed?"disabled":""}>${icon("check-circle")}Validar documento</button><button class="button ghost" id="saveReview">${icon("file-check")}Guardar avance</button></div>
-    </article>
+  const activeDoc=state.documents[state.activeDocument];
+  content.innerHTML=pageHeader("Revisión de solicitud","Valida los datos capturados y cada documento antes de aprobar u observar.",`<button class="button ghost" data-view-link="requests">${icon("library")}Volver a solicitudes</button>`) +
+  `<section class="summary-banner">
+    <div><h2>${request.id}</h2><span>${request.name}</span></div>
+    <div class="summary-item"><small>Trámite</small><strong>${request.type}</strong></div>
+    <div class="summary-item"><small>Estatus</small>${badge(request.status)}</div>
+    <div class="summary-item"><small>Cita</small><strong>${request.appointment}</strong></div>
+    <div class="summary-item"><small>Plazo</small><strong class="${["Pendiente","Observada"].includes(request.status)&&request.priority==="Alta"?"text-red":""}">${request.deadline}</strong></div>
   </section>
-  <div class="notice" style="margin-top:18px"><strong>Regla operativa:</strong> cuando un documento se marque como observado, el ciudadano tendrá 3 días hábiles para subsanar. El cambio se registra en bitácora y se notifica por correo.</div>`;
+  <div class="workflow-steps">
+    <div class="workflow-step done">1. Solicitud recibida</div>
+    <div class="workflow-step current">2. Revisión documental</div>
+    <div class="workflow-step">3. Aprobación para cita</div>
+    <div class="workflow-step">4. Atención presencial</div>
+    <div class="workflow-step">5. Certificado</div>
+  </div>
+  <section class="review-layout">
+    <article class="card" style="padding:0;overflow:hidden;position:sticky;top:96px;max-height:calc(100vh - 120px);display:flex;flex-direction:column">
+      <!-- Tabs navegación -->
+      <div style="padding:0 20px;border-bottom:1px solid var(--line);flex-shrink:0">
+        <div class="tabs">
+          <button class="tab-button ${state.activeTab==="general"?"active":""}" data-tab="general">Datos personales</button>
+          <button class="tab-button ${state.activeTab==="labor"?"active":""}" data-tab="labor">Datos laborales</button>
+          <button class="tab-button ${state.activeTab==="log"?"active":""}" data-tab="log">Bitácora</button>
+        </div>
+      </div>
+      <!-- Contenido tab con scroll propio -->
+      <div id="requestTabContent" style="padding:4px 20px 16px;overflow-y:auto;flex:1;min-height:0">${requestTab(request)}</div>
+      <!-- Documentos colapsables -->
+      <div style="border-top:2px solid var(--line);flex-shrink:0">
+        <button id="toggleDocs" style="width:100%;border:0;background:${state.reviewDocsOpen?'#F9E4EA':'#F7F8FA'};padding:13px 20px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;transition:background .15s">
+          <div style="display:flex;align-items:center;gap:10px">
+            <span style="width:28px;height:28px;border-radius:6px;background:${validated===docs.length?'var(--green-bg)':'var(--amber-bg)'};color:${validated===docs.length?'var(--green)':'var(--amber)'};display:grid;place-items:center;flex-shrink:0">${icon("file-check")}</span>
+            <div style="text-align:left">
+              <strong style="font-size:13px;display:block">Documentos a revisar</strong>
+              <span style="font-size:11px;color:var(--muted)">${validated} de ${docs.length} validados</span>
+            </div>
+          </div>
+          <span style="color:var(--brand);font-size:11px;font-weight:700;display:flex;align-items:center;gap:4px">${state.reviewDocsOpen?'Cerrar':'Ver documentos'}${icon("chevron-down")}</span>
+        </button>
+        ${state.reviewDocsOpen?`<div style="padding:10px 16px 14px;background:#fff;border-top:1px solid var(--line)">
+          <div class="document-list">
+            ${docs.map(([key,d])=>`<button class="document-button ${state.activeDocument===key?"active":""}" data-document="${key}">
+              <span><strong style="font-size:12px">${d.name}</strong><small>${d.file}</small></span>
+              ${badge(d.status)}
+            </button>`).join("")}
+          </div>
+        </div>`:''}
+      </div>
+      <!-- Decisión final -->
+      <div style="padding:14px 20px;border-top:1px solid var(--line);background:#FAFAFA;flex-shrink:0">
+        <button class="button danger-outline wide" id="rejectRequest" ${isClosed?"disabled":""}>${icon("alert")}Rechazar solicitud</button>
+        <button class="button primary wide" style="margin-top:8px" id="approveRequest" ${allValidated&&!isClosed?"":"disabled"}>${icon("check-circle")}Aprobar y enviar a Citas</button>
+        <p style="margin:8px 0 0;font-size:11px;color:var(--muted);text-align:center">${isClosed?`Cerrada · ${request.status}`:allValidated?"✓ Todos los documentos validados":"Valida todos los documentos para aprobar"}</p>
+      </div>
+    </article>
+    <article class="card" style="padding:0;overflow:hidden">
+      <div style="padding:14px 20px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:12px">
+        <div style="display:flex;align-items:center;gap:10px">
+          <span style="width:8px;height:8px;border-radius:50%;background:${activeDoc.status==='Validado'?'var(--green)':activeDoc.status==='Observado'?'var(--red)':'var(--amber)'};flex-shrink:0"></span>
+          <div><strong style="font-size:14px">${activeDoc.name}</strong><p style="margin:2px 0 0;font-size:11px;color:var(--muted)">${activeDoc.file} · ${activeDoc.status}</p></div>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
+          <button class="action-icon" id="downloadActiveDocument" title="Descargar">${icon("download")}</button>
+          <div style="display:flex;align-items:center;gap:4px;border:1px solid var(--line);border-radius:6px;padding:2px 6px;background:#fff">
+            <button class="button ghost small" id="zoomOut" style="min-height:28px;padding:4px 8px">−</button>
+            <span style="font-size:12px;font-weight:700;min-width:36px;text-align:center">${state.viewerZoom}%</span>
+            <button class="button ghost small" id="zoomIn" style="min-height:28px;padding:4px 8px">+</button>
+          </div>
+        </div>
+      </div>
+      <div class="document-viewer" style="margin:0;border-radius:0;min-height:calc(100vh - 420px)">
+        <div class="viewer-toolbar">
+          <span style="font-size:11px">${activeDoc.file}</span>
+          <span style="font-size:11px">Pág. 1 / 2</span>
+        </div>
+        <div style="transform:scale(${state.viewerZoom/100});transform-origin:top center;transition:transform .15s">${documentPaper(state.activeDocument)}</div>
+      </div>
+      <div style="padding:14px 20px;border-top:1px solid var(--line);background:#FAFAFA">
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
+          <button class="button secondary" id="observeDocument" ${isClosed?"disabled":""}>${icon("alert")}Observar documento</button>
+          <button class="button success" id="validateDocument" ${isClosed?"disabled":""}>${icon("check-circle")}Validar documento</button>
+          <button class="button ghost" id="saveReview">${icon("file-check")}Guardar avance</button>
+        </div>
+        <div class="notice" style="margin-top:12px;font-size:12px"><strong>Regla operativa:</strong> al observar un documento el ciudadano tendrá 3 días hábiles para subsanar. El cambio queda en bitácora.</div>
+      </div>
+    </article>
+  </section>`;
   $$(".tab-button").forEach(b=>b.onclick=()=>{state.activeTab=b.dataset.tab;renderReview()});
+  $("#toggleDocs").onclick=()=>{state.reviewDocsOpen=!state.reviewDocsOpen;renderReview()};
   $$(".document-button").forEach(b=>b.onclick=()=>{state.activeDocument=b.dataset.document;renderReview()});
   $("#validateDocument").onclick=()=>{
     state.documents[state.activeDocument].status="Validado";
@@ -1330,24 +1453,94 @@ function renderReview(id=state.activeRequest){
   bindCommonActions();
 }
 function requestTab(request){
-  if(state.activeTab==="labor") return `<div class="info-panel"><div class="info-grid"><div><small>Tipo de persona</small><strong>${request.labor}</strong></div><div><small>Dependencia</small><strong>${request.dependency}</strong></div><div><small>Área de adscripción</small><strong>Dirección de Innovación</strong></div><div><small>Puesto</small><strong>Jefe de Departamento</strong></div><div class="full"><small>Documento de adscripción</small><strong>Nombramiento vigente</strong></div></div></div>`;
-  if(state.activeTab==="log") return `<div class="info-panel"><div class="alert-list">${state.reviewLog.map(item=>`<span>${item}</span>`).join("")}</div></div>`;
-  return `<div class="info-panel"><div class="info-grid"><div><small>CURP</small><strong>PEGJ850215HTSMRN09</strong></div><div><small>RFC</small><strong>PEGJ850215XYZ</strong></div><div class="full"><small>Nombre completo</small><strong>${request.name}</strong></div><div><small>Correo electrónico</small><strong>juan.perez@tamaulipas.gob.mx</strong></div><div><small>Teléfono móvil</small><strong>834 123 4567</strong></div><div class="full"><small>Domicilio</small><strong>Calle Hidalgo 123, Zona Centro, Ciudad Victoria</strong></div></div></div>`;
+  if(state.activeTab==="labor") return `<div class="info-panel">
+    <p class="info-section-title">Datos laborales</p>
+    <div class="info-grid">
+      <div class="info-field"><small>Tipo de persona</small><strong>${request.labor}</strong></div>
+      <div class="info-field"><small>Número de empleado</small><strong>1234567</strong></div>
+      <div class="info-divider"></div>
+      <div class="info-field full"><small>Dependencia</small><strong>${request.dependency}</strong></div>
+      <div class="info-field full"><small>Área de adscripción</small><strong>Dirección de Innovación y Tecnología</strong></div>
+      <div class="info-field"><small>Puesto</small><strong>Jefe de Departamento</strong></div>
+      <div class="info-field"><small>Teléfono de oficina</small><strong>834 124 5897 ext. 256</strong></div>
+      <div class="info-field"><small>Correo institucional</small><strong>juan.perez@tamaulipas.gob.mx</strong></div>
+      <div class="info-field"><small>Ciudad, Estado y País</small><strong>Ciudad Victoria, Tamaulipas, México</strong></div>
+      <div class="info-divider"></div>
+      <div class="info-field full"><small>Documento de adscripción</small><strong>Nombramiento vigente</strong></div>
+    </div>
+  </div>`;
+  if(state.activeTab==="log") return `<div class="info-panel">
+    <p class="info-section-title">Historial de actividad</p>
+    <div class="log-list">${state.reviewLog.map(item=>`<div class="log-item"><span class="log-dot"></span><span>${item}</span></div>`).join("")}</div>
+  </div>`;
+  return `<div class="info-panel">
+    <p class="info-section-title">Datos personales</p>
+    <div class="info-grid">
+      <div class="info-field"><small>CURP</small><strong style="font-family:monospace;font-size:12px;letter-spacing:.03em">PEGJ850215HTSMRN09</strong></div>
+      <div class="info-field"><small>RFC</small><strong style="font-family:monospace;font-size:12px;letter-spacing:.03em">PEGJ850215XYZ</strong></div>
+      <div class="info-divider"></div>
+      <div class="info-field full"><small>Nombre completo</small><strong>${request.name}</strong></div>
+      <div class="info-field"><small>Correo electrónico</small><strong>juan.perez@tamaulipas.gob.mx</strong></div>
+      <div class="info-field"><small>Teléfono móvil</small><strong>834 123 4567</strong></div>
+      <div class="info-divider"></div>
+      <div class="info-field full"><small>Domicilio</small><strong>Calle Hidalgo 123, Zona Centro, Ciudad Victoria</strong></div>
+      <div class="info-field"><small>Código postal</small><strong>87000</strong></div>
+      <div class="info-field"><small>Ciudad, Estado y País</small><strong>Ciudad Victoria, Tamaulipas, México</strong></div>
+    </div>
+  </div>`;
 }
 function documentPaper(key){
-  const titles={identity:"IDENTIFICACIÓN OFICIAL",domicilio:"COMPROBANTE DE DOMICILIO",curp:"CONSTANCIA DE CURP",rfc:"CONSTANCIA DE SITUACIÓN FISCAL",adscripcion:"NOMBRAMIENTO"};
-  return `<div class="document-paper"><h3>${titles[key]}</h3><p><strong>PERSONA TITULAR</strong></p><p>Juan Pérez García</p><p>Folio documental: DOC-2026-041001</p><p>Fecha de emisión: 01/04/2026</p><div class="document-highlight"><strong>Dato para cotejo</strong><p>La información del documento debe coincidir con los datos de la solicitud.</p></div></div>`;
+  const titles={identity:"IDENTIFICACIÓN OFICIAL",domicilio:"COMPROBANTE DE DOMICILIO",curp:"CONSTANCIA DE CURP",rfc:"CONSTANCIA DE SITUACIÓN FISCAL",adscripcion:"NOMBRAMIENTO O CONSTANCIA DE ADSCRIPCIÓN"};
+  const subtitles={identity:"Credencial para Votar / INE",domicilio:"Comprobante de servicios o estado de cuenta",curp:"Clave Única de Registro de Población",rfc:"Constancia de Situación Fiscal — SAT",adscripcion:"Documento de adscripción laboral"};
+  return `<div class="document-paper">
+    <h3>${titles[key]||"DOCUMENTO"}</h3>
+    <p style="text-align:center;font-size:11px;color:var(--muted);margin:-10px 0 20px">${subtitles[key]||""}</p>
+    <p class="doc-label">Persona titular</p>
+    <p class="doc-value">Juan Pérez García</p>
+    <p class="doc-label">Folio documental</p>
+    <p class="doc-value">DOC-2026-041001</p>
+    <p class="doc-label">Fecha de emisión</p>
+    <p class="doc-value">01/04/2026</p>
+    <div class="document-highlight">
+      <strong>Dato para cotejo</strong>
+      <p>La información del documento debe coincidir con los datos capturados en la solicitud.</p>
+    </div>
+  </div>`;
 }
 function openObserveModal(){
   const doc=state.documents[state.activeDocument];
   openModal({title:"Observar documento",subtitle:doc.name,confirm:"Registrar observación",confirmClass:"danger",body:`<div class="form-grid"><div class="field full"><label>Motivo de observación</label><select id="observationReason"><option>Documento ilegible</option><option>Documento vencido</option><option>Los datos no coinciden</option><option>Documento incompleto</option></select></div><div class="field full"><label>Indicaciones para el ciudadano</label><textarea id="observationText" rows="5">Carga nuevamente el documento completo, vigente y con información legible.</textarea></div><div class="notice full"><strong>Plazo:</strong> se iniciará un contador de 3 días hábiles para subsanar.</div></div>`,onConfirm:()=>{const reason=$("#observationReason").value;doc.status="Observado";requestById(state.activeRequest).status="Observada";state.reviewLog.unshift(`${new Date().toLocaleTimeString("es-MX",{hour:"2-digit",minute:"2-digit"})} · ${doc.name} observado: ${reason}`);closeModal();toast("Observación registrada y notificada.","warning");renderReview()}});
 }
 function approveRequest(request){
-  openModal({title:"Aprobar documentación",subtitle:request.id,confirm:"Aprobar y enviar a Citas",confirmClass:"success",body:`<div class="notice"><strong>Confirmación:</strong> todos los documentos tienen resolución. La solicitud cambiará a “Aprobada para cita” y quedará disponible en la agenda.</div>`,onConfirm:()=>{
-    request.status="Aprobada"; request.deadline="Aprobada";
-    if(!state.appointments.some(a=>a.request===request.id)) state.appointments.push({id:"CITA-"+request.id.slice(5),request:request.id,name:request.name,type:request.type,date:"25 may 2026",time:"11:00",status:"Confirmada",agent:"Luis Hernández"});
-    closeModal();toast("Documentación aprobada. La solicitud ya se encuentra disponible en Citas.");renderReview(request.id);
-  }});
+  const citaDate=request.appointment&&request.appointment!=="Pendiente"&&request.appointment!=="No aplica"
+    ?request.appointment.split(" · ")[0]:"25 may 2026";
+  const citaTime=request.appointment&&request.appointment.includes(" · ")
+    ?request.appointment.split(" · ")[1]:"10:00";
+  openModal({
+    title:"Aprobar documentación",subtitle:request.id,confirm:"Aprobar y confirmar cita",confirmClass:"success",
+    body:`<div style="display:grid;gap:14px">
+      <div class="notice" style="display:flex;align-items:center;gap:12px;padding:14px 16px">
+        <span style="width:36px;height:36px;border-radius:8px;background:var(--green);color:#fff;display:grid;place-items:center;flex-shrink:0">${icon("check-circle")}</span>
+        <div><strong style="display:block;margin-bottom:3px">Documentación completa</strong><span style="font-size:13px;color:var(--gray)">La solicitud pasará al módulo de Citas automáticamente.</span></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px 20px;background:#F7F8FA;border-radius:8px;padding:16px">
+        <div><small style="font-size:11px;color:var(--muted);text-transform:uppercase;font-weight:700">Solicitante</small><strong style="display:block;margin-top:4px">${request.name}</strong></div>
+        <div><small style="font-size:11px;color:var(--muted);text-transform:uppercase;font-weight:700">Trámite</small><strong style="display:block;margin-top:4px">${request.type}</strong></div>
+        <div><small style="font-size:11px;color:var(--muted);text-transform:uppercase;font-weight:700">Fecha de cita</small><strong style="display:block;margin-top:4px;color:var(--brand)">${citaDate}</strong></div>
+        <div><small style="font-size:11px;color:var(--muted);text-transform:uppercase;font-weight:700">Hora</small><strong style="display:block;margin-top:4px;color:var(--brand)">${citaTime}</strong></div>
+      </div>
+      <p style="margin:0;font-size:12px;color:var(--muted)">La cita fue agendada por el ciudadano al enviar su solicitud. El agente que la atenderá se asignará según disponibilidad.</p>
+    </div>`,
+    onConfirm:()=>{
+      request.status="Aprobada";request.deadline="Aprobada";
+      if(!state.appointments.some(a=>a.request===request.id)){
+        state.appointments.push({id:"CITA-"+request.id.slice(5),request:request.id,name:request.name,type:request.type,date:citaDate,time:citaTime,status:"Confirmada",agent:"",assignedAgent:""});
+      }
+      closeModal();
+      toast("Solicitud aprobada · Cita del "+citaDate+" a las "+citaTime+" confirmada en Citas.");
+      renderReview(request.id);
+    }
+  });
 }
 function rejectRequest(request){
   openModal({title:"Rechazar solicitud",subtitle:request.id,confirm:"Confirmar rechazo",confirmClass:"danger",body:`<div class="form-grid"><div class="field full"><label>Motivo de rechazo</label><select id="rejectionReason"><option>Identidad no acreditada</option><option>Documentación apócrifa o inconsistente</option><option>Incumplimiento de requisitos</option><option>Solicitud duplicada</option></select></div><div class="field full"><label>Fundamento y comentarios</label><textarea id="rejectionComment" rows="4" placeholder="Describe el motivo que recibirá el ciudadano." required></textarea></div><div class="notice full"><strong>Importante:</strong> el rechazo cerrará la solicitud y enviará una notificación al ciudadano. La acción quedará registrada en bitácora.</div></div>`,onConfirm:()=>{
@@ -1384,7 +1577,7 @@ function renderAppointments(){
   <section class="appointment-legend" aria-label="Convenciones de acciones"><span><i class="legend-dot green"></i> Lista para atender</span><span><i class="legend-dot amber"></i> Requiere seguimiento</span><span><i class="legend-dot red"></i> Incidencia</span></section>
   <section class="card table-card appointments-card frest-table-card"><div class="card-header"><div><h2>Mis citas asignadas</h2><p>Las acciones disponibles cambian de acuerdo con el estatus de cada cita.</p></div><span class="records-summary">${filtered.length} registros</span></div>
   ${dataTableToolbar("appointments","appointmentSearch",state.appointmentSearch,"exportAppointments",state.appointments.length)}
-  <div class="table-wrap"><table class="appointments-table"><thead><tr><th>Cita / solicitud</th><th>Ciudadano</th><th>Trámite</th><th>Fecha y hora</th><th>Estatus</th><th>Contexto operativo</th><th>Acciones</th></tr></thead><tbody>${visible.map(a=>`<tr class="appointment-row ${appointmentRowClass(a.status)}"><td><span class="folio">${a.id}</span><span class="subtext">${a.request}</span></td><td><strong>${a.name}</strong><span class="subtext">Sede Victoria Centro</span></td><td>${a.type}<span class="subtext">${appointmentModality(a.type)}</span></td><td><strong>${a.date}</strong><span class="appointment-time">${icon("clock")} ${a.time} h</span></td><td>${badge(a.status)}</td><td>${appointmentContext(a)}</td><td class="actions-cell appointment-actions-cell">${appointmentActions(a)}</td></tr>`).join("")||`<tr><td colspan="7" class="empty-state">No hay citas con estos criterios.</td></tr>`}</tbody></table></div><div class="pagination"><span>Mostrando ${visible.length?1:0} a ${visible.length} de ${filtered.length} citas</span><div class="pagination-buttons"><button disabled>Anterior</button><button class="active" data-page="1">1</button><button disabled>Siguiente</button></div></div></section>`;
+  <div class="table-wrap"><table class="appointments-table"><thead><tr><th>Cita / solicitud</th><th>Ciudadano</th><th>Trámite</th><th>Fecha y hora</th>${state.role==="admin"?`<th>Agente asignado</th>`:""}<th>Estatus</th><th>Acciones</th></tr></thead><tbody>${visible.map(a=>`<tr class="appointment-row ${appointmentRowClass(a.status)}"><td><span class="folio">${a.id}</span><span class="subtext">${a.request}</span></td><td><strong>${a.name}</strong><span class="subtext">Sede Victoria Centro</span></td><td>${a.type}<span class="subtext">${appointmentModality(a.type)}</span></td><td><strong>${a.date}</strong><span class="appointment-time">${icon("clock")} ${a.time} h</span></td>${state.role==="admin"?`<td>${appointmentAgentCell(a)}</td>`:""}<td>${badge(a.status)}</td><td class="actions-cell appointment-actions-cell">${appointmentActions(a)}</td></tr>`).join("")||`<tr><td colspan="7" class="empty-state">No hay citas con estos criterios.</td></tr>`}</tbody></table></div><div class="pagination"><span>Mostrando ${visible.length?1:0} a ${visible.length} de ${filtered.length} citas</span><div class="pagination-buttons"><button disabled>Anterior</button><button class="active" data-page="1">1</button><button disabled>Siguiente</button></div></div></section>`;
   if($("#appointmentStatus")) $("#appointmentStatus").onchange=e=>{state.appointmentFilter=e.target.value;renderAppointments()};
   $("#appointmentSearch").oninput=e=>{state.appointmentSearch=e.target.value;renderAppointments()};
   if($("#appointmentDate")) $("#appointmentDate").onchange=e=>{state.appointmentDate=e.target.value;renderAppointments()};
@@ -1394,6 +1587,20 @@ function renderAppointments(){
   $("#todayAppointments").onclick=renderTodayAppointments;
   bindCommonActions();
   bindAppointmentActions();
+}
+function appointmentAgentCell(a){
+  const agent=state.agents&&state.agents.find(ag=>ag.id===a.assignedAgent);
+  if(agent){
+    const parts=agent.name.trim().split(" ").filter(Boolean);
+    const initials=(parts.length>=2?parts[0][0]+parts[1][0]:parts[0][0]).toUpperCase();
+    return `<div style="display:flex;align-items:center;gap:8px">
+      <span style="width:28px;height:28px;border-radius:50%;background:var(--brand);color:#fff;display:grid;place-items:center;font-size:11px;font-weight:800;flex-shrink:0">${initials}</span>
+      <span style="font-size:12px;font-weight:600">${agent.name.split(" ").slice(0,2).join(" ")}</span>
+    </div>`;
+  }
+  if(["Atendida","No se presentó","Cancelada"].includes(a.status)) return `<span style="font-size:12px;color:var(--muted)">—</span>`;
+  if(state.role==="admin") return `<button class="button ghost small" data-assign-agent="${a.id}" style="font-size:11px;padding:4px 10px;border-style:dashed">${icon("plus")}Asignar</button>`;
+  return `<span style="font-size:12px;color:var(--muted)">Sin asignar</span>`;
 }
 function appointmentModality(type){
   return type==="Revocación"?"Validación y firma":"Cotejo presencial";
@@ -1440,6 +1647,34 @@ function renderTodayAppointments(){
 }
 function appointmentById(id){return state.appointments.find(a=>a.id===id)}
 function bindAppointmentActions(){
+  $$("[data-assign-agent]").forEach(b=>b.onclick=()=>{
+    const a=appointmentById(b.dataset.assignAgent);
+    if(!a) return;
+    const agentOptions=state.agents&&state.agents.filter(ag=>ag.status==="Disponible"||ag.status==="Alta carga")
+      .map(ag=>`<option value="${ag.id}" ${a.assignedAgent===ag.id?"selected":""}>${ag.name} · ${ag.site} (${ag.status})</option>`).join("");
+    openModal({title:"Asignar agente a cita",subtitle:`${a.id} · ${a.name}`,confirm:"Guardar asignación",confirmClass:"primary",
+      body:`<div style="display:grid;gap:14px">
+        <div style="background:#F7F8FA;border-radius:8px;padding:14px 16px;display:grid;grid-template-columns:1fr 1fr;gap:8px 16px">
+          <div><small style="font-size:11px;color:var(--muted);font-weight:700">Fecha</small><strong style="display:block;font-size:13px">${a.date}</strong></div>
+          <div><small style="font-size:11px;color:var(--muted);font-weight:700">Hora</small><strong style="display:block;font-size:13px">${a.time}</strong></div>
+          <div><small style="font-size:11px;color:var(--muted);font-weight:700">Trámite</small><strong style="display:block;font-size:13px">${a.type}</strong></div>
+          <div><small style="font-size:11px;color:var(--muted);font-weight:700">Ciudadano</small><strong style="display:block;font-size:13px">${a.name}</strong></div>
+        </div>
+        <div class="field"><label>Agente disponible</label><select id="assignAgentSelect"><option value="">Sin asignar</option>${agentOptions}</select></div>
+        <div class="notice" style="font-size:12px">El agente asignado verá esta cita en su agenda del día correspondiente.</div>
+      </div>`,
+      onConfirm:()=>{
+        const sel=$("#assignAgentSelect").value;
+        const agentObj=state.agents&&state.agents.find(ag=>ag.id===sel);
+        a.assignedAgent=sel;
+        a.agent=agentObj?agentObj.name:"";
+        closeModal();
+        const currentView=state.view==="appointments"?renderAppointments:renderTodayAppointments;
+        currentView();
+        toast(agentObj?`${agentObj.name} asignado a la cita.`:"Asignación eliminada.");
+      }
+    });
+  });
   $$("[data-reschedule]").forEach(b=>b.onclick=()=>rescheduleAppointment(b.dataset.reschedule));
   $$("[data-remind-appointment]").forEach(b=>b.onclick=()=>{const a=appointmentById(b.dataset.remindAppointment);toast(`Recordatorio de confirmación enviado a ${a.name}.`)});
   $$("[data-no-show]").forEach(b=>b.onclick=()=>{const a=appointmentById(b.dataset.noShow);openModal({title:"Registrar inasistencia",subtitle:`${a.name} · ${a.time}`,confirm:"Marcar no presentado",confirmClass:"danger",body:`<div class="notice"><strong>Esta acción quedará en bitácora.</strong> El ciudadano será notificado y la cita podrá reprogramarse conforme a las reglas vigentes.</div>`,onConfirm:()=>{a.status="No se presentó";closeModal();toast("La inasistencia quedó registrada.","warning");renderAppointments()}})});
@@ -1463,42 +1698,273 @@ function renderAttend(id=state.activeAppointment){
   const a=appointmentById(id)||state.appointments[0];state.activeAppointment=a.id;
   const allBio=Object.values(state.biometrics).every(Boolean);
   const allChecks=Object.values(state.physicalChecks).every(Boolean);
-  content.innerHTML=pageHeader("Atención de cita","Coteja la identidad, captura los biométricos y formaliza la emisión del certificado.",`<button class="button secondary" data-view-link="appointments">Regresar</button><button class="button success" id="finishAppointment" ${allBio&&allChecks?"":"disabled"}>Finalizar atención</button>`) +
-  `<section class="summary-banner"><div><h2>Cita ${a.id}</h2><span>${a.name}</span></div><div class="summary-item"><small>Trámite</small><strong>${a.type}</strong></div><div class="summary-item"><small>Fecha</small><strong>${a.date}</strong></div><div class="summary-item"><small>Hora</small><strong>${a.time}</strong></div><div class="summary-item"><small>Agente</small><strong>Luis H.</strong></div></section>
-  <section class="card">
-    <div class="tabs">${[["general","Datos generales"],["labor","Datos laborales"],["documents","Documentos"],["onsite","Atención presencial"],["log","Bitácora"]].map(([key,label])=>`<button class="tab-button ${state.attendTab===key?"active":""}" data-attend-tab="${key}">${label}</button>`).join("")}</div>
-    <div id="attendTabPanel">${attendTabContent()}</div>
-    ${state.attendTab==="onsite"?`<div class="checklist">${[
-      ["identity","Identidad del ciudadano cotejada con identificación oficial"],
-      ["originals","Documentos originales cotejados contra los archivos precargados"],
-      ["consent","Acta de Emisión y términos firmados electrónicamente"],
-      ["duplicate","Validación de no duplicidad de clave pública completada"]
-    ].map(([key,label])=>`<label class="check-item"><input type="checkbox" data-check="${key}" ${state.physicalChecks[key]?"checked":""}><span>${label}</span></label>`).join("")}</div>
-    <div class="biometric-grid">${[
-      ["photo","camera","Fotografía","Captura facial del ciudadano"],
-      ["fingerprint","fingerprint","Huella dactilar","Índice derecho del ciudadano"],
-      ["signature","signature","Firma","Firma digital del ciudadano"]
-    ].map(([key,iconName,title,desc])=>`<article class="biometric-card ${state.biometrics[key]?"complete":""}"><span class="biometric-icon">${icon(state.biometrics[key]?"check-circle":iconName)}</span><h3>${title}</h3><p>${state.biometrics[key]?"Captura completada":desc}</p><button class="button ${state.biometrics[key]?"success":"primary"}" data-biometric="${key}">${state.biometrics[key]?"Volver a capturar":"Capturar"}</button></article>`).join("")}</div>`:""}
-  </section>`;
-  $$("[data-attend-tab]").forEach(b=>b.onclick=()=>{state.attendTab=b.dataset.attendTab;renderAttend()});
+  const canFinish=allBio&&allChecks;
+  const docs=Object.values(state.documents);
+  content.innerHTML=pageHeader("Atención presencial","Coteja la identidad, captura los biométricos y formaliza la emisión del certificado.",
+    `<button class="button ghost" data-view-link="appointments">${icon("library")}Volver a citas</button>
+     <button class="button success" id="finishAppointment" ${canFinish?"":"disabled"}>${icon("check-circle")}Finalizar y generar certificado</button>`) +
+  `<section class="summary-banner">
+    <div><h2>${a.id}</h2><span>${a.name}</span></div>
+    <div class="summary-item"><small>Trámite</small><strong>${a.type}</strong></div>
+    <div class="summary-item"><small>Fecha</small><strong>${a.date}</strong></div>
+    <div class="summary-item"><small>Hora</small><strong>${a.time}</strong></div>
+    <div class="summary-item"><small>Solicitud</small><strong>${a.request}</strong></div>
+  </section>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start">
+    <!-- Panel izquierdo: expediente completo en una sola vista -->
+    <article class="card" style="padding:0;overflow:hidden">
+      <div style="padding:14px 20px;border-bottom:1px solid var(--line);background:#FAFAFA">
+        <strong style="font-size:14px">Expediente del ciudadano</strong>
+        <p style="margin:3px 0 0;font-size:12px;color:var(--muted)">Información aprobada en la revisión documental. Solo consulta.</p>
+      </div>
+      <!-- Datos personales -->
+      <div style="padding:16px 20px;border-bottom:1px solid var(--line)">
+        <p style="font-size:11px;font-weight:800;color:var(--brand);text-transform:uppercase;letter-spacing:.06em;margin:0 0 12px">Datos personales</p>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+          <div style="padding:8px 10px;background:#F7F8FA;border-radius:6px"><small style="font-size:10px;color:var(--muted);font-weight:700;text-transform:uppercase">CURP</small><strong style="display:block;font-size:12px;font-family:monospace;letter-spacing:.03em">PEGJ850215HTSMRN09</strong></div>
+          <div style="padding:8px 10px;background:#F7F8FA;border-radius:6px"><small style="font-size:10px;color:var(--muted);font-weight:700;text-transform:uppercase">RFC</small><strong style="display:block;font-size:12px;font-family:monospace;letter-spacing:.03em">PEGJ850215XYZ</strong></div>
+          <div style="padding:8px 10px;background:#F7F8FA;border-radius:6px;grid-column:1/-1"><small style="font-size:10px;color:var(--muted);font-weight:700;text-transform:uppercase">Nombre completo</small><strong style="display:block;font-size:13px">${a.name}</strong></div>
+          <div style="padding:8px 10px;background:#F7F8FA;border-radius:6px"><small style="font-size:10px;color:var(--muted);font-weight:700;text-transform:uppercase">Correo</small><strong style="display:block;font-size:12px">juan.perez@tamaulipas.gob.mx</strong></div>
+          <div style="padding:8px 10px;background:#F7F8FA;border-radius:6px"><small style="font-size:10px;color:var(--muted);font-weight:700;text-transform:uppercase">Teléfono</small><strong style="display:block;font-size:12px">834 123 4567</strong></div>
+        </div>
+      </div>
+      <!-- Datos laborales -->
+      <div style="padding:16px 20px;border-bottom:1px solid var(--line)">
+        <p style="font-size:11px;font-weight:800;color:var(--brand);text-transform:uppercase;letter-spacing:.06em;margin:0 0 12px">Datos laborales</p>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+          <div style="padding:8px 10px;background:#F7F8FA;border-radius:6px;grid-column:1/-1"><small style="font-size:10px;color:var(--muted);font-weight:700;text-transform:uppercase">Dependencia</small><strong style="display:block;font-size:13px">Secretaría de Salud</strong></div>
+          <div style="padding:8px 10px;background:#F7F8FA;border-radius:6px"><small style="font-size:10px;color:var(--muted);font-weight:700;text-transform:uppercase">Área</small><strong style="display:block;font-size:12px">Dirección de Innovación</strong></div>
+          <div style="padding:8px 10px;background:#F7F8FA;border-radius:6px"><small style="font-size:10px;color:var(--muted);font-weight:700;text-transform:uppercase">Puesto</small><strong style="display:block;font-size:12px">Jefe de Departamento</strong></div>
+        </div>
+      </div>
+      <!-- Documentos presentados -->
+      <div style="padding:16px 20px">
+        <p style="font-size:11px;font-weight:800;color:var(--brand);text-transform:uppercase;letter-spacing:.06em;margin:0 0 12px">Documentos presentados en físico</p>
+        <div style="display:grid;gap:6px">
+          ${docs.map(d=>`<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;border:1px solid var(--line);border-radius:7px;background:#fff">
+            <div style="display:flex;align-items:center;gap:8px">
+              <span style="color:var(--green)">${icon("check-circle")}</span>
+              <div><strong style="font-size:12px">${d.name}</strong><small style="display:block;color:var(--muted)">${d.file}</small></div>
+            </div>
+            <span class="badge approved">Validado</span>
+          </div>`).join("")}
+        </div>
+      </div>
+    </article>
+    <!-- Panel derecho: cotejo y biométricos -->
+    <article class="card" style="padding:0;overflow:hidden">
+      <div style="padding:14px 20px;border-bottom:1px solid var(--line);background:#FAFAFA">
+        <strong style="font-size:14px">Cotejo y captura biométrica</strong>
+        <p style="margin:3px 0 0;font-size:12px;color:var(--muted)">Completa cada paso para habilitar la generación del certificado.</p>
+      </div>
+      <!-- Checklist de cotejo -->
+      <div style="padding:16px 20px;border-bottom:1px solid var(--line)">
+        <p style="font-size:11px;font-weight:800;color:var(--brand);text-transform:uppercase;letter-spacing:.06em;margin:0 0 12px">Lista de verificación</p>
+        <div style="display:grid;gap:8px">
+          ${[
+            ["identity","Identidad cotejada con identificación oficial presentada"],
+            ["originals","Documentos originales verificados contra los archivos aprobados"],
+            ["consent","Acta de Emisión y términos aceptados y firmados"],
+            ["duplicate","Validación de no duplicidad de clave pública completada"]
+          ].map(([key,label])=>`<label style="display:flex;align-items:flex-start;gap:10px;padding:11px 13px;border:1px solid ${state.physicalChecks[key]?"var(--green)":"var(--line)"};border-radius:7px;cursor:pointer;background:${state.physicalChecks[key]?"#F0FBF4":"#fff"};transition:all .15s">
+            <input type="checkbox" data-check="${key}" ${state.physicalChecks[key]?"checked":""} style="margin-top:1px;accent-color:var(--green);flex-shrink:0">
+            <span style="font-size:13px;color:${state.physicalChecks[key]?"var(--green)":"var(--ink)"}">${label}</span>
+          </label>`).join("")}
+        </div>
+      </div>
+      <!-- Biométricos -->
+      <div style="padding:16px 20px;border-bottom:1px solid var(--line)">
+        <p style="font-size:11px;font-weight:800;color:var(--brand);text-transform:uppercase;letter-spacing:.06em;margin:0 0 12px">Datos biométricos</p>
+        <div class="biometric-grid">
+          ${[
+            ["photo","camera","Fotografía","Captura facial"],
+            ["fingerprint","fingerprint","Huella dactilar","Índice derecho"],
+            ["signature","signature","Firma electrónica","Firma del titular"]
+          ].map(([key,iconName,title,desc])=>`<article class="biometric-card ${state.biometrics[key]?"complete":""}">
+            <span class="biometric-icon">${icon(state.biometrics[key]?"check-circle":iconName)}</span>
+            <h3>${title}</h3>
+            <p>${state.biometrics[key]?"Captura completada":desc}</p>
+            <button class="button ${state.biometrics[key]?"success":"primary"} small" data-biometric="${key}">${state.biometrics[key]?"Volver a capturar":"Capturar"}</button>
+          </article>`).join("")}
+        </div>
+      </div>
+      <!-- Estado del proceso -->
+      <div style="padding:14px 20px;background:#FAFAFA">
+        ${canFinish
+          ?`<div style="display:flex;align-items:center;gap:10px;padding:12px 16px;background:#F0FBF4;border:1px solid var(--green);border-radius:8px;margin-bottom:12px">
+              <span style="color:var(--green);flex-shrink:0">${icon("check-circle")}</span>
+              <span style="font-size:13px;color:var(--green);font-weight:600">Todo completo. Puedes generar el certificado.</span>
+            </div>`
+          :`<div style="display:flex;align-items:center;gap:10px;padding:12px 16px;background:#FFF8E6;border:1px solid var(--amber);border-radius:8px;margin-bottom:12px">
+              <span style="color:var(--amber);flex-shrink:0">${icon("clock")}</span>
+              <span style="font-size:13px;color:#805E29">
+                ${!allChecks&&!allBio?"Completa la verificación y los biométricos para continuar."
+                  :!allChecks?"Completa la lista de verificación para continuar."
+                  :"Captura todos los datos biométricos para continuar."}
+              </span>
+            </div>`}
+        <button class="button success wide" id="finishAppointment2" ${canFinish?"":"disabled"}>${icon("check-circle")}Finalizar y generar certificado</button>
+      </div>
+    </article>
+  </div>`;
   $$("[data-check]").forEach(c=>c.onchange=()=>{state.physicalChecks[c.dataset.check]=c.checked;renderAttend()});
   $$("[data-biometric]").forEach(b=>b.onclick=()=>captureBiometric(b.dataset.biometric));
   $("#finishAppointment").onclick=()=>finishAppointment(a);
+  if($("#finishAppointment2")) $("#finishAppointment2").onclick=()=>finishAppointment(a);
   bindCommonActions();
-}
-function attendTabContent(){
-  if(state.attendTab==="general") return `<h2>Datos generales</h2><div class="info-panel"><div class="info-grid"><div><small>Nombre</small><strong>Juan Pérez García</strong></div><div><small>CURP</small><strong>PEGJ850215HTSMRN09</strong></div><div><small>RFC</small><strong>PEGJ850215XYZ</strong></div><div><small>Teléfono</small><strong>834 123 4567</strong></div></div></div>`;
-  if(state.attendTab==="labor") return `<h2>Datos laborales</h2><div class="info-panel"><div class="info-grid"><div><small>Dependencia</small><strong>Secretaría de Salud</strong></div><div><small>Área</small><strong>Dirección de Innovación</strong></div><div><small>Puesto</small><strong>Jefe de Departamento</strong></div><div><small>Adscripción</small><strong>Victoria, Tamaulipas</strong></div></div></div>`;
-  if(state.attendTab==="documents") return `<h2>Documentos aprobados</h2><div class="document-list">${Object.values(state.documents).map(d=>`<div class="document-button"><span><strong>${d.name}</strong><small class="subtext">${d.file}</small></span>${badge(d.status==="Pendiente"?"Validado":d.status)}</div>`).join("")}</div>`;
-  if(state.attendTab==="log") return `<h2>Bitácora de atención</h2><div class="alert-list"><span>Cita confirmada por el ciudadano.</span><span>Agente inició la atención presencial.</span><span>En espera de cotejo y captura biométrica.</span></div>`;
-  return `<h2>Cotejo presencial y datos biométricos</h2><p>Completa cada validación antes de finalizar la atención.</p><div class="notice"><strong>Importante:</strong> la generación del certificado requiere cotejo físico, consentimiento firmado, biométricos completos y validación de no duplicidad de clave pública.</div>`;
 }
 function captureBiometric(key){
   const labels={photo:"fotografía",fingerprint:"huella dactilar",signature:"firma"};
   openModal({title:`Capturar ${labels[key]}`,subtitle:"Simulación del dispositivo de captura",confirm:"Confirmar captura",body:`<div class="empty-state"><span class="biometric-icon modal-capture-icon">${icon(key==="photo"?"camera":key)}</span><h3>Dispositivo conectado</h3><p>La captura simulada está lista. En el sistema real se habilitará el dispositivo correspondiente.</p></div>`,onConfirm:()=>{state.biometrics[key]=true;closeModal();toast(`${labels[key]} capturada correctamente.`);renderAttend()}});
 }
 function finishAppointment(a){
-  openModal({title:"Finalizar atención",subtitle:"Se generará el certificado y el acta de emisión.",confirm:"Generar certificado",confirmClass:"success",body:`<div class="notice"><strong>Validaciones completas.</strong> Al continuar se generará el archivo .cer, se firmará el Acta de Emisión y se enviará una notificación al correo del ciudadano.</div>`,onConfirm:()=>{a.status="Atendida";const number=`FEAT-2026-${String(930+state.certificates.length).padStart(6,"0")}`;state.procedures.unshift({id:`TRM-2026-${String(120+state.procedures.length).padStart(6,"0")}`,citizen:a.name,type:a.type,result:"Emitido",document:number,period:"2026-05"});state.certificates.unshift({id:number,citizen:a.name,type:a.type,status:"Vigente",validity:"22/05/2026 - 22/05/2028"});state.biometrics={photo:false,fingerprint:false,signature:false};state.physicalChecks={identity:false,originals:false,consent:false,duplicate:false};closeModal();toast("Atención finalizada. Certificado generado y notificado.");navigate("procedures")}});
+  openModal({
+    title:"Finalizar atención",
+    subtitle:"Se generará el certificado y el acta de emisión.",
+    confirm:"Generar certificado",
+    confirmClass:"success",
+    body:`<div style="display:grid;gap:12px">
+      <div class="notice" style="display:flex;align-items:center;gap:12px;padding:14px 16px">
+        <span style="width:36px;height:36px;border-radius:8px;background:var(--green);color:#fff;display:grid;place-items:center;flex-shrink:0">${icon("check-circle")}</span>
+        <div><strong style="display:block;margin-bottom:3px">Validaciones completas</strong><span style="font-size:13px;color:var(--gray)">Al continuar se generará el certificado y el Acta de Emisión FEAT.</span></div>
+      </div>
+      <div style="background:#F7F8FA;border-radius:8px;padding:14px 16px;font-size:13px;display:grid;gap:6px">
+        <div style="display:flex;justify-content:space-between"><span style="color:var(--muted)">Titular</span><strong>${a.name}</strong></div>
+        <div style="display:flex;justify-content:space-between"><span style="color:var(--muted)">Trámite</span><strong>${a.type}</strong></div>
+        <div style="display:flex;justify-content:space-between"><span style="color:var(--muted)">Fecha de atención</span><strong>${a.date} · ${a.time}</strong></div>
+      </div>
+      <p style="margin:0;font-size:12px;color:var(--muted)">Se enviará una notificación al correo del ciudadano con el archivo .cer y el acta firmada.</p>
+    </div>`,
+    onConfirm:()=>{
+      a.status="Atendida";
+      const number=`FEAT-2026-${String(930+state.certificates.length).padStart(6,"0")}`;
+      const actaId=`ACTA-2026-${String(100+state.procedures.length).padStart(5,"0")}`;
+      state.procedures.unshift({id:`TRM-2026-${String(120+state.procedures.length).padStart(6,"0")}`,citizen:a.name,type:a.type,result:"Emitido",document:number,period:"2026-05"});
+      state.certificates.unshift({id:number,citizen:a.name,type:a.type,status:"Vigente",validity:"22/05/2026 - 22/05/2028"});
+      // Guardar datos del acta para la pantalla de cierre
+      state.lastActa={
+        actaId, certId:number,
+        name:a.name, type:a.type,
+        date:a.date, time:a.time,
+        request:a.request,
+        agent:"Luis Hernández Pérez",
+        agentDep:"Secretaría de Administración — Dirección de Innovación",
+        municipio:"Ciudad Victoria",
+        curp:"PEGJ850215HTSMRN09"
+      };
+      state.biometrics={photo:false,fingerprint:false,signature:false};
+      state.physicalChecks={identity:false,originals:false,consent:false,duplicate:false};
+      closeModal();
+      renderActaEmision();
+    }
+  });
+}
+
+function renderActaEmision(){
+  const d=state.lastActa||{actaId:"ACTA-2026-00100",certId:"FEAT-2026-000930",name:"Juan Pérez García",type:"Emisión",date:"22 may 2026",time:"08:30",request:"FEAT-2026-041001",agent:"Luis Hernández Pérez",agentDep:"Secretaría de Administración — Dirección de Innovación",municipio:"Ciudad Victoria",curp:"PEGJ850215HTSMRN09"};
+  const now=new Date();
+  const hora=d.time||`${now.getHours().toString().padStart(2,"0")}:${now.getMinutes().toString().padStart(2,"0")}`;
+  const fecha=d.date||"22 de mayo de 2026";
+  state.actaZoom=state.actaZoom||100;
+
+  content.innerHTML=pageHeader("Acta de Emisión","Revisión final antes de entregar al ciudadano.",
+    `<button class="button ghost" id="backToAttend">${icon("library")}Volver</button>
+     <button class="button ghost" id="printActa">${icon("download")}Imprimir</button>
+     <button class="button ghost" id="downloadActa">${icon("download")}Descargar PDF</button>
+     <button class="button primary" id="goToProcedures">${icon("check-circle")}Confirmar y cerrar trámite</button>`)+
+  `<section class="summary-banner" style="margin-bottom:20px">
+    <div><h2>${d.certId}</h2><span>${d.name}</span></div>
+    <div class="summary-item"><small>Acta</small><strong>${d.actaId}</strong></div>
+    <div class="summary-item"><small>Trámite</small><strong>${d.type}</strong></div>
+    <div class="summary-item"><small>Fecha</small><strong>${fecha}</strong></div>
+    <div class="summary-item"><small>Estatus</small><span class="badge approved">Emitido</span></div>
+  </section>
+  <!-- Visor PDF -->
+  <section class="card" style="padding:0;overflow:hidden">
+    <div style="padding:13px 20px;border-bottom:1px solid var(--line);background:#F7F8FA;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
+      <div style="display:flex;align-items:center;gap:10px">
+        <span style="width:28px;height:28px;border-radius:6px;background:var(--brand);color:#fff;display:grid;place-items:center;flex-shrink:0">${icon("file-text")}</span>
+        <div><strong style="font-size:13px">Acta de Emisión de Certificado Digital — FEAT</strong><p style="margin:2px 0 0;font-size:11px;color:var(--muted)">${d.actaId}.pdf · 1 página</p></div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <span style="font-size:11px;color:var(--muted)">Pág. 1 / 1</span>
+        <div style="display:flex;align-items:center;gap:4px;border:1px solid var(--line);border-radius:6px;padding:2px 8px;background:#fff">
+          <button id="actaZoomOut" class="button ghost small" style="min-height:28px;padding:4px 8px">−</button>
+          <span id="actaZoomLabel" style="font-size:12px;font-weight:700;min-width:40px;text-align:center">${state.actaZoom}%</span>
+          <button id="actaZoomIn" class="button ghost small" style="min-height:28px;padding:4px 8px">+</button>
+        </div>
+        <button class="button ghost small" id="printActa2">${icon("download")}Imprimir</button>
+      </div>
+    </div>
+    <!-- Área del documento -->
+    <div style="background:#6E7580;padding:28px;min-height:600px;overflow:auto" id="actaViewport">
+      <div id="actaDoc" style="transform:scale(${state.actaZoom/100});transform-origin:top center;transition:transform .15s">
+        <div style="background:#fff;max-width:780px;margin:0 auto;padding:56px 68px 64px;box-shadow:0 8px 32px rgba(0,0,0,.22);border-radius:2px;font-family:'Encode Sans',Arial,sans-serif;color:#1a1a1a;line-height:1.7">
+          <!-- Membrete -->
+          <div style="display:flex;align-items:center;justify-content:space-between;padding-bottom:20px;border-bottom:3px solid #AB1738;margin-bottom:28px">
+            <div>
+              <div style="font-size:11px;font-weight:800;color:#AB1738;text-transform:uppercase;letter-spacing:.08em">Gobierno del Estado de Tamaulipas</div>
+              <div style="font-size:18px;font-weight:800;color:#1a1a1a;margin-top:4px">Firma Electrónica Avanzada Tamaulipas</div>
+              <div style="font-size:12px;color:#666;margin-top:2px">Sistema de Certificación Digital — FEAT</div>
+            </div>
+            <div style="text-align:right">
+              <div style="font-size:11px;color:#666">Folio de acta</div>
+              <div style="font-size:15px;font-weight:800;color:#AB1738;font-family:monospace">${d.actaId}</div>
+              <div style="font-size:11px;color:#666;margin-top:4px">No. certificado</div>
+              <div style="font-size:13px;font-weight:700;font-family:monospace">${d.certId}</div>
+            </div>
+          </div>
+          <!-- Título -->
+          <h1 style="text-align:center;font-size:16px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;margin:0 0 24px;color:#1a1a1a">Acta de Emisión de Certificado Digital</h1>
+          <!-- Cuerpo -->
+          <p style="font-size:13px;text-align:justify;margin:0 0 16px">En la ciudad de <strong>${d.municipio}</strong>, Tamaulipas, siendo las <strong>${hora}</strong> horas del día <strong>${fecha}</strong>, el suscrito <strong>${d.agent}</strong>, en mi carácter de Agente Certificador adscrito a <strong>${d.agentDep}</strong>, hago constar que compareció ante mí <strong>${d.name}</strong>, con CURP <strong style="font-family:monospace">${d.curp}</strong>, quien se identificó mediante la documentación oficial correspondiente.</p>
+          <p style="font-size:13px;text-align:justify;margin:0 0 16px">Derivado de la revisión realizada, se llevó a cabo el cotejo de la documentación digital presentada contra los originales físicos exhibidos por el solicitante, así como la captura de los datos biométricos correspondientes, consistentes en huellas dactilares y fotografía, conforme al aviso de privacidad aplicable y a la normatividad vigente en materia de protección de datos personales.</p>
+          <p style="font-size:13px;text-align:justify;margin:0 0 16px">Una vez verificada la identidad del solicitante y validada la integración de su expediente, se autoriza la emisión del certificado digital de <strong>Firma Electrónica Avanzada Tamaulipas (FEAT)</strong>, quedando técnicamente vinculado dicho certificado con su titular, para los efectos legales y administrativos que correspondan.</p>
+          <p style="font-size:13px;text-align:justify;margin:0 0 28px">Asimismo, el solicitante manifiesta que recibe o tiene a su disposición el archivo digital correspondiente, así como la <strong>Carta de Términos y Condiciones de Operación y Límites de Responsabilidad</strong>, cuyo contenido conoce y acepta, obligándose a conservar bajo su resguardo los medios, claves, contraseñas o elementos asociados al uso de su Firma Electrónica Avanzada, reconociendo que su utilización será personal, directa e intransferible.</p>
+          <p style="font-size:13px;text-align:justify;margin:0 0 36px">No habiendo otro asunto que hacer constar, se firma la presente acta para los efectos legales y administrativos conducentes.</p>
+          <!-- Firmas -->
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:40px;margin-top:16px">
+            <div style="text-align:center">
+              <div style="border-top:1.5px solid #1a1a1a;padding-top:12px;margin-top:48px">
+                <div style="font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.04em">Firma Electrónica del Agente Certificador</div>
+                <div style="font-size:13px;margin-top:6px;font-weight:600">${d.agent}</div>
+                <div style="font-size:11px;color:#666;margin-top:3px">Agente Certificador FEAT</div>
+              </div>
+            </div>
+            <div style="text-align:center">
+              <div style="border-top:1.5px solid #1a1a1a;padding-top:12px;margin-top:48px">
+                <div style="font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.04em">Firma de Conformidad del Solicitante</div>
+                <div style="font-size:13px;margin-top:6px;font-weight:600">${d.name}</div>
+                <div style="font-size:11px;color:#666;margin-top:3px">CURP: <span style="font-family:monospace">${d.curp}</span></div>
+              </div>
+            </div>
+          </div>
+          <!-- Pie de página -->
+          <div style="margin-top:40px;padding-top:16px;border-top:1px solid #e0e0e0;display:flex;justify-content:space-between;align-items:center">
+            <span style="font-size:10px;color:#999">Documento generado electrónicamente por el Sistema FEAT · Gobierno del Estado de Tamaulipas</span>
+            <span style="font-size:10px;color:#999">${fecha}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <div class="notice" style="margin-top:16px;font-size:12px"><strong>Siguiente paso:</strong> entrega el archivo .cer al ciudadano e indica que ya puede usar su Firma Electrónica Avanzada. Al confirmar, el trámite quedará cerrado en el sistema.</div>`;
+
+  $("#actaZoomIn").onclick=()=>{state.actaZoom=Math.min(state.actaZoom+15,150);renderActaEmision()};
+  $("#actaZoomOut").onclick=()=>{state.actaZoom=Math.max(state.actaZoom-15,50);renderActaEmision()};
+  $("#backToAttend").onclick=()=>navigate("appointments");
+  $("#goToProcedures").onclick=()=>{toast("Trámite cerrado. Acta registrada en el expediente.");navigate("procedures")};
+  const printFn=()=>{
+    const docHtml=document.getElementById("actaDoc").innerHTML;
+    const w=window.open("","_blank","width=900,height=700");
+    w.document.write(`<!DOCTYPE html><html><head><meta charset="utf-8"><title>${d.actaId}</title><link href="https://fonts.googleapis.com/css2?family=Encode+Sans:wght@400;600;700;800&display=swap" rel="stylesheet"><style>*{box-sizing:border-box}body{margin:0;padding:32px;font-family:'Encode Sans',Arial,sans-serif}@media print{body{padding:0}}</style></head><body>${docHtml}</body></html>`);
+    w.document.close();
+    setTimeout(()=>w.print(),800);
+  };
+  $("#printActa").onclick=printFn;
+  if($("#printActa2")) $("#printActa2").onclick=printFn;
+  if($("#downloadActa")) $("#downloadActa").onclick=()=>toast("En el sistema real se generaría el PDF firmado digitalmente.");
+  bindCommonActions();
 }
 
 function renderProcedures(){
@@ -1557,7 +2023,7 @@ function renderCertificates(){
 }
 
 function renderCatalogs(){
-  if(state.activeCatalogNav&&state.activeCatalogNav!=="all") return renderCatalogTable(state.activeCatalogNav);
+  return renderCatalogTable(state.activeCatalogNav);
   const query=state.catalogSearch.toLowerCase();
   const filteredCatalogs=catalogDefinitions.filter(c=>{
     const searchable=[c.title,c.description,c.group,...c.rows.flat()].join(" ").toLowerCase();
@@ -1592,7 +2058,7 @@ function renderCatalogs(){
 }
 function selectCatalogSubmodule(id){
   if(id==="all"){
-    state.activeCatalogNav="all";
+    state.activeCatalogNav="tramites";
     state.catalogSearch="";
     state.catalogGroup="all";
     navigate("catalogs");
@@ -1628,7 +2094,7 @@ function documentCatalogOptions(value=""){
 
 function renderCatalogTable(id){
   const catalog=catalogDefinitions.find(item=>item.id===id);
-  if(!catalog){state.activeCatalogNav="all";return renderCatalogs()}
+  if(!catalog){state.activeCatalogNav="tramites";return renderCatalogs()}
   const query=state.catalogRecordSearch.trim().toLowerCase();
   const indexedRows=catalog.rows.map((row,index)=>({row,index})).filter(({row})=>!query||row.join(" ").toLowerCase().includes(query));
   const pageSize=state.pageSize.catalogs;
@@ -1638,7 +2104,7 @@ function renderCatalogTable(id){
   const visible=indexedRows.slice(start,start+pageSize);
   const statusColumn=catalogStatusColumn(catalog);
   const visibleColumnIndexes=catalog.id==="documentos"?catalog.columns.map((_,index)=>index).filter(index=>index!==2):catalog.columns.map((_,index)=>index);
-  content.innerHTML=pageHeader(catalog.title,catalog.description,`<button class="button ghost" id="backToCatalogs">${icon("library")}Todos los catálogos</button><button class="button primary" id="newCatalogRecord">${icon("plus")}Nuevo</button>`)+
+  content.innerHTML=pageHeader(catalog.title,catalog.description,`<button class="button ghost" id="backToCatalogs">${icon("library")}Catálogos</button><button class="button primary" id="newCatalogRecord">${icon("plus")}Nuevo</button>`)+
   `<section class="catalog-detail-context">
     <span class="catalog-icon">${icon(catalog.icon)}</span>
     <div><small>${catalog.group}</small><strong>${catalog.rows.length} registros</strong><p>Los cambios realizados se reflejan en los módulos relacionados del sistema.</p></div>
@@ -1661,7 +2127,7 @@ function renderCatalogTable(id){
       <button data-catalog-page="${state.catalogPage+1}" ${state.catalogPage===pages?"disabled":""}>Siguiente</button>
     </div></div>
   </article>`;
-  $("#backToCatalogs").onclick=()=>selectCatalogSubmodule("all");
+  $("#backToCatalogs").onclick=()=>selectCatalogSubmodule("tramites");
   $("#newCatalogRecord").onclick=()=>openCatalogRecordModal(id);
   $("#catalogRecordSearch").oninput=e=>{state.catalogRecordSearch=e.target.value};
   $("#catalogRecordSearch").onkeydown=e=>{if(e.key==="Enter"){state.catalogPage=1;renderCatalogTable(id)}};
@@ -1960,137 +2426,104 @@ function procedureRequirementRows(procedure){
 }
 
 function renderProcedureManagement(){
-  // Nivel 2: detalle de requisitos de un trámite seleccionado
-  if(state.selectedConfiguredProcedure && state.procedureDetailView){
-    return renderProcedureRequirementsTable();
-  }
-  // Nivel 1: tabla de trámites
-  const query=state.procedureConfigSearch.trim().toLowerCase();
-  const filtered=state.procedureConfigurations.filter(item=>
-    !query||`${item.name} ${item.id} ${item.status} ${item.validity}`.toLowerCase().includes(query)
-  );
-  const totalReqs=state.procedureConfigurations.reduce((s,p)=>s+p.requirements.length,0);
-  const active=state.procedureConfigurations.filter(p=>p.status==="Vigente").length;
-  content.innerHTML=pageHeader("Gestión de trámites","Administra los trámites habilitados y los requisitos documentales que solicita el portal ciudadano.",
-    `<button class="button primary" id="addConfiguredProcedure">${icon("plus")}Agregar trámite</button>`)+
-  `<section class="stats-grid" style="margin-bottom:22px">
-    <article class="stat-card"><span class="stat-icon">${icon("clipboard")}</span><div><h3>Trámites configurados</h3><strong>${state.procedureConfigurations.length}</strong></div><small>${active} vigentes</small></article>
-    <article class="stat-card blue"><span class="stat-icon" style="background:var(--blue-bg);color:var(--blue)">${icon("file-check")}</span><div><h3>Requisitos totales</h3><strong>${totalReqs}</strong></div><small>Entre todos los trámites</small></article>
-    <article class="stat-card green"><span class="stat-icon" style="background:var(--green-bg);color:var(--green)">${icon("check-circle")}</span><div><h3>Requisitos reutilizables</h3><strong>${state.requirementCatalog.length}</strong></div><small>En catálogo base</small></article>
-    <article class="stat-card amber"><span class="stat-icon" style="background:var(--amber-bg);color:var(--amber)">${icon("refresh")}</span><div><h3>Última actualización</h3><strong>08 jun 2026</strong></div><small>Configuración vigente</small></article>
-  </section>
-  ${filterDisclosure("procedureConfig","Filtros","Filtra por nombre, clave o estatus.",`
-    <div class="filter-panel embedded" style="display:grid;grid-template-columns:1fr 1fr auto;gap:12px;padding:16px 0 0">
-      <div class="field"><label>Estatus</label><select id="filterProcStatus"><option value="all">Todos</option>${["Vigente","Suspendido"].map(s=>`<option ${state.procedureStatusFilter===s?"selected":""}>${s}</option>`).join("")}</select></div>
-      <button class="button secondary" id="clearProcFilters" style="align-self:end">Limpiar filtros</button>
-    </div>`)}
-  <section class="card table-card frest-table-card" style="margin-top:16px">
-    <div class="card-header"><div><h2>Trámites configurados</h2><p>Haz clic en "Ver requisitos" para administrar los documentos de cada trámite.</p></div></div>
-    ${dataTableToolbar("procedureConfig","procedureConfigSearch",state.procedureConfigSearch,"exportProcedures",state.procedureConfigurations.length)}
-    <div class="table-wrap"><table><thead><tr><th>Trámite</th><th>Clave</th><th>Requisitos</th><th>Vigencia</th><th>Estatus</th><th>Acciones</th></tr></thead>
-    <tbody>${filtered.length?filtered.map(p=>`<tr>
-      <td><strong>${p.name}</strong></td>
-      <td><span class="folio">${p.id}</span></td>
-      <td><strong style="color:var(--blue)">${p.requirements.length}</strong><span class="subtext">${p.requirements.filter(r=>r.active).length} activos</span></td>
-      <td>${p.validity}</td>
-      <td>${badge(p.status)}</td>
-      <td><div class="actions-cell">
-        <button class="button secondary small" data-proc-detail="${p.id}">${icon("eye")}Ver requisitos</button>
-        <button class="action-icon warning" data-edit-proc="${p.id}" title="Editar trámite">${icon("edit")}</button>
-        <button class="action-icon neutral" data-proc-catalog="${p.id}" title="Ver en catálogo">${icon("library")}</button>
-      </div></td>
-    </tr>`).join(""):`<tr><td colspan="6" class="empty-state">No hay trámites con estos criterios.</td></tr>`}
-    </tbody></table></div>
-    <div class="pagination"><span>Mostrando ${filtered.length} de ${state.procedureConfigurations.length} trámites</span><div class="pagination-buttons"><button disabled>Anterior</button><button class="active">1</button><button disabled>Siguiente</button></div></div>
-  </section>`;
-  $("#addConfiguredProcedure").onclick=openAddProcedureModal;
-  $("#procedureConfigSearch").oninput=e=>{state.procedureConfigSearch=e.target.value;renderProcedureManagement()};
-  if($("#procedureConfigPageSize")) $("#procedureConfigPageSize").onchange=()=>renderProcedureManagement();
-  if($("#exportProcedures")) $("#exportProcedures").onclick=()=>exportTable("tramites-feat",["Clave","Nombre","Requisitos","Vigencia","Estatus"],filtered.map(p=>[p.id,p.name,p.requirements.length,p.validity,p.status]));
-  if($("#filterProcStatus")) $("#filterProcStatus").onchange=e=>{state.procedureStatusFilter=e.target.value;renderProcedureManagement()};
-  if($("#clearProcFilters")) $("#clearProcFilters").onclick=()=>{state.procedureConfigSearch="";state.procedureStatusFilter="all";renderProcedureManagement()};
-  $$("[data-proc-detail]").forEach(b=>b.onclick=()=>{
-    state.selectedConfiguredProcedure=b.dataset.procDetail;
-    state.procedureDetailView=true;
-    state.procedureRequirementSearch="";
-    renderProcedureManagement();
-  });
-  $$("[data-edit-proc]").forEach(b=>b.onclick=()=>{
-    const p=state.procedureConfigurations.find(x=>x.id===b.dataset.editProc);
-    if(!p) return;
-    openModal({title:"Editar trámite",subtitle:p.name,confirm:"Guardar",body:`
-      <div class="form-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:14px 20px">
-        <div class="field full" style="grid-column:1/-1"><label>Nombre</label><input id="editProcName" value="${p.name}"></div>
-        <div class="field"><label>Vigencia</label><input id="editProcValidity" value="${p.validity}"></div>
-        <div class="field"><label>Estatus</label><select id="editProcStatus">${["Vigente","Suspendido"].map(s=>`<option ${p.status===s?"selected":""}>${s}</option>`).join("")}</select></div>
-      </div>`,
-      onConfirm:()=>{
-        p.name=$("#editProcName").value.trim()||p.name;
-        p.validity=$("#editProcValidity").value.trim()||p.validity;
-        p.status=$("#editProcStatus").value;
-        closeModal();renderProcedureManagement();toast("Trámite actualizado.");
-      }
-    });
-  });
-  $$("[data-proc-catalog]").forEach(b=>b.onclick=()=>{state.expandedMenus.catalogs=true;selectCatalogSubmodule("tramites")});
-  bindCommonActions();
-}
-
-function renderProcedureRequirementsTable(){
   const procedure=selectedProcedureConfiguration();
-  if(!procedure){state.procedureDetailView=false;return renderProcedureManagement();}
+  if(!procedure){
+    content.innerHTML=pageHeader("Gesti&oacute;n de tr&aacute;mites y requisitos","Administra los tr&aacute;mites disponibles y los documentos que solicita el portal ciudadano.")+
+      `<section class="card empty-state"><h2>No hay tr&aacute;mites configurados</h2><p>Agrega un tr&aacute;mite existente del cat&aacute;logo para comenzar.</p><button class="button primary" id="addConfiguredProcedure">${icon("plus")}Agregar tr&aacute;mite</button></section>`;
+    $("#addConfiguredProcedure").onclick=openAddProcedureModal;
+    return;
+  }
+  const procedureSearch=state.procedureConfigSearch.trim().toLowerCase();
+  const procedures=state.procedureConfigurations.filter(item=>!procedureSearch||`${item.name} ${item.id} ${item.status}`.toLowerCase().includes(procedureSearch));
   const rows=procedureRequirementRows(procedure);
-  const filterBody=`<div class="filter-panel embedded" style="display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:12px;padding:16px 0 0">
-    <div class="field"><label>Requisito</label><input id="procedureRequirementSearch" value="${state.procedureRequirementSearch}" placeholder="Nombre, formato o condición"></div>
+  const filterBody=`<div class="filter-panel embedded procedure-requirement-filters">
+    <div class="field"><label>Requisito</label><input id="procedureRequirementSearch" value="${state.procedureRequirementSearch}" placeholder="Nombre, formato o condici&oacute;n"></div>
     <div class="field"><label>Estado</label><select id="procedureRequirementStatus"><option value="all">Todos</option><option value="true" ${state.procedureRequirementStatus==="true"?"selected":""}>Activos</option><option value="false" ${state.procedureRequirementStatus==="false"?"selected":""}>Inactivos</option></select></div>
     <div class="field"><label>Obligatoriedad</label><select id="procedureRequirementMandatory"><option value="all">Todos</option><option value="true" ${state.procedureRequirementMandatory==="true"?"selected":""}>Obligatorios</option><option value="false" ${state.procedureRequirementMandatory==="false"?"selected":""}>Condicionales</option></select></div>
-    <button class="button ghost" id="clearProcedureRequirementFilters" style="align-self:end">Limpiar</button>
+    <button class="button ghost" id="clearProcedureRequirementFilters">Limpiar</button>
+    <button class="button primary" id="applyProcedureRequirementFilters">Aplicar</button>
   </div>`;
-  content.innerHTML=pageHeader(procedure.name,"Requisitos documentales configurados para este trámite.",
-    `<button class="button ghost" id="backToProcedures">${icon("library")}Todos los trámites</button><button class="button primary" id="addProcedureRequirement">${icon("plus")}Agregar requisito</button>`)+
-  `<article class="card procedure-readonly-card" style="margin-bottom:16px">
-    <div class="procedure-readonly-grid">
-      <div class="procedure-name"><small>Trámite</small><strong>${procedure.name}</strong></div>
-      <div><small>Clave</small><strong>${procedure.id}</strong></div>
-      <div><small>Estatus</small>${badge(procedure.status)}</div>
-      <div><small>Vigencia</small><strong>${procedure.validity}</strong></div>
+  content.innerHTML=pageHeader("Gesti&oacute;n de tr&aacute;mites y requisitos","Administra los tr&aacute;mites, sus documentos requeridos, formatos permitidos y reglas de carga.",`<button class="button ghost" id="restoreProcedureConfiguration">${icon("refresh")}Restaurar predeterminado</button><button class="button primary" id="saveProcedureConfiguration">Guardar</button>`)+
+  `<section class="procedure-management-grid">
+    <aside class="card procedure-selector-card">
+      <div class="card-header"><div><h2>Tr&aacute;mites configurados</h2><p>Selecciona un tr&aacute;mite para administrar sus requisitos.</p></div></div>
+      <label class="procedure-search">${icon("search")}<input id="configuredProcedureSearch" value="${state.procedureConfigSearch}" placeholder="Buscar tr&aacute;mite"></label>
+      <button class="button primary wide" id="addConfiguredProcedure">${icon("plus")}Agregar tr&aacute;mite</button>
+      <div class="procedure-list" id="configuredProcedureList">
+        ${procedures.length?procedures.map(item=>`<button class="procedure-list-item ${item.id===procedure.id?"active":""}" data-configured-procedure="${item.id}">
+          <span><strong>${item.name}</strong><small>${item.requirements.length} requisitos asociados</small></span>${badge(item.status)}
+        </button>`).join(""):`<div class="procedure-list-empty">No hay coincidencias.</div>`}
+      </div>
+      <div class="procedure-summary"><strong>Resumen</strong><span>${state.procedureConfigurations.length} tr&aacute;mites configurados</span><span>${state.requirementCatalog.length} requisitos reutilizables</span></div>
+    </aside>
+    <div class="procedure-management-content">
+      <article class="card procedure-readonly-card">
+        <div class="card-header"><div><h2>Informaci&oacute;n del tr&aacute;mite</h2><p>Datos de solo lectura provenientes del Cat&aacute;logo de tr&aacute;mites.</p></div><button class="button secondary small" id="viewProcedureCatalog">Ver en cat&aacute;logo</button></div>
+        <div class="procedure-readonly-grid">
+          <div class="procedure-name"><small>Nombre del tr&aacute;mite</small><strong>${procedure.name}</strong></div>
+          <div><small>Clave</small><strong>${procedure.id}</strong></div>
+          <div><small>Estatus</small>${badge(procedure.status)}</div>
+          <div><small>Vigencia</small><strong>${procedure.validity}</strong></div>
+        </div>
+      </article>
+      ${filterDisclosure("procedureConfig","Filtros de requisitos","Filtra por nombre, estado u obligatoriedad.",filterBody)}
+      <article class="card table-card frest-table-card procedure-requirements-card">
+        <div class="card-header"><div><h2>Requisitos del tr&aacute;mite</h2><p>Configura c&oacute;mo aplica cada requisito sin modificar su registro base.</p></div><button class="button primary small" id="addProcedureRequirement">${icon("plus")}Agregar requisito</button></div>
+        ${dataTableToolbar("procedureConfig","procedureRequirementTableSearch",state.procedureRequirementSearch,"exportProcedureRequirements",procedure.requirements.length)}
+        <div class="table-wrap"><table class="procedure-requirements-table"><thead><tr><th>Requisito</th><th>Tipo / formatos</th><th>Peso m&aacute;ximo</th><th>Condici&oacute;n de aplicaci&oacute;n</th><th>Estado</th><th>Acciones</th></tr></thead>
+          <tbody>${rows.length?rows.map(requirement=>`<tr>
+            <td><strong>${requirement.name}</strong><small>${requirement.description}</small></td>
+            <td><span>${requirement.type}</span><small class="format-list">${requirement.formats}</small></td>
+            <td>${requirement.weight} MB</td>
+            <td><span class="${requirement.condition!=="Siempre"?"conditional-text":""}">${requirement.condition}</span><small>${requirement.mandatory?"Obligatorio":"Condicional"}</small></td>
+            <td>${badge(requirement.active?"Activo":"Inactivo")}</td>
+            <td><div class="actions-cell">
+              <button class="action-icon warning" data-edit-requirement="${requirement.id}" title="Editar requisito" aria-label="Editar requisito">${icon("edit")}</button>
+              <button class="action-icon ${requirement.active?"neutral":"success"}" data-toggle-requirement="${requirement.id}" title="${requirement.active?"Desactivar":"Activar"} requisito" aria-label="${requirement.active?"Desactivar":"Activar"} requisito">${icon(requirement.active?"ban":"check-circle")}</button>
+              <button class="action-icon danger" data-delete-requirement="${requirement.id}" title="Eliminar requisito" aria-label="Eliminar requisito">${icon("trash")}</button>
+            </div></td>
+          </tr>`).join(""):`<tr><td colspan="6"><div class="empty-table">No hay requisitos que coincidan con los filtros.</div></td></tr>`}</tbody>
+        </table></div>
+        <div class="pagination"><span>Mostrando ${rows.length} de ${procedure.requirements.length} requisitos</span><div class="pagination-buttons"><button disabled>Anterior</button><button class="active">1</button><button disabled>Siguiente</button></div></div>
+      </article>
     </div>
-  </article>
-  ${filterDisclosure("procedureConfig","Filtros de requisitos","Filtra por nombre, estado u obligatoriedad.",filterBody)}
-  <section class="card table-card frest-table-card" style="margin-top:16px">
-    <div class="card-header"><div><h2>Requisitos del trámite</h2><p>${rows.length} de ${procedure.requirements.length} requisitos configurados.</p></div></div>
-    ${dataTableToolbar("procedureReqs","procedureRequirementTableSearch",state.procedureRequirementSearch,"exportProcedureRequirements",procedure.requirements.length)}
-    <div class="table-wrap"><table class="procedure-requirements-table"><thead><tr><th>Requisito</th><th>Tipo / formatos</th><th>Peso máximo</th><th>Condición de aplicación</th><th>Estado</th><th>Acciones</th></tr></thead>
-      <tbody>${rows.length?rows.map(requirement=>`<tr>
-        <td><strong>${requirement.name}</strong><small>${requirement.description}</small></td>
-        <td><span>${requirement.type}</span><small class="format-list">${requirement.formats}</small></td>
-        <td>${requirement.weight} MB</td>
-        <td><span class="${requirement.condition!=="Siempre"?"conditional-text":""}">${requirement.condition}</span><small>${requirement.mandatory?"Obligatorio":"Condicional"}</small></td>
-        <td>${badge(requirement.active?"Activo":"Inactivo")}</td>
-        <td><div class="actions-cell">
-          <button class="action-icon warning" data-edit-requirement="${requirement.id}" title="Editar requisito">${icon("edit")}</button>
-          <button class="action-icon ${requirement.active?"neutral":"success"}" data-toggle-requirement="${requirement.id}" title="${requirement.active?"Desactivar":"Activar"}">${icon(requirement.active?"ban":"check-circle")}</button>
-          <button class="action-icon danger" data-delete-requirement="${requirement.id}" title="Eliminar requisito">${icon("trash")}</button>
-        </div></td>
-      </tr>`).join(""):`<tr><td colspan="6"><div class="empty-table">No hay requisitos que coincidan con los filtros.</div></td></tr>`}</tbody>
-    </table></div>
-    <div class="pagination"><span>Mostrando ${rows.length} de ${procedure.requirements.length} requisitos</span><div class="pagination-buttons"><button disabled>Anterior</button><button class="active">1</button><button disabled>Siguiente</button></div></div>
   </section>`;
-  $("#backToProcedures").onclick=()=>{state.procedureDetailView=false;state.procedureRequirementSearch="";renderProcedureManagement()};
-  $("#addProcedureRequirement").onclick=()=>openProcedureRequirementModal();
-  if($("#procedureRequirementSearch")) $("#procedureRequirementSearch").oninput=e=>{state.procedureRequirementSearch=e.target.value;renderProcedureRequirementsTable()};
-  if($("#procedureRequirementStatus")) $("#procedureRequirementStatus").onchange=e=>{state.procedureRequirementStatus=e.target.value;renderProcedureRequirementsTable()};
-  if($("#procedureRequirementMandatory")) $("#procedureRequirementMandatory").onchange=e=>{state.procedureRequirementMandatory=e.target.value;renderProcedureRequirementsTable()};
-  if($("#clearProcedureRequirementFilters")) $("#clearProcedureRequirementFilters").onclick=()=>{state.procedureRequirementSearch="";state.procedureRequirementStatus="all";state.procedureRequirementMandatory="all";renderProcedureRequirementsTable()};
-  if($("#exportProcedureRequirements")) $("#exportProcedureRequirements").onclick=()=>exportTable(`requisitos-${procedure.id}`,["Requisito","Tipo","Formatos","Peso","Condición","Estado"],rows.map(r=>[r.name,r.type,r.formats,r.weight,r.condition,r.active?"Activo":"Inactivo"]));
-  if($("#procedureReqsPageSize")) $("#procedureReqsPageSize").onchange=()=>renderProcedureRequirementsTable();
-  $$("[data-edit-requirement]").forEach(b=>b.onclick=()=>openProcedureRequirementModal(b.dataset.editRequirement));
-  $$("[data-toggle-requirement]").forEach(b=>b.onclick=()=>confirmToggleProcedureRequirement(b.dataset.toggleRequirement));
-  $$("[data-delete-requirement]").forEach(b=>b.onclick=()=>confirmDeleteProcedureRequirement(b.dataset.deleteRequirement));
+  bindProcedureManagementActions(procedure,rows);
   bindCommonActions();
 }
 
 function bindProcedureManagementActions(procedure,rows){
+  $("#configuredProcedureSearch").oninput=e=>{
+    state.procedureConfigSearch=e.target.value;
+    const search=e.target.value.trim().toLowerCase();
+    $$("[data-configured-procedure]").forEach(button=>button.hidden=!button.textContent.toLowerCase().includes(search));
+  };
+  $$("[data-configured-procedure]").forEach(button=>button.onclick=()=>{
+    state.selectedConfiguredProcedure=button.dataset.configuredProcedure;
+    state.procedureRequirementSearch="";
+    renderProcedureManagement();
+  });
+  $("#addConfiguredProcedure").onclick=openAddProcedureModal;
+  $("#viewProcedureCatalog").onclick=()=>{
+    state.expandedMenus.catalogs=true;
+    selectCatalogSubmodule("tramites");
+  };
+  $("#addProcedureRequirement").onclick=()=>openProcedureRequirementModal();
+  $("#saveProcedureConfiguration").onclick=()=>toast("Configuraci&oacute;n de tr&aacute;mites guardada durante esta sesi&oacute;n.");
+  $("#restoreProcedureConfiguration").onclick=()=>openModal({
+    title:"Restaurar configuraci&oacute;n",
+    subtitle:"Se recuperar&aacute;n los requisitos predeterminados.",
+    confirm:"Restaurar",
+    confirmClass:"danger",
+    body:`<div class="notice"><strong>Se perder&aacute;n los cambios de esta sesi&oacute;n.</strong> Los tr&aacute;mites y requisitos regresar&aacute;n a su configuraci&oacute;n inicial.</div>`,
+    onConfirm:()=>{
+      state.procedureConfigurations=createDefaultProcedureConfigurations();
+      state.selectedConfiguredProcedure="EMI";
+      closeModal();
+      renderProcedureManagement();
+      toast("Configuraci&oacute;n predeterminada restaurada.","warning");
+    }
+  });
   $("#applyProcedureRequirementFilters")?.addEventListener("click",()=>{
     state.procedureRequirementSearch=$("#procedureRequirementSearch").value;
     state.procedureRequirementStatus=$("#procedureRequirementStatus").value;
@@ -2239,286 +2672,177 @@ function confirmDeleteProcedureRequirement(id){
   });
 }
 
-function agentStatusBadge(status){
-  if(status==="Disponible") return `<span class="badge approved">${status}</span>`;
-  if(status==="Alta carga") return `<span class="badge pending">${status}</span>`;
-  if(status==="Inactivo") return `<span class="badge neutral">${status}</span>`;
-  return `<span class="badge neutral">${status}</span>`;
+function agentStatusBadge(s){
+  if(s==="Disponible") return `<span class="badge approved">${s}</span>`;
+  if(s==="Alta carga") return `<span class="badge pending">${s}</span>`;
+  return `<span class="badge neutral">${s}</span>`;
 }
-
+function agentAvatar(agent,size=36){
+  const parts=agent.name.trim().split(" ").filter(Boolean);
+  const initials=(parts.length>=2?parts[0][0]+parts[1][0]:parts[0]?parts[0][0]:"?").toUpperCase();
+  return agent.photo
+    ?`<img src="${agent.photo}" style="width:${size}px;height:${size}px;border-radius:50%;object-fit:cover;border:2px solid var(--gold-light);flex-shrink:0">`
+    :`<span style="width:${size}px;height:${size}px;border-radius:50%;background:var(--brand);color:#fff;display:grid;place-items:center;font-size:${size<40?12:14}px;font-weight:800;flex-shrink:0;border:2px solid var(--gold-light)">${initials}</span>`;
+}
 function openAddAgentModal(){
-  const today = new Date().toLocaleDateString("es-MX",{day:"numeric",month:"long",year:"numeric"});
-  let capturedPhoto = null;
-  openModal({
-    title:"Agregar nuevo agente certificador",
-    subtitle:"Registra sus datos, sede de atención, permisos y carga inicial de solicitudes.",
-    confirm:"Guardar agente",
-    confirmClass:"primary",
-    size:"large",
-    body:`
-      <div style="display:grid;grid-template-columns:148px 1fr;gap:24px;align-items:start">
-        <div style="display:flex;flex-direction:column;align-items:center;gap:10px">
-          <div id="agentPhotoPreview" style="width:120px;height:120px;border-radius:50%;background:var(--brand);color:#fff;display:grid;place-items:center;font-size:36px;font-weight:800;border:3px solid var(--gold-light);overflow:hidden;flex-shrink:0">
-            <span id="agentPhotoInitials">?</span>
-          </div>
-          <label style="cursor:pointer;display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--brand);font-weight:700;border:1px solid var(--brand);border-radius:6px;padding:6px 10px">
-            ${icon("camera")} Capturar foto
-            <input type="file" id="agentPhotoInput" accept="image/*" style="display:none">
-          </label>
-          <small style="color:var(--muted);text-align:center;font-size:10px;line-height:1.4">JPG o PNG · Máx. 2 MB<br>Foto institucional del agente</small>
+  const today=new Date().toLocaleDateString("es-MX",{day:"numeric",month:"long",year:"numeric"});
+  let capturedPhoto=null;
+  openModal({title:"Agregar nuevo agente certificador",subtitle:"Registra sus datos, sede de atención, permisos y carga inicial de solicitudes.",confirm:"Guardar agente",confirmClass:"primary",size:"large",
+    body:`<div style="display:grid;grid-template-columns:148px 1fr;gap:24px;align-items:start">
+      <div style="display:flex;flex-direction:column;align-items:center;gap:10px">
+        <div id="agentPhotoPreview" style="width:120px;height:120px;border-radius:50%;background:var(--brand);color:#fff;display:grid;place-items:center;font-size:36px;font-weight:800;border:3px solid var(--gold-light);overflow:hidden">
+          <span id="agentPhotoInitials">?</span>
         </div>
-        <div class="form-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:14px 20px">
-          <div style="grid-column:1/-1"><h3 style="color:var(--brand);font-size:15px;margin:0 0 4px">Datos del agente</h3></div>
-          <div class="field"><label>Nombre completo *</label><input id="agentName" placeholder="Ej. Laura Martinez Rivera"></div>
-          <div class="field"><label>CURP *</label><input id="agentCurp" placeholder="Clave única de registro" maxlength="18" style="text-transform:uppercase"></div>
-          <div class="field"><label>Correo institucional *</label><input id="agentEmail" placeholder="nombre@tamaulipas.gob.mx" type="email"></div>
-          <div class="field"><label>Teléfono / Extensión</label><input id="agentPhone" placeholder="834 000 0000 ext. 0000"></div>
-          <div style="grid-column:1/-1;margin-top:4px"><h3 style="color:var(--brand);font-size:15px;margin:0 0 4px">Asignación operativa</h3></div>
-          <div class="field"><label>Sede asignada *</label><select id="agentSiteNew"><option value="">Seleccionar...</option><option>Victoria</option><option>Tampico</option><option>Reynosa</option><option>Mante</option></select></div>
-          <div class="field"><label>Rol *</label><select id="agentRole"><option>Agente certificador</option><option>Supervisor</option></select></div>
-          <div class="field"><label>Carga inicial</label><input id="agentLoad" type="number" value="0" min="0"></div>
-          <div class="field"><label>Solicitudes iniciales asignadas</label><input id="agentRequests" type="number" value="0" min="0" readonly style="background:#F4F5F7"></div>
-          <div class="field"><label>Disponibilidad</label><select id="agentAvail"><option>Disponible</option><option>Alta carga</option><option>Inactivo</option></select></div>
-          <div class="field"><label>Fecha de alta</label><input id="agentDate" value="${today}" readonly style="background:#F4F5F7"></div>
-        </div>
-      </div>`,
+        <label style="cursor:pointer;display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--brand);font-weight:700;border:1px solid var(--brand);border-radius:6px;padding:6px 10px">
+          ${icon("camera")} Capturar foto<input type="file" id="agentPhotoInput" accept="image/*" style="display:none">
+        </label>
+        <small style="color:var(--muted);text-align:center;font-size:10px;line-height:1.4">JPG o PNG · Máx. 2 MB</small>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px 20px">
+        <div style="grid-column:1/-1"><h3 style="color:var(--brand);font-size:15px;margin:0 0 4px">Datos del agente</h3></div>
+        <div class="field"><label>Nombre completo *</label><input id="agentName" placeholder="Ej. Laura Martínez Rivera"></div>
+        <div class="field"><label>CURP *</label><input id="agentCurp" placeholder="Clave única de registro" maxlength="18" style="text-transform:uppercase"></div>
+        <div class="field"><label>Correo institucional *</label><input id="agentEmail" placeholder="nombre@tamaulipas.gob.mx" type="email"></div>
+        <div class="field"><label>Teléfono / Extensión</label><input id="agentPhone" placeholder="834 000 0000 ext. 0000"></div>
+        <div style="grid-column:1/-1;margin-top:4px"><h3 style="color:var(--brand);font-size:15px;margin:0 0 4px">Asignación operativa</h3></div>
+        <div class="field"><label>Sede asignada *</label><select id="agentSiteNew"><option value="">Seleccionar...</option><option>Victoria</option><option>Tampico</option><option>Reynosa</option><option>Mante</option></select></div>
+        <div class="field"><label>Rol *</label><select id="agentRole"><option>Agente certificador</option><option>Supervisor</option></select></div>
+        <div class="field"><label>Disponibilidad</label><select id="agentAvail"><option>Disponible</option><option>Alta carga</option><option>Inactivo</option></select></div>
+        <div class="field"><label>Fecha de alta</label><input value="${today}" readonly style="background:#F4F5F7"></div>
+      </div>
+    </div>`,
     onConfirm:()=>{
-      const name=$("#agentName").value.trim();
-      const email=$("#agentEmail").value.trim();
-      const site=$("#agentSiteNew").value;
-      const curp=$("#agentCurp").value.trim().toUpperCase();
+      const name=$("#agentName").value.trim(),email=$("#agentEmail").value.trim(),site=$("#agentSiteNew").value;
       if(!name||!email||!site){toast("Completa los campos obligatorios.","warning");return}
-      const newId="AG-"+String(state.agents.length+1).padStart(5,"0");
-      state.agents.push({
-        id:newId, name, email, curp, site,
-        load:Number($("#agentLoad").value)||0,
-        status:$("#agentAvail").value, role:$("#agentRole").value,
-        availability:$("#agentAvail").value,
-        since:today, requests:Number($("#agentRequests").value)||0,
-        photo: capturedPhoto
-      });
-      closeModal();
-      renderAgents();
-      toast("Agente registrado correctamente.");
+      state.agents.push({id:"AG-"+String(state.agents.length+1).padStart(5,"0"),name,email,curp:$("#agentCurp").value.trim().toUpperCase(),site,load:0,status:$("#agentAvail").value,role:$("#agentRole").value,availability:$("#agentAvail").value,since:today,photo:capturedPhoto});
+      closeModal();renderAgents();toast("Agente registrado correctamente.");
     }
   });
-  // Actualizar iniciales al escribir nombre
   setTimeout(()=>{
-    const nameInput=$("#agentName");
-    if(nameInput) nameInput.oninput=e=>{
-      const parts=e.target.value.trim().split(" ").filter(Boolean);
-      const initials=parts.length>=2?parts[0][0]+parts[1][0]:parts[0]?parts[0][0]:"?";
-      const initialsEl=$("#agentPhotoInitials");
-      if(initialsEl&&!capturedPhoto) initialsEl.textContent=initials.toUpperCase();
-    };
-    const photoInput=$("#agentPhotoInput");
-    if(photoInput) photoInput.onchange=e=>{
-      const file=e.target.files[0];
-      if(!file) return;
-      if(file.size>2*1024*1024){toast("La imagen no debe superar 2 MB.","warning");return}
-      const reader=new FileReader();
-      reader.onload=ev=>{
-        capturedPhoto=ev.target.result;
-        const preview=$("#agentPhotoPreview");
-        if(preview) preview.innerHTML=`<img src="${capturedPhoto}" style="width:100%;height:100%;object-fit:cover">`;
-      };
-      reader.readAsDataURL(file);
-    };
+    const ni=$("#agentName");if(ni) ni.oninput=e=>{const p=e.target.value.trim().split(" ").filter(Boolean);const i=(p.length>=2?p[0][0]+p[1][0]:p[0]?p[0][0]:"?").toUpperCase();const el=$("#agentPhotoInitials");if(el&&!capturedPhoto)el.textContent=i;};
+    const pi=$("#agentPhotoInput");if(pi) pi.onchange=e=>{const f=e.target.files[0];if(!f)return;if(f.size>2097152){toast("La imagen no debe superar 2 MB.","warning");return}const r=new FileReader();r.onload=ev=>{capturedPhoto=ev.target.result;const pr=$("#agentPhotoPreview");if(pr)pr.innerHTML=`<img src="${capturedPhoto}" style="width:100%;height:100%;object-fit:cover">`};r.readAsDataURL(f);};
   },100);
 }
-
 function openEditAgentModal(agentId){
-  const agent=state.agents.find(a=>a.id===agentId);
-  if(!agent) return;
-  let capturedPhoto = agent.photo || null;
-  const initials=(()=>{const parts=agent.name.trim().split(" ").filter(Boolean);return parts.length>=2?parts[0][0]+parts[1][0]:parts[0]?parts[0][0]:"?"})().toUpperCase();
-  const avatarHtml=capturedPhoto
-    ?`<img src="${capturedPhoto}" style="width:100%;height:100%;object-fit:cover">`
-    :`<span>${initials}</span>`;
-  openModal({
-    title:"Editar agente certificador",
-    subtitle:"Modifica los datos del agente, sede de atención, permisos o carga de solicitudes.",
-    confirm:"Guardar cambios",
-    confirmClass:"primary",
-    size:"large",
-    body:`
-      <div style="display:grid;grid-template-columns:148px 1fr;gap:24px;align-items:start">
-        <div style="display:flex;flex-direction:column;align-items:center;gap:10px">
-          <div id="agentPhotoPreview" style="width:120px;height:120px;border-radius:50%;background:var(--brand);color:#fff;display:grid;place-items:center;font-size:36px;font-weight:800;border:3px solid var(--gold-light);overflow:hidden;flex-shrink:0">
-            ${avatarHtml}
-          </div>
-          <label style="cursor:pointer;display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--brand);font-weight:700;border:1px solid var(--brand);border-radius:6px;padding:6px 10px">
-            ${icon("camera")} ${capturedPhoto?"Cambiar foto":"Capturar foto"}
-            <input type="file" id="agentPhotoInput" accept="image/*" style="display:none">
-          </label>
-          <small style="color:var(--muted);text-align:center;font-size:10px;line-height:1.4">JPG o PNG · Máx. 2 MB</small>
+  const agent=state.agents.find(a=>a.id===agentId);if(!agent)return;
+  let capturedPhoto=agent.photo||null;
+  openModal({title:"Editar agente certificador",subtitle:"Modifica los datos del agente, sede de atención, permisos o carga.",confirm:"Guardar cambios",confirmClass:"primary",size:"large",
+    body:`<div style="display:grid;grid-template-columns:148px 1fr;gap:24px;align-items:start">
+      <div style="display:flex;flex-direction:column;align-items:center;gap:10px">
+        <div id="agentPhotoPreview" style="width:120px;height:120px;border-radius:50%;background:var(--brand);color:#fff;display:grid;place-items:center;font-size:36px;font-weight:800;border:3px solid var(--gold-light);overflow:hidden">
+          ${capturedPhoto?`<img src="${capturedPhoto}" style="width:100%;height:100%;object-fit:cover">`:`<span>${agentAvatar(agent).match(/>[^<]+</)?agentAvatar(agent).match(/>[A-Z]+</)?.[0]?.replace(/[><]/g,""):agent.name[0]}</span>`}
         </div>
-        <div class="form-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:14px 20px">
-          <div style="grid-column:1/-1"><h3 style="color:var(--brand);font-size:15px;margin:0 0 4px">Datos del agente</h3></div>
-          <div class="field"><label>Nombre completo *</label><input id="editAgentName" value="${agent.name}"></div>
-          <div class="field"><label>CURP</label><input id="editAgentCurp" value="${agent.curp||""}" maxlength="18" style="text-transform:uppercase" placeholder="Clave única de registro"></div>
-          <div class="field"><label>Correo institucional *</label><input id="editAgentEmail" value="${agent.email}" type="email"></div>
-          <div class="field"><label>Teléfono / Extensión</label><input id="editAgentPhone" placeholder="834 000 0000 ext. 0000"></div>
-          <div style="grid-column:1/-1;margin-top:4px"><h3 style="color:var(--brand);font-size:15px;margin:0 0 4px">Asignación operativa</h3></div>
-          <div class="field"><label>Sede asignada *</label><select id="editAgentSite">${["Victoria","Tampico","Reynosa","Mante"].map(s=>`<option ${agent.site===s?"selected":""}>${s}</option>`).join("")}</select></div>
-          <div class="field"><label>Rol</label><input id="editAgentRole" value="${agent.role}" readonly style="background:#F4F5F7"></div>
-          <div class="field"><label>Carga actual</label><input value="${agent.load}" readonly style="background:#F4F5F7"></div>
-          <div class="field"><label>Disponibilidad</label><select id="editAgentAvail">${["Disponible","Alta carga","Inactivo"].map(s=>`<option ${agent.availability===s?"selected":""}>${s}</option>`).join("")}</select></div>
-          <div class="field"><label>ID del agente</label><input value="${agent.id}" readonly style="background:#F4F5F7"></div>
-          <div class="field"><label>Fecha de alta</label><input value="${agent.since}" readonly style="background:#F4F5F7"></div>
-        </div>
+        <label style="cursor:pointer;display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--brand);font-weight:700;border:1px solid var(--brand);border-radius:6px;padding:6px 10px">
+          ${icon("camera")} ${capturedPhoto?"Cambiar foto":"Capturar foto"}<input type="file" id="agentPhotoInput" accept="image/*" style="display:none">
+        </label>
       </div>
-      <div class="notice" style="margin-top:16px">${icon("file-text")}<strong> Registro en bitácora</strong><br><small>Los cambios realizados quedarán registrados automáticamente en la bitácora del sistema con fecha, hora y usuario que ejecuta la modificación.</small></div>`,
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px 20px">
+        <div style="grid-column:1/-1"><h3 style="color:var(--brand);font-size:15px;margin:0 0 4px">Datos del agente</h3></div>
+        <div class="field"><label>Nombre completo *</label><input id="editAgentName" value="${agent.name}"></div>
+        <div class="field"><label>CURP</label><input id="editAgentCurp" value="${agent.curp||""}" maxlength="18" style="text-transform:uppercase"></div>
+        <div class="field"><label>Correo institucional *</label><input id="editAgentEmail" value="${agent.email}" type="email"></div>
+        <div style="grid-column:1/-1;margin-top:4px"><h3 style="color:var(--brand);font-size:15px;margin:0 0 4px">Asignación operativa</h3></div>
+        <div class="field"><label>Sede asignada *</label><select id="editAgentSite">${["Victoria","Tampico","Reynosa","Mante"].map(s=>`<option ${agent.site===s?"selected":""}>${s}</option>`).join("")}</select></div>
+        <div class="field"><label>Disponibilidad</label><select id="editAgentAvail">${["Disponible","Alta carga","Inactivo"].map(s=>`<option ${agent.availability===s?"selected":""}>${s}</option>`).join("")}</select></div>
+        <div class="field"><label>ID del agente</label><input value="${agent.id}" readonly style="background:#F4F5F7"></div>
+        <div class="field"><label>Fecha de alta</label><input value="${agent.since}" readonly style="background:#F4F5F7"></div>
+      </div>
+    </div>
+    <div class="notice" style="margin-top:16px">${icon("file-text")}<strong> Registro en bitácora</strong> — Los cambios quedarán registrados automáticamente.</div>`,
     onConfirm:()=>{
-      const name=$("#editAgentName").value.trim();
-      const email=$("#editAgentEmail").value.trim();
-      const site=$("#editAgentSite").value;
+      const name=$("#editAgentName").value.trim(),email=$("#editAgentEmail").value.trim(),site=$("#editAgentSite").value;
       if(!name||!email||!site){toast("Completa los campos obligatorios.","warning");return}
-      agent.name=name; agent.email=email; agent.site=site;
-      agent.curp=$("#editAgentCurp").value.trim().toUpperCase();
-      agent.availability=$("#editAgentAvail").value;
-      agent.status=agent.availability;
-      agent.photo=capturedPhoto;
-      closeModal();
-      renderAgents();
-      toast("Datos del agente actualizados.");
+      agent.name=name;agent.email=email;agent.site=site;agent.curp=$("#editAgentCurp").value.trim().toUpperCase();agent.availability=$("#editAgentAvail").value;agent.status=agent.availability;agent.photo=capturedPhoto;
+      closeModal();renderAgents();toast("Datos del agente actualizados.");
     }
   });
-  setTimeout(()=>{
-    const photoInput=$("#agentPhotoInput");
-    if(photoInput) photoInput.onchange=e=>{
-      const file=e.target.files[0];
-      if(!file) return;
-      if(file.size>2*1024*1024){toast("La imagen no debe superar 2 MB.","warning");return}
-      const reader=new FileReader();
-      reader.onload=ev=>{
-        capturedPhoto=ev.target.result;
-        const preview=$("#agentPhotoPreview");
-        if(preview) preview.innerHTML=`<img src="${capturedPhoto}" style="width:100%;height:100%;object-fit:cover">`;
-      };
-      reader.readAsDataURL(file);
-    };
-  },100);
+  setTimeout(()=>{const pi=$("#agentPhotoInput");if(pi)pi.onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{capturedPhoto=ev.target.result;const pr=$("#agentPhotoPreview");if(pr)pr.innerHTML=`<img src="${capturedPhoto}" style="width:100%;height:100%;object-fit:cover">`};r.readAsDataURL(f);};},100);
 }
-
 function openDeactivateAgentModal(agentId){
-  const agent=state.agents.find(a=>a.id===agentId);
-  if(!agent) return;
-  openModal({
-    title:"Dar de baja agente certificador",
-    subtitle:"Esta acción revocará inmediatamente todos los permisos de acceso del agente.",
-    confirm:"Confirmar baja",
-    confirmClass:"danger",
-    size:"large",
-    body:`
-      <div style="border:1px solid #F8D0D8;background:#FEF0F3;border-radius:8px;padding:14px 16px;margin-bottom:16px">
-        <small style="color:var(--brand);font-weight:800;font-size:11px">Agente a dar de baja:</small>
-        <strong style="display:block;margin-top:6px;font-size:15px">${agent.name}</strong>
-        <span style="color:var(--muted);font-size:12px">${agent.email}</span>
-      </div>
-      <div style="border:1px solid #F0D98E;background:#FFFBEA;border-radius:8px;padding:14px 16px;margin-bottom:16px">
-        <strong style="color:#9A6E00;display:flex;align-items:center;gap:6px;margin-bottom:10px">${icon("alert")} Consecuencias de esta acción:</strong>
-        <ul style="margin:0;padding-left:20px;color:var(--gray);font-size:13px;line-height:1.8">
-          <li>Revocación inmediata de todos los permisos de acceso al sistema</li>
-          <li>Las solicitudes asignadas deberán ser reasignadas manualmente</li>
-          <li>El agente no podrá iniciar sesión ni realizar operaciones</li>
-          <li>Se generará un registro permanente en la bitácora del sistema</li>
-        </ul>
-      </div>
-      <div class="field"><label>Motivo de la baja *</label><input id="deactivateReason" placeholder=""></div>
-      <div class="field" style="margin-top:12px"><label>Observaciones adicionales *</label><textarea id="deactivateObs" rows="4" placeholder="Describe el motivo de la baja y cualquier detalle relevante..." style="width:100%;resize:vertical"></textarea></div>
-      <label style="display:flex;align-items:flex-start;gap:10px;border:1px solid var(--line);border-radius:8px;padding:13px 15px;margin-top:12px;cursor:pointer">
-        <input type="checkbox" id="deactivateConfirm" style="margin-top:2px;accent-color:var(--brand)">
-        <span style="font-size:13px">Confirmo que deseo dar de baja a este agente y revocar todos sus permisos de acceso de forma inmediata</span>
-      </label>`,
+  const agent=state.agents.find(a=>a.id===agentId);if(!agent)return;
+  openModal({title:"Dar de baja agente certificador",subtitle:"Esta acción revocará inmediatamente todos los permisos de acceso del agente.",confirm:"Confirmar baja",confirmClass:"danger",size:"large",
+    body:`<div style="border:1px solid #F8D0D8;background:#FEF0F3;border-radius:8px;padding:14px 16px;margin-bottom:16px">
+      <small style="color:var(--brand);font-weight:800;font-size:11px">Agente a dar de baja:</small>
+      <strong style="display:block;margin-top:6px;font-size:15px">${agent.name}</strong>
+      <span style="color:var(--muted);font-size:12px">${agent.email}</span>
+    </div>
+    <div style="border:1px solid #F0D98E;background:#FFFBEA;border-radius:8px;padding:14px 16px;margin-bottom:16px">
+      <strong style="color:#9A6E00;display:flex;align-items:center;gap:6px;margin-bottom:10px">${icon("alert")} Consecuencias de esta acción:</strong>
+      <ul style="margin:0;padding-left:20px;color:var(--gray);font-size:13px;line-height:1.8">
+        <li>Revocación inmediata de todos los permisos de acceso al sistema</li>
+        <li>Las solicitudes asignadas deberán ser reasignadas manualmente</li>
+        <li>El agente no podrá iniciar sesión ni realizar operaciones</li>
+        <li>Se generará un registro permanente en la bitácora del sistema</li>
+      </ul>
+    </div>
+    <div class="field"><label>Motivo de la baja *</label><input id="deactivateReason" placeholder=""></div>
+    <div class="field" style="margin-top:12px"><label>Observaciones adicionales *</label><textarea id="deactivateObs" rows="4" placeholder="Describe el motivo de la baja y cualquier detalle relevante..." style="width:100%;resize:vertical"></textarea></div>
+    <label style="display:flex;align-items:flex-start;gap:10px;border:1px solid var(--line);border-radius:8px;padding:13px 15px;margin-top:12px;cursor:pointer">
+      <input type="checkbox" id="deactivateConfirm" style="margin-top:2px;accent-color:var(--brand)">
+      <span style="font-size:13px">Confirmo que deseo dar de baja a este agente y revocar todos sus permisos de acceso de forma inmediata</span>
+    </label>`,
     onConfirm:()=>{
       if(!$("#deactivateConfirm").checked){toast("Debes confirmar la acción antes de continuar.","warning");return}
       if(!$("#deactivateReason").value.trim()){toast("Captura el motivo de la baja.","warning");return}
-      agent.status="Inactivo"; agent.availability="Inactivo"; agent.load=0;
-      closeModal();
-      renderAgents();
-      toast("Agente dado de baja correctamente.","warning");
+      agent.status="Inactivo";agent.availability="Inactivo";agent.load=0;
+      closeModal();renderAgents();toast("Agente dado de baja correctamente.","warning");
     }
   });
 }
-
 function renderAgents(){
   const active=state.agents.filter(a=>a.status!=="Inactivo");
-  const totalLoad=state.agents.reduce((sum,a)=>sum+a.load,0);
-  const sites=[...new Set(state.agents.filter(a=>a.status!=="Inactivo").map(a=>a.site))];
+  const totalLoad=state.agents.reduce((s,a)=>s+a.load,0);
+  const sites=[...new Set(active.map(a=>a.site))];
   const incidents=state.agents.filter(a=>a.status==="Alta carga");
-
   const filtered=state.agents.filter(a=>{
-    const matchSearch=(a.name+" "+a.email).toLowerCase().includes(state.agentSearch.toLowerCase());
-    const matchSite=state.agentSite==="all"||a.site===state.agentSite;
-    const matchStatus=state.agentStatus==="all"||a.status===state.agentStatus;
+    const matchSearch=(a.name+" "+a.email).toLowerCase().includes((state.agentSearch||"").toLowerCase());
+    const matchSite=(state.agentSite||"all")==="all"||a.site===state.agentSite;
+    const matchStatus=(state.agentStatus||"all")==="all"||a.status===state.agentStatus;
     return matchSearch&&matchSite&&matchStatus;
   });
-
   content.innerHTML=pageHeader("Agentes certificadores","Administra altas, bajas, sedes, carga operativa, permisos y reasignación de solicitudes.",
-    `<button class="button primary" id="newAgentBtn">${icon("plus")}Nuevo Agente</button>`)+
+    `<button class="button primary" id="newAgentBtn">${icon("plus")}Nuevo agente</button>`)+
   `<section class="stats-grid" style="margin-bottom:22px">
     <article class="stat-card"><span class="stat-icon">${icon("file-check")}</span><div><h3>Agentes activos</h3><strong>${active.length}</strong></div><small class="positive">${active.length-incidents.length} disponibles</small></article>
     <article class="stat-card blue"><span class="stat-icon" style="background:var(--blue-bg);color:var(--blue)">${icon("clipboard")}</span><div><h3>Solicitudes asignadas</h3><strong>${totalLoad}</strong></div><small>Carga operativa actual</small></article>
-    <article class="stat-card amber"><span class="stat-icon" style="background:var(--amber-bg);color:var(--amber)">${icon("calendar")}</span><div><h3>Sedes activas</h3><strong>${sites.length}</strong></div><small>${sites.join(", ")}</small></article>
-    <article class="stat-card"><span class="stat-icon">${icon("alert")}</span><div><h3>Incidencias</h3><strong>${incidents.length}</strong></div><small style="color:var(--red)">Requieren reasignación</small></article>
+    <article class="stat-card amber"><span class="stat-icon" style="background:var(--amber-bg);color:var(--amber)">${icon("calendar")}</span><div><h3>Sedes activas</h3><strong>${sites.length}</strong></div><small>${sites.join(", ")||"—"}</small></article>
+    <article class="stat-card"><span class="stat-icon">${icon("alert")}</span><div><h3>Incidencias</h3><strong>${incidents.length}</strong></div><small style="color:var(--red)">${incidents.length>0?"Requieren reasignación":"Sin incidencias"}</small></article>
   </section>
-  <section class="filter-disclosure" id="agentFilterSection">
-    <button class="filter-disclosure-trigger" id="agentFilterToggle" style="width:100%">
-      <span><strong style="display:flex;align-items:center;gap:8px">${icon("search")}Filtros</strong></span>
-      <span class="filter-chevron">${icon("chevron-down")}</span>
-    </button>
-    <div class="filter-disclosure-body" id="agentFilterBody" hidden>
-      <div class="filter-panel embedded" style="display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:12px;padding:16px 0 0">
-        <div class="field"><label>Sede</label><select id="filterAgentSite"><option value="all">Todas</option>${["Victoria","Tampico","Reynosa","Mante"].map(s=>`<option ${state.agentSite===s?"selected":""}>${s}</option>`).join("")}</select></div>
-        <div class="field"><label>Estatus</label><select id="filterAgentStatus"><option value="all">Todos</option>${["Disponible","Alta carga","Inactivo"].map(s=>`<option ${state.agentStatus===s?"selected":""}>${s}</option>`).join("")}</select></div>
-        <button class="button secondary" id="clearAgentFilters" style="align-self:end">Limpiar filtros</button>
-      </div>
-    </div>
-  </section>
-  <section class="card table-card frest-table-card" style="margin-top:16px">
-    <div class="card-header"><div><h2>Listado de agentes</h2></div>
+  <section class="card table-card frest-table-card">
+    <div class="card-header">
+      <div><h2>Listado de agentes</h2></div>
       <div style="display:flex;gap:10px;align-items:center">
-        <button class="button ghost small" id="exportAgents">${icon("download")}Export</button>
+        <select id="filterAgentSite" style="font-size:12px;padding:7px 10px;border:1px solid var(--line);border-radius:6px"><option value="all">Todas las sedes</option>${["Victoria","Tampico","Reynosa","Mante"].map(s=>`<option ${(state.agentSite||"all")===s?"selected":""}>${s}</option>`).join("")}</select>
+        <select id="filterAgentStatus" style="font-size:12px;padding:7px 10px;border:1px solid var(--line);border-radius:6px"><option value="all">Todos los estatus</option>${["Disponible","Alta carga","Inactivo"].map(s=>`<option ${(state.agentStatus||"all")===s?"selected":""}>${s}</option>`).join("")}</select>
+        <button class="button ghost small" id="exportAgents">${icon("download")}Exportar</button>
       </div>
     </div>
-    ${dataTableToolbar("agents","agentSearch",state.agentSearch,"exportAgentsToolbar",state.agents.length)}
+    ${dataTableToolbar("agents","agentSearch",state.agentSearch||"","exportAgentsToolbar",state.agents.length)}
     <div class="table-wrap"><table><thead><tr><th>Agente</th><th>CURP</th><th>Sede</th><th>Carga</th><th>Estatus</th><th>Acciones</th></tr></thead>
-    <tbody>${filtered.length?filtered.map(a=>{
-      const parts=a.name.trim().split(" ").filter(Boolean);
-      const initials=(parts.length>=2?parts[0][0]+parts[1][0]:parts[0]?parts[0][0]:"?").toUpperCase();
-      const avatar=a.photo
-        ?`<img src="${a.photo}" style="width:36px;height:36px;border-radius:50%;object-fit:cover;border:2px solid var(--gold-light);flex-shrink:0">`
-        :`<span style="width:36px;height:36px;border-radius:50%;background:var(--brand);color:#fff;display:grid;place-items:center;font-size:13px;font-weight:800;flex-shrink:0;border:2px solid var(--gold-light)">${initials}</span>`;
-      return `<tr>
-      <td><div style="display:flex;align-items:center;gap:10px">${avatar}<div><strong>${a.name}</strong><span class="subtext">${a.email}</span></div></div></td>
-      <td><span style="font-family:monospace;font-size:12px;color:var(--gray)">${a.curp||`<span style="color:var(--muted);font-style:italic">No registrada</span>`}</span></td>
+    <tbody>${filtered.length?filtered.map(a=>`<tr>
+      <td><div style="display:flex;align-items:center;gap:10px">${agentAvatar(a)}<div><strong>${a.name}</strong><span class="subtext">${a.email}</span></div></div></td>
+      <td><span style="font-family:monospace;font-size:12px;color:var(--gray);white-space:nowrap;letter-spacing:.03em">${a.curp||`<span style="color:var(--muted);font-style:italic">No registrada</span>`}</span></td>
       <td>${a.site}</td>
       <td><strong style="color:${a.load>=15?"var(--red)":a.load>=10?"var(--amber)":"var(--blue)"}">${a.load}</strong></td>
       <td>${agentStatusBadge(a.status)}</td>
       <td><div class="actions-cell">
-        <button class="action-icon warning" data-edit-agent="${a.id}" title="Editar agente">${icon("edit")}</button>
+        <button class="action-icon warning" data-edit-agent="${a.id}" title="Editar">${icon("edit")}</button>
         <button class="action-icon danger" data-deactivate-agent="${a.id}" title="Dar de baja">${icon("ban")}</button>
       </div></td>
-    </tr>`}).join(""):`<tr><td colspan="6" class="empty-state">No hay agentes con estos criterios.</td></tr>`}
+    </tr>`).join(""):`<tr><td colspan="6" class="empty-state">No hay agentes con estos criterios.</td></tr>`}
     </tbody></table></div>
-    <div class="pagination"><span>Mostrando ${filtered.length?1:0} a ${filtered.length} de ${filtered.length} registros</span><div class="pagination-buttons"><button disabled>Anterior</button><button class="active">1</button><button disabled>Siguiente</button></div></div>
+    <div class="pagination"><span>Mostrando ${filtered.length} de ${state.agents.length} agentes</span><div class="pagination-buttons"><button disabled>Anterior</button><button class="active">1</button><button disabled>Siguiente</button></div></div>
   </section>
   <div class="notice" style="margin-top:16px"><strong>Acciones de administrador:</strong> Dar de alta/baja agentes, asignar sede, cambiar permisos, distribuir solicitudes y reasignar carga por incidencia o disponibilidad.</div>`;
-
   $("#newAgentBtn").onclick=openAddAgentModal;
-  $("#agentSearch").oninput=e=>{state.agentSearch=e.target.value;renderAgents()};
+  if($("#agentSearch")) $("#agentSearch").oninput=e=>{state.agentSearch=e.target.value;renderAgents()};
   if($("#filterAgentSite")) $("#filterAgentSite").onchange=e=>{state.agentSite=e.target.value;renderAgents()};
   if($("#filterAgentStatus")) $("#filterAgentStatus").onchange=e=>{state.agentStatus=e.target.value;renderAgents()};
-  if($("#clearAgentFilters")) $("#clearAgentFilters").onclick=()=>{state.agentSearch="";state.agentSite="all";state.agentStatus="all";renderAgents()};
-  if($("#agentFilterToggle")) $("#agentFilterToggle").onclick=()=>{const body=$("#agentFilterBody");body.hidden=!body.hidden;$("#agentFilterSection").classList.toggle("open",!body.hidden)};
-  if($("#exportAgents")) $("#exportAgents").onclick=()=>exportTable("agentes-feat",["ID","Nombre","Correo","Sede","Carga","Estatus"],filtered.map(a=>[a.id,a.name,a.email,a.site,a.load,a.status]));
-  if($("#exportAgentsToolbar")) $("#exportAgentsToolbar").onclick=()=>exportTable("agentes-feat",["ID","Nombre","Correo","Sede","Carga","Estatus"],filtered.map(a=>[a.id,a.name,a.email,a.site,a.load,a.status]));
-  if($("#agentsPageSize")) $("#agentsPageSize").onchange=e=>{renderAgents()};
+  if($("#exportAgents")) $("#exportAgents").onclick=()=>exportTable("agentes-feat",["ID","Nombre","CURP","Sede","Carga","Estatus"],filtered.map(a=>[a.id,a.name,a.curp||"",a.site,a.load,a.status]));
   $$("[data-edit-agent]").forEach(b=>b.onclick=()=>openEditAgentModal(b.dataset.editAgent));
   $$("[data-deactivate-agent]").forEach(b=>b.onclick=()=>openDeactivateAgentModal(b.dataset.deactivateAgent));
+  bindCommonActions();
 }
-
 function renderSettings(){
   if(state.settingsScreen==="exception") return renderNewException();
   if(["sites","calendar"].includes(state.activeSettingNav)) return renderSiteCalendar();
@@ -2537,7 +2861,6 @@ function renderSettings(){
 function selectSettingSubmodule(id){
   state.activeSettingNav=id;
   state.settingsScreen=id==="general"?"general":["sites","calendar"].includes(id)?"calendar":id;
-  state.procedureDetailView=false;
   navigate("settings");
 }
 
@@ -2693,10 +3016,10 @@ function navigate(view){
   state.view=view;
   if(state.role==="admin"&&adminSubmenus[view]){
     state.expandedMenus[view]=true;
-    if(view==="catalogs"&&!state.activeCatalogNav) state.activeCatalogNav="all";
+    if(view==="catalogs"&&!state.activeCatalogNav) state.activeCatalogNav="tramites";
   }
   renderNavigation();
-  const renderers={dashboard:renderDashboard,requests:renderRequests,review:renderReview,appointments:renderAppointments,attend:renderAttend,procedures:renderProcedures,certificates:renderCertificates,catalogs:renderCatalogs,reports:renderReports,settings:renderSettings};
+  const renderers={dashboard:renderDashboard,requests:renderRequests,review:renderReview,appointments:renderAppointments,attend:renderAttend,acta:renderActaEmision,procedures:renderProcedures,certificates:renderCertificates,catalogs:renderCatalogs,reports:renderReports,settings:renderSettings};
   (renderers[view]||renderDashboard)();
   content.focus();window.scrollTo({top:0,behavior:"smooth"});
   $("#sidebar").classList.remove("open");
