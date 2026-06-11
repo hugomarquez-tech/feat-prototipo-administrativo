@@ -795,13 +795,13 @@ const state = {
   biometrics: { photo: false, fingerprint: false, signature: false },
   physicalChecks: { identity: false, originals: false, consent: false, duplicate: false },
   requests: [
-    { id:"FEAT-2026-041001", name:"Juan Pérez García", dependency:"Secretaría de Salud", type:"Emisión", status:"Pendiente", agent:"Luis Hernández", site:"Victoria Centro", date:"20 may 2026", priority:"Alta", deadline:"18 h hábiles", appointment:"22 may 2026 · 08:30", labor:"Servidor público", observations:0 },
-    { id:"FEAT-2026-041000", name:"María González López", dependency:"DIF Tamaulipas", type:"Renovación", status:"Observada", agent:"Luis Hernández", site:"Victoria Centro", date:"19 may 2026", priority:"Alta", deadline:"8 h hábiles", appointment:"Pendiente", labor:"Servidor público", observations:2 },
-    { id:"FEAT-2026-040998", name:"Ana Laura Martínez", dependency:"Secretaría de Educación", type:"Emisión", status:"En revisión", agent:"Luis Hernández", site:"Victoria Centro", date:"19 may 2026", priority:"Media", deadline:"31 h hábiles", appointment:"24 may 2026 · 14:30", labor:"Servidor público", observations:0 },
+    { id:"FEAT-2026-041001", name:"Juan Pérez García", dependency:"Secretaría de Salud", depType:"Gobierno Central", type:"Emisión", status:"Pendiente", agent:"Luis Hernández", site:"Victoria Centro", date:"20 may 2026", priority:"Alta", deadline:"18 h hábiles", appointment:"22 may 2026 · 08:30", labor:"Servidor público", observations:0 },
+    { id:"FEAT-2026-041000", name:"María González López", dependency:"DIF Tamaulipas", depType:"Organismo Público Descentralizado (OPD)", type:"Renovación", status:"Observada", agent:"Luis Hernández", site:"Victoria Centro", date:"19 may 2026", priority:"Alta", deadline:"8 h hábiles", appointment:"Pendiente", labor:"Servidor público", observations:2 },
+    { id:"FEAT-2026-040998", name:"Ana Laura Martínez", dependency:"Secretaría de Educación", depType:"Gobierno Central", type:"Emisión", status:"En revisión", agent:"Luis Hernández", site:"Victoria Centro", date:"19 may 2026", priority:"Media", deadline:"31 h hábiles", appointment:"24 may 2026 · 14:30", labor:"Servidor público", observations:0 },
     { id:"FEAT-2026-040995", name:"Roberto Hernández Cruz", dependency:"Ciudadano", type:"Renovación", status:"Aprobada", agent:"Luis Hernández", site:"Victoria Centro", date:"18 may 2026", priority:"Baja", deadline:"Atendida", appointment:"23 may 2026 · 10:00", labor:"Ciudadano", observations:0 },
-    { id:"FEAT-2026-040992", name:"Laura Ramírez Flores", dependency:"DIF Tamaulipas", type:"Revocación", status:"Rechazada", agent:"Luis Hernández", site:"Victoria Centro", date:"17 may 2026", priority:"Media", deadline:"Cerrada", appointment:"No aplica", labor:"Servidor público", observations:1 },
+    { id:"FEAT-2026-040992", name:"Laura Ramírez Flores", dependency:"DIF Tamaulipas", depType:"Organismo Público Descentralizado (OPD)", type:"Revocación", status:"Rechazada", agent:"Luis Hernández", site:"Victoria Centro", date:"17 may 2026", priority:"Media", deadline:"Cerrada", appointment:"No aplica", labor:"Servidor público", observations:1 },
     { id:"FEAT-2026-040990", name:"Sofía Guadalupe Torres", dependency:"Secretaría de Bienestar Social", type:"Emisión", status:"Pendiente", agent:"Luis Hernández", site:"Victoria Centro", date:"20 may 2026", priority:"Alta", deadline:"12 h hábiles", appointment:"Pendiente", labor:"Servidor público", observations:0 },
-    { id:"FEAT-2026-040987", name:"Miguel Ángel Vargas", dependency:"Secretaría de Finanzas", type:"Renovación", status:"En revisión", agent:"Luis Hernández", site:"Victoria Centro", date:"20 may 2026", priority:"Media", deadline:"26 h hábiles", appointment:"Pendiente", labor:"Servidor público", observations:0 },
+    { id:"FEAT-2026-040987", name:"Miguel Ángel Vargas", dependency:"Secretaría de Finanzas", depType:"Gobierno Central", type:"Renovación", status:"En revisión", agent:"Luis Hernández", site:"Victoria Centro", date:"20 may 2026", priority:"Media", deadline:"26 h hábiles", appointment:"Pendiente", labor:"Servidor público", observations:0 },
     { id:"FEAT-2026-040981", name:"Patricia Ramírez Cruz", dependency:"Ciudadano", type:"Emisión", status:"Observada", agent:"Luis Hernández", site:"Victoria Centro", date:"18 may 2026", priority:"Alta", deadline:"5 h hábiles", appointment:"Pendiente", labor:"Ciudadano", observations:1 }
   ],
   appointments: [
@@ -912,16 +912,37 @@ const catalogDefinitions = [
     ]
   },
   {
-    id:"dependencias", icon:"library", title:"Dependencias y entidades", group:"Operación",
-    description:"Adscripciones institucionales válidas para cotejar los datos laborales.",
-    columns:["Clave","Dependencia o entidad","Sector","Tipo","Estatus"],
+    id:"tipos-dependencia", icon:"library", title:"Tipos de dependencia", group:"Operación",
+    description:"Clasificación institucional que determina el tipo de adscripción del solicitante.",
+    columns:["Clave","Tipo de dependencia","Descripción","Aplica a","Estatus"],
     rows:[
-      ["SEC-ADM","Secretaría de Administración","Administración pública","Secretaría","Activa"],
-      ["SEC-FIN","Secretaría de Finanzas","Administración pública","Secretaría","Activa"],
-      ["SEC-SAL","Secretaría de Salud","Salud","Secretaría","Activa"],
-      ["SEC-EDU","Secretaría de Educación","Educación","Secretaría","Activa"],
-      ["DIF-TAM","Sistema DIF Tamaulipas","Bienestar social","Organismo público","Activa"],
-      ["AIIDT","Agencia de Innovación e Inteligencia Digital","Tecnología","Organismo público","Activa"]
+      ["TD-01","Gobierno Central","Secretarías y dependencias del Ejecutivo Estatal","Servidores públicos de mandos medios y superiores","Activo"],
+      ["TD-02","Organismo Público Descentralizado (OPD)","Entidades con personalidad jurídica propia","Personal de organismos como DIF, COMAPA, IMSS-Tamaulipas","Activo"],
+      ["TD-03","Municipal","Presidencias municipales y dependencias municipales","Servidores públicos de los 43 municipios de Tamaulipas","Activo"],
+      ["TD-04","Poder Legislativo","H. Congreso del Estado de Tamaulipas","Diputados y personal administrativo del Congreso","Activo"],
+      ["TD-05","Poder Judicial","Tribunal Superior de Justicia","Magistrados, jueces y personal judicial","Activo"],
+      ["TD-06","Órgano Autónomo","Entidades con autonomía constitucional","IEEM, IJET, CEDH y similares","Activo"]
+    ]
+  },
+  {
+    id:"dependencias", icon:"library", title:"Dependencias", group:"Operación",
+    description:"Adscripciones institucionales válidas para cotejar los datos laborales del solicitante.",
+    columns:["Clave","Tipo de dependencia","Nombre de la dependencia","Sector","Estatus"],
+    rows:[
+      ["SEC-ADM","Gobierno Central","Secretaría de Administración","Administración pública","Activa"],
+      ["SEC-FIN","Gobierno Central","Secretaría de Finanzas","Finanzas públicas","Activa"],
+      ["SEC-SAL","Gobierno Central","Secretaría de Salud","Salud","Activa"],
+      ["SEC-EDU","Gobierno Central","Secretaría de Educación","Educación","Activa"],
+      ["SEC-SEG","Gobierno Central","Secretaría de Seguridad Pública","Seguridad","Activa"],
+      ["SEC-OBP","Gobierno Central","Secretaría de Obras Públicas","Infraestructura","Activa"],
+      ["DIF-TAM","Organismo Público Descentralizado (OPD)","Sistema DIF Tamaulipas","Bienestar social","Activa"],
+      ["AIIDT","Organismo Público Descentralizado (OPD)","Agencia de Innovación e Inteligencia Digital","Tecnología","Activa"],
+      ["COMAPA","Organismo Público Descentralizado (OPD)","COMAPA Victoria","Servicios hidráulicos","Activa"],
+      ["MUN-VIC","Municipal","Municipio de Victoria","Gobierno municipal","Activa"],
+      ["MUN-TAM","Municipal","Municipio de Tampico","Gobierno municipal","Activa"],
+      ["MUN-REY","Municipal","Municipio de Reynosa","Gobierno municipal","Activa"],
+      ["CONG-TAM","Poder Legislativo","H. Congreso del Estado de Tamaulipas","Legislativo","Activa"],
+      ["TSJ-TAM","Poder Judicial","Tribunal Superior de Justicia","Judicial","Activa"]
     ]
   },
   {
@@ -1018,6 +1039,7 @@ const adminSubmenus = {
     ["requisitos","Requisitos"],
     ["documentos","Tipos de documento"],
     ["sedes","Sedes"],
+    ["tipos-dependencia","Tipos de dependencia"],
     ["dependencias","Dependencias"],
     ["motivos-cita","Motivos de cita"],
     ["observaciones","Motivos de observación"],
@@ -1610,7 +1632,7 @@ function requestTab(request){
   if(state.activeTab==="labor") return `<div class="info-panel">
     <p class="info-section-title">Datos laborales</p>
     <div class="info-grid">
-      <div class="info-field"><small>Tipo de persona</small><strong>${request.labor}</strong></div>
+      <div class="info-field"><small>Tipo de dependencia</small><strong>${request.depType||"Gobierno Central"}</strong></div>
       <div class="info-field"><small>Número de empleado</small><strong>1234567</strong></div>
       <div class="info-divider"></div>
       <div class="info-field full"><small>Dependencia</small><strong>${request.dependency}</strong></div>
@@ -1886,6 +1908,8 @@ function renderAttend(id=state.activeAppointment){
       <div style="padding:16px 20px;border-bottom:1px solid var(--line)">
         <p style="font-size:11px;font-weight:800;color:var(--brand);text-transform:uppercase;letter-spacing:.06em;margin:0 0 12px">Datos laborales</p>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+          <div style="padding:8px 10px;background:#F7F8FA;border-radius:6px"><small style="font-size:10px;color:var(--muted);font-weight:700;text-transform:uppercase">Tipo de dependencia</small><strong style="display:block;font-size:12px">Gobierno Central</strong></div>
+          <div style="padding:8px 10px;background:#F7F8FA;border-radius:6px"><small style="font-size:10px;color:var(--muted);font-weight:700;text-transform:uppercase">Número de empleado</small><strong style="display:block;font-size:12px">1234567</strong></div>
           <div style="padding:8px 10px;background:#F7F8FA;border-radius:6px;grid-column:1/-1"><small style="font-size:10px;color:var(--muted);font-weight:700;text-transform:uppercase">Dependencia</small><strong style="display:block;font-size:13px">Secretaría de Salud</strong></div>
           <div style="padding:8px 10px;background:#F7F8FA;border-radius:6px"><small style="font-size:10px;color:var(--muted);font-weight:700;text-transform:uppercase">Área</small><strong style="display:block;font-size:12px">Dirección de Innovación</strong></div>
           <div style="padding:8px 10px;background:#F7F8FA;border-radius:6px"><small style="font-size:10px;color:var(--muted);font-weight:700;text-transform:uppercase">Puesto</small><strong style="display:block;font-size:12px">Jefe de Departamento</strong></div>
