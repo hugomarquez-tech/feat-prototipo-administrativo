@@ -111,6 +111,12 @@ input:focus,select:focus,textarea:focus{border-color:var(--brand);box-shadow:0 0
 .main-content{grid-area:main;padding:32px 38px 54px;min-width:0}
 .app-footer{grid-area:footer;background:var(--brand);color:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 32px;font-size:12px}
 .mobile-menu{display:none}
+.breadcrumb{display:flex;align-items:center;gap:4px;margin-bottom:12px;flex-wrap:wrap}
+.breadcrumb-item{font-size:12px;color:var(--muted);display:flex;align-items:center;gap:4px}
+.breadcrumb-item a{color:var(--muted);text-decoration:none;transition:color .15s}
+.breadcrumb-item a:hover{color:var(--brand);text-decoration:underline}
+.breadcrumb-item.active{color:var(--ink);font-weight:600}
+.breadcrumb-sep{color:var(--line);font-size:11px;user-select:none}
 .page-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:22px;gap:20px}
 .page-header h1{font-size:36px;margin:0 0 8px;letter-spacing:-.02em}
 .page-header p{color:var(--muted);margin:0;line-height:1.45}
@@ -666,7 +672,8 @@ tbody tr:hover{background:#FCF8F9}
   <symbol id="i-settings" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1-2.8 2.8-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.6v.2h-4V21a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1L4.2 17l.1-.1a1.7 1.7 0 0 0 .3-1.9A1.7 1.7 0 0 0 3 14H2.8v-4H3a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9L4.2 7 7 4.2l.1.1A1.7 1.7 0 0 0 9 4.6a1.7 1.7 0 0 0 1-1.6v-.2h4V3a1.7 1.7 0 0 0 1 1.6 1.7 1.7 0 0 0 1.9-.3l.1-.1L19.8 7l-.1.1a1.7 1.7 0 0 0-.3 1.9 1.7 1.7 0 0 0 1.6 1h.2v4H21a1.7 1.7 0 0 0-1.6 1Z"/></symbol>
   <symbol id="i-trash" viewBox="0 0 24 24"><path d="M4 7h16M9 7V4h6v3M6 7l1 14h10l1-14M10 11v6M14 11v6"/></symbol>
   <symbol id="i-ban" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m6 6 12 12"/></symbol>
-  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-upload" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
 </defs></svg>
 <section class="login-view" id="loginView">
   <div class="login-panel">
@@ -752,6 +759,9 @@ const state = {
   appointmentDate: "all",
   procedureSearch: "",
   procedureResult: "all",
+  procedureSite: "all",
+  procedureAgent: "all",
+  procedureDep: "all",
   procedureType: "all",
   procedurePeriod: "2026-05",
   certificateSearch: "",
@@ -782,6 +792,8 @@ const state = {
   reviewDocsOpen: false,
   actaZoom: 100,
   lastActa: null,
+  physicalDocStatus: {},
+  featPasswordOk: false,
   activeAppointment: null,
   activeTab: "general",
   attendTab: "onsite",
@@ -805,23 +817,23 @@ const state = {
     { id:"FEAT-2026-040981", name:"Patricia Ramírez Cruz", dependency:"Ciudadano", type:"Emisión", status:"Observada", agent:"Luis Hernández", site:"Victoria Centro", date:"18 may 2026", priority:"Alta", deadline:"5 h hábiles", appointment:"Pendiente", labor:"Ciudadano", observations:1 }
   ],
   appointments: [
-    { id:"CITA-2026-041001", request:"FEAT-2026-041001", name:"Juan Pérez García", type:"Emisión", date:"22 may 2026", time:"08:30", status:"Confirmada", agent:"Luis Hernández", assignedAgent:"AG-00001" },
-    { id:"CITA-2026-040995", request:"FEAT-2026-040995", name:"Roberto Hernández Cruz", type:"Renovación", date:"22 may 2026", time:"10:30", status:"Pendiente de confirmación", agent:"Luis Hernández", assignedAgent:"AG-00001" },
-    { id:"CITA-2026-040986", request:"FEAT-2026-040986", name:"Sofía Guadalupe Torres", type:"Emisión", date:"22 may 2026", time:"12:30", status:"Confirmada", agent:"Luis Hernández", assignedAgent:"" },
-    { id:"CITA-2026-040980", request:"FEAT-2026-040980", name:"Miguel Ángel Ramírez", type:"Renovación", date:"22 may 2026", time:"15:00", status:"Confirmada", agent:"Luis Hernández", assignedAgent:"" },
-    { id:"CITA-2026-040993", request:"FEAT-2026-040993", name:"Fernando López Díaz", type:"Emisión", date:"24 may 2026", time:"14:30", status:"Reprogramación requerida", agent:"Luis Hernández", assignedAgent:"" },
-    { id:"CITA-2026-040991", request:"FEAT-2026-040991", name:"Diego Morales Cruz", type:"Emisión", date:"21 may 2026", time:"15:30", status:"Atendida", agent:"Luis Hernández", assignedAgent:"AG-00001" },
-    { id:"CITA-2026-040978", request:"FEAT-2026-040978", name:"Elena Martínez Soto", type:"Emisión", date:"20 may 2026", time:"11:30", status:"No se presentó", agent:"Luis Hernández", assignedAgent:"AG-00003" },
+    { id:"CITA-2026-041001", request:"FEAT-2026-041001", name:"Juan Pérez García", type:"Emisión", date:"22 may 2026", time:"08:30", status:"Confirmada", agent:"Luis Hernández", assignedAgent:"AG-00001", actaUploaded:false },
+    { id:"CITA-2026-040995", request:"FEAT-2026-040995", name:"Roberto Hernández Cruz", type:"Renovación", date:"22 may 2026", time:"10:30", status:"Confirmada", agent:"Luis Hernández", assignedAgent:"AG-00001", assignedBy:"admin" },
+    { id:"CITA-2026-040986", request:"FEAT-2026-040986", name:"Sofía Guadalupe Torres", type:"Emisión", date:"22 may 2026", time:"12:30", status:"Confirmada", agent:"Luis Hernández", assignedAgent:"", assignedBy:"" },
+    { id:"CITA-2026-040980", request:"FEAT-2026-040980", name:"Miguel Ángel Ramírez", type:"Renovación", date:"22 may 2026", time:"15:00", status:"Confirmada", agent:"Luis Hernández", assignedAgent:"", assignedBy:"" },
+    { id:"CITA-2026-040993", request:"FEAT-2026-040993", name:"Fernando López Díaz", type:"Emisión", date:"24 may 2026", time:"14:30", status:"Reprogramada", agent:"Luis Hernández", assignedAgent:"", assignedBy:"" },
+    { id:"CITA-2026-040991", request:"FEAT-2026-040991", name:"Diego Morales Cruz", type:"Emisión", date:"21 may 2026", time:"15:30", status:"Atendida", agent:"Luis Hernández", assignedAgent:"AG-00001", actaUploaded:true },
+    { id:"CITA-2026-040978", request:"FEAT-2026-040978", name:"Elena Martínez Soto", type:"Emisión", date:"20 may 2026", time:"11:30", status:"Cancelada", agent:"Luis Hernández", assignedAgent:"AG-00003", actaUploaded:false },
     { id:"CITA-2026-040970", request:"FEAT-2026-040970", name:"José Luis González", type:"Renovación", date:"19 may 2026", time:"13:00", status:"Cancelada", agent:"Luis Hernández" }
   ],
   procedures: [
-    { id:"TRM-2026-000118", citizen:"Juan Pérez García", type:"Emisión", result:"Emitido", document:"FEAT-2026-000928", actaId:"ACTA-2026-00118", period:"2026-05" },
-    { id:"TRM-2026-000109", citizen:"María González López", type:"Renovación", result:"Renovado", document:"FEAT-2026-000441", actaId:"ACTA-2026-00109", period:"2026-05" },
-    { id:"TRM-2026-000083", citizen:"Carlos Sánchez Vega", type:"Revocación", result:"Revocado", document:"ACUSE-REV-000083", period:"2026-05" },
-    { id:"TRM-2026-000071", citizen:"Ana Laura Martínez", type:"Emisión", result:"Por cerrar", document:"Pendiente de acta", period:"2026-05" },
-    { id:"TRM-2026-000065", citizen:"Roberto Flores Mendoza", type:"Emisión", result:"Emitido", document:"FEAT-2026-000890", actaId:"ACTA-2026-00065", period:"2026-05" },
-    { id:"TRM-2026-000052", citizen:"Patricia Ramírez Cruz", type:"Renovación", result:"Renovado", document:"FEAT-2026-000412", actaId:"ACTA-2026-00052", period:"2026-05" },
-    { id:"TRM-2026-000041", citizen:"Luis Alberto Morales", type:"Emisión", result:"Emitido", document:"FEAT-2026-000851", actaId:"ACTA-2026-00041", period:"2026-04" }
+    { id:"TRM-2026-000118", citizen:"Juan Pérez García", laborType:"Servidor público", dependency:"Secretaría de Salud", type:"Emisión", result:"Emitido", document:"FEAT-2026-000928", actaId:"ACTA-2026-00118", period:"2026-05", actaUploaded:false, date:"22/05/2026", site:"Victoria Centro", agent:"Luis Hernández Pérez" },
+    { id:"TRM-2026-000109", citizen:"María González López", laborType:"Servidor público", dependency:"Secretaría de Educación", type:"Renovación", result:"Renovado", document:"FEAT-2026-000441", actaId:"ACTA-2026-00109", period:"2026-05", actaUploaded:true, date:"15/05/2026", site:"Tampico Centro", agent:"Sofía Torres Díaz" },
+    { id:"TRM-2026-000083", citizen:"Carlos Sánchez Vega", laborType:"Servidor público", dependency:"DIF Tamaulipas", type:"Revocación", result:"Revocado", document:"ACUSE-REV-000083", period:"2026-05", date:"10/05/2026", site:"Victoria Centro", agent:"Luis Hernández Pérez" },
+    { id:"TRM-2026-000071", citizen:"Ana Laura Martínez", laborType:"Servidor público", dependency:"Secretaría de Educación", type:"Emisión", result:"Emitido", document:"FEAT-2026-000871", actaId:"ACTA-2026-00071", period:"2026-05", actaUploaded:false, date:"12/05/2026", site:"Victoria Centro", agent:"Luis Hernández Pérez" },
+    { id:"TRM-2026-000065", citizen:"Roberto Flores Mendoza", laborType:"Servidor público", dependency:"Secretaría de Finanzas", type:"Emisión", result:"Emitido", document:"FEAT-2026-000890", actaId:"ACTA-2026-00065", period:"2026-05", actaUploaded:true, date:"08/05/2026", site:"Reynosa Norte", agent:"Carlos Ramírez Soto" },
+    { id:"TRM-2026-000052", citizen:"Patricia Ramírez Cruz", laborType:"Servidor público", dependency:"Secretaría de Administración", type:"Renovación", result:"Renovado", document:"FEAT-2026-000412", actaId:"ACTA-2026-00052", period:"2026-05", actaUploaded:false, date:"05/05/2026", site:"Tampico Centro", agent:"Sofía Torres Díaz" },
+    { id:"TRM-2026-000041", citizen:"Luis Alberto Morales", laborType:"Servidor público", dependency:"Secretaría de Salud", type:"Emisión", result:"Emitido", document:"FEAT-2026-000851", actaId:"ACTA-2026-00041", period:"2026-04", actaUploaded:true, date:"28/04/2026", site:"El Mante", agent:"Ricardo González Ruiz" }
   ],
   certificates: [
     { id:"FEAT-2026-000928", citizen:"Juan Pérez García", type:"Emisión", status:"Vigente", validity:"22/05/2026 - 22/05/2028" },
@@ -839,6 +851,10 @@ const state = {
     {id:"AG-00007",name:"Miguel Santos Mora",email:"miguel.santos@tamaulipas.gob.mx",site:"Victoria",load:8,status:"Disponible",role:"Agente certificador",availability:"Disponible",since:"18 enero 2026",curp:"SAMM940710HTCNRG05",photo:null}
   ],
   agentSearch:"",
+  citaSelectionMode: false,
+  agendaAgentFilter: "all",
+  agendaStatusFilter: "all",
+  agendaSiteFilter: "all",
   agentSite:"all",
   agentStatus:"all",
   documents: {
@@ -864,7 +880,7 @@ const catalogDefinitions = [
     ]
   },
   {
-    id:"perfiles", icon:"file-check", title:"Perfiles de solicitante", group:"Proceso",
+    id:"perfiles", icon:"file-check", title:"Tipo de solicitantes", group:"Proceso",
     description:"Perfiles que determinan los datos y requisitos condicionales de cada solicitud.",
     columns:["Clave","Perfil","Datos adicionales","Requisito condicional","Estatus"],
     rows:[
@@ -984,7 +1000,7 @@ const catalogDefinitions = [
     ]
   },
   {
-    id:"estatus", icon:"award", title:"Estatus operativos", group:"Proceso",
+    id:"estatus", icon:"award", title:"Estatus operativos", group:"Proceso", readOnly:true,
     description:"Estados válidos y siguiente acción dentro del flujo FEAT.",
     columns:["Módulo","Estatus","Significado","Siguiente acción","Color"],
     rows:[
@@ -993,7 +1009,7 @@ const catalogDefinitions = [
       ["Solicitud","Observada","Esperando corrección del ciudadano","Dar seguimiento","Rojo"],
       ["Solicitud","Aprobada","Documentación completa","Enviar a Citas","Verde"],
       ["Cita","Confirmada","Lista para atención presencial","Atender o reprogramar","Verde"],
-      ["Cita","No se presentó","Inasistencia registrada","Reprogramar si procede","Rojo"],
+      ["Cita","Cancelada","Cita no realizada","Reprogramar si procede","Rojo"],
       ["Certificado","Vigente","Certificado válido","Consultar o descargar","Verde"],
       ["Certificado","Por vencer","Dentro de ventana de renovación","Notificar renovación","Dorado"],
       ["Certificado","Revocado","Sin validez desde la revocación","Solo consultar acuse","Rojo"]
@@ -1025,7 +1041,7 @@ const navigationItems = [
   ["dashboard","home","Inicio"],
   ["requests","file-check","Solicitudes"],
   ["appointments","calendar","Citas"],
-  ["procedures","clipboard","Trámites"],
+  ["procedures","clipboard","Historial de trámites"],
   ["certificates","award","Certificados"],
   ["catalogs","library","Catálogos"],
   ["reports","chart","Reportes"],
@@ -1035,7 +1051,7 @@ const adminSubmenus = {
   catalogs:[
 
     ["tramites","Trámites"],
-    ["perfiles","Perfiles de solicitante"],
+    ["perfiles","Tipo de solicitantes"],
     ["requisitos","Requisitos"],
     ["documentos","Tipos de documento"],
     ["sedes","Sedes"],
@@ -1132,8 +1148,23 @@ function openModal({title,subtitle="",body,confirm="Guardar",confirmClass="prima
   $("#modalConfirm").onclick=()=>onConfirm?.();
 }
 function closeModal(){ $("#modalRoot").innerHTML=""; }
-function pageHeader(title,description,actions=""){
-  return `<header class="page-header"><div><h1>${title}</h1><p>${description}</p></div><div class="page-actions">${actions}</div></header>`;
+function breadcrumb(items){
+  // items = [{label, view, extra}] — el último es el activo
+  const parts=items.map(function(item,i){
+    const isLast=i===items.length-1;
+    const sep=i>0?'<span class="breadcrumb-sep" aria-hidden="true">/</span>':'';
+    if(isLast){
+      return sep+'<span class="breadcrumb-item active" aria-current="page">'+item.label+'</span>';
+    }
+    const view=item.view||"dashboard";
+    const onclick="onclick=\"navigate('"+view+"')\" href=\"#\"";
+    return sep+'<span class="breadcrumb-item"><a '+onclick+'>'+item.label+'</a></span>';
+  });
+  return '<nav class="breadcrumb" aria-label="Ruta de navegación">'+parts.join('')+'</nav>';
+}
+function pageHeader(title,description,actions="",crumbs=[]){
+  const bc=crumbs.length?breadcrumb(crumbs):'';
+  return bc+'<header class="page-header"><div><h1>'+title+'</h1><p>'+description+'</p></div><div class="page-actions">'+actions+'</div></header>';
 }
 function filterDisclosure(module,title,summary,body){
   const open=state.filtersOpen[module];
@@ -1163,7 +1194,10 @@ function renderDashboard(){
 function renderAgentDashboard(){
   const actionable=state.requests.filter(r=>["Pendiente","En revisión","Observada"].includes(r.status));
   const observed=state.requests.filter(r=>r.status==="Observada");
-  const todayAppointments=state.appointments.filter(a=>a.date==="22 may 2026");
+  const MY_AGENT_ID="AG-00001";
+  // Citas del agente: las que le asignaron O las que tomó él mismo
+  const todayAppointments=state.appointments.filter(a=>a.date==="22 may 2026"&&
+    (a.assignedAgent===MY_AGENT_ID||!a.assignedAgent));
   const confirmedToday=todayAppointments.filter(a=>a.status==="Confirmada");
   const nextCita=confirmedToday[0]||todayAppointments[0];
   const pendingReq=actionable.filter(r=>r.status!=="Observada");
@@ -1172,8 +1206,7 @@ function renderAgentDashboard(){
     return p[a.priority]-p[b.priority]||parseInt(a.deadline)-parseInt(b.deadline);
   });
 
-  content.innerHTML=pageHeader("Mi espacio de trabajo","Jornada del viernes 22 de mayo de 2026.",
-    `<button class="button ghost" data-action="refresh">${icon("refresh")}Actualizar</button>`)+
+  content.innerHTML=pageHeader("Mi espacio de trabajo","Jornada del viernes 22 de mayo de 2026.",`<button class="button ghost" data-action="refresh">${icon("refresh")}Actualizar</button>`,[{label:"Inicio",view:"dashboard"}])+
 
   // ── CITAS DE HOY ──────────────────────────────────────────────────────────
   `<section class="card" style="margin-bottom:20px;padding:0;overflow:hidden">
@@ -1273,7 +1306,7 @@ function renderAdminDashboard(){
   const pending=state.requests.filter(r=>["Pendiente","En revisión"].includes(r.status));
   const observed=state.requests.filter(r=>r.status==="Observada");
   const confirmed=state.appointments.filter(a=>a.status==="Confirmada");
-  content.innerHTML=pageHeader("Centro de control","Supervisa la operación general de FEAT, la carga de trabajo y los servicios de atención.",`<span class="role-chip">${icon("settings")}Administrador general</span>`) +
+  content.innerHTML=pageHeader("Centro de control","Supervisa la operación general de FEAT, la carga de trabajo y los servicios de atención.",`<span class="role-chip">${icon("settings")}Administrador general</span>`,[{label:"Inicio",view:"dashboard"}]) +
   `<section class="admin-context">
     <div><span class="admin-context-icon">${icon("library")}</span><div><strong>Operación estatal FEAT</strong><small>Vista consolidada de todas las sedes y agentes certificadores.</small></div></div>
     <div class="admin-sync">${icon("refresh")} Actualizado hoy, 08:42 h</div>
@@ -1442,7 +1475,7 @@ function renderRequests(){
   const nextPending=state.requests.find(r=>r.status==="Pendiente"||r.status==="En revisión"||r.status==="Observada");
   content.innerHTML=pageHeader("Solicitudes","Revisa las solicitudes asignadas, controla sus plazos y determina si avanzan a la agenda de citas.",
     nextPending?`<button class="button primary" id="attendNextBtn">${icon("play")}Atender siguiente</button>`:
-    `<button class="button primary" disabled>${icon("check-circle")}Sin solicitudes pendientes</button>`)+
+    `<button class="button primary" disabled>${icon("check-circle")}Sin solicitudes pendientes</button>`,[{label:"Inicio",view:"dashboard"},{label:"Solicitudes",view:"requests"}])+
   `<section class="stats-grid">
     ${stat("clock","Pendientes de iniciar",state.requests.filter(r=>r.status==="Pendiente").length,"Sin revisión documental","amber")}
     ${stat("edit","En revisión",state.requests.filter(r=>r.status==="En revisión").length,"Con actividad del agente","blue")}
@@ -1522,7 +1555,7 @@ function renderReview(id=state.activeRequest){
   const allValidated=validated===docs.length;
   const isClosed=["Aprobada","Rechazada"].includes(request.status);
   const activeDoc=state.documents[state.activeDocument];
-  content.innerHTML=pageHeader("Revisión de solicitud","Valida los datos capturados y cada documento antes de aprobar u observar.",`<button class="button ghost" data-view-link="requests">${icon("library")}Volver a solicitudes</button>`) +
+  content.innerHTML=pageHeader("Revisión de solicitud","Valida los datos capturados y cada documento antes de aprobar u observar.",`<button class="button ghost" data-view-link="requests">${icon("library")}Volver a solicitudes</button>`,[{label:"Inicio",view:"dashboard"},{label:"Solicitudes",view:"requests"},{label:request.id}]) +
   `<section class="summary-banner">
     <div><h2>${request.id}</h2><span>${request.name}</span></div>
     <div class="summary-item"><small>Trámite</small><strong>${request.type}</strong></div>
@@ -1729,31 +1762,226 @@ function rejectRequest(request){
   }});
 }
 
+
+// ── Seleccionar citas (Agente) ────────────────────────────────────────────
+function openSelectCitasModal(){
+  const available=state.appointments.filter(a=>!a.assignedAgent&&["Confirmada","Reprogramada"].includes(a.status));
+  const myAgent=state.agents&&state.agents.find(ag=>ag.name.includes("Luis"));
+  const capacity=myAgent?20-myAgent.load:5;
+  if(!available.length){toast("No hay citas disponibles para seleccionar.","warning");return;}
+  openModal({
+    title:"Seleccionar citas",
+    subtitle:"Elige las citas que atenderás. Capacidad disponible: "+capacity,
+    confirm:"Confirmar selección",
+    confirmClass:"primary",
+    size:"large",
+    body:'<div style="margin-bottom:12px;padding:12px 16px;background:#E9F5FB;border:1px solid var(--blue);border-radius:8px;font-size:13px;display:flex;align-items:center;gap:10px">'+
+      icon("calendar")+
+      '<span>Puedes seleccionar hasta <strong>'+capacity+'</strong> citas según tu capacidad operativa. Las citas seleccionadas quedarán asignadas a ti.</span></div>'+
+      '<div style="display:grid;gap:6px" id="citaSelectionList">'+
+      available.map(function(a){
+        return '<label style="display:flex;align-items:center;gap:12px;padding:12px 14px;border:1px solid var(--line);border-radius:8px;cursor:pointer;background:#fff" class="cita-sel-item">'+
+          '<input type="checkbox" class="cita-checkbox" data-cita-id="'+a.id+'" style="accent-color:var(--brand);width:16px;height:16px;flex-shrink:0">'+
+          '<div style="flex:1">'+
+          '<strong style="font-size:13px">'+a.name+'</strong>'+
+          '<div style="display:flex;gap:12px;margin-top:3px">'+
+          '<span style="font-size:12px;color:var(--muted)">'+icon("calendar")+' '+a.date+'</span>'+
+          '<span style="font-size:12px;color:var(--muted)">'+icon("clock")+' '+a.time+'</span>'+
+          '<span style="font-size:12px;color:var(--muted)">'+a.type+'</span>'+
+          '</div></div>'+
+          badge(a.status)+
+          '</label>';
+      }).join('')+
+      '</div>'+
+      '<p style="margin:10px 0 0;font-size:12px;color:var(--muted)" id="selCount">0 citas seleccionadas</p>',
+    onConfirm:function(){
+      const checked=[...document.querySelectorAll(".cita-checkbox:checked")];
+      if(!checked.length){toast("Selecciona al menos una cita.","warning");return;}
+      if(checked.length>capacity){toast("Excedes tu capacidad. Selecciona máximo "+capacity+" citas.","warning");return;}
+      const myId=myAgent?myAgent.id:"AG-00001";
+      const myName=myAgent?myAgent.name:"Luis Hernández Pérez";
+      checked.forEach(function(cb){
+        const a=appointmentById(cb.dataset.citaId);
+        if(a){a.assignedAgent=myId;a.agent=myName;a.assignedBy="agent";}
+      });
+      // Actualizar carga del agente
+      if(myAgent) myAgent.load=Math.min(myAgent.load+checked.length,20);
+      closeModal();
+      toast(checked.length+" cita"+(checked.length>1?"s":"")+" seleccionada"+(checked.length>1?"s":"")+" y asignada"+(checked.length>1?"s":"")+" a tu agenda.");
+      renderAppointments();
+    }
+  });
+  // Contador en tiempo real
+  setTimeout(function(){
+    document.querySelectorAll(".cita-checkbox").forEach(function(cb){
+      cb.onchange=function(){
+        const n=document.querySelectorAll(".cita-checkbox:checked").length;
+        const el=document.getElementById("selCount");
+        if(el) el.textContent=n+" cita"+(n!==1?"s":"")+" seleccionada"+(n!==1?"s":"");
+        // Estilo visual
+        const lbl=cb.closest("label");
+        if(lbl) lbl.style.borderColor=cb.checked?"var(--brand)":"var(--line)";
+        if(lbl) lbl.style.background=cb.checked?"#FCF3F5":"#fff";
+      };
+    });
+  },100);
+}
+
+// ── Reasignar citas (Administrador) ───────────────────────────────────────
+function openReassignCitasModal(){
+  // Paso 1: elegir agente origen
+  const agentsWithCitas=state.agents.filter(function(ag){
+    return state.appointments.some(function(a){return a.assignedAgent===ag.id&&["Confirmada","Reprogramada"].includes(a.status);});
+  });
+  if(!agentsWithCitas.length){toast("No hay agentes con citas asignadas para reasignar.","warning");return;}
+
+  openModal({
+    title:"Reasignar citas",
+    subtitle:"Paso 1 de 2 — Selecciona el agente origen",
+    confirm:"Siguiente →",
+    confirmClass:"primary",
+    size:"large",
+    body:'<p style="font-size:13px;color:var(--gray);margin:0 0 14px">Selecciona el agente cuyas citas deseas reasignar a otro agente.</p>'+
+      '<div style="display:grid;gap:8px" id="agentOriginList">'+
+      agentsWithCitas.map(function(ag){
+        const citaCount=state.appointments.filter(function(a){return a.assignedAgent===ag.id&&["Confirmada","Reprogramada"].includes(a.status);}).length;
+        const parts=ag.name.trim().split(" ");
+        const initials=(parts[0][0]+(parts[1]?parts[1][0]:'')).toUpperCase();
+        return '<label style="display:flex;align-items:center;gap:14px;padding:14px 16px;border:1px solid var(--line);border-radius:8px;cursor:pointer;background:#fff" class="agent-origin-item">'+
+          '<input type="radio" name="agentOrigin" value="'+ag.id+'" style="accent-color:var(--brand);width:16px;height:16px;flex-shrink:0">'+
+          '<span style="width:36px;height:36px;border-radius:50%;background:var(--brand);color:#fff;display:grid;place-items:center;font-size:13px;font-weight:800;flex-shrink:0">'+initials+'</span>'+
+          '<div style="flex:1"><strong style="display:block">'+ag.name+'</strong><span style="font-size:12px;color:var(--muted)">'+ag.site+' · '+citaCount+' cita'+(citaCount!==1?"s":"")+" asignada"+(citaCount!==1?"s":"")+'</span></div>'+
+          badge(ag.status)+
+          '</label>';
+      }).join('')+'</div>',
+    onConfirm:function(){
+      const sel=document.querySelector("input[name='agentOrigin']:checked");
+      if(!sel){toast("Selecciona un agente origen.","warning");return;}
+      closeModal();
+      openReassignStep2(sel.value);
+    }
+  });
+  // Estilo visual radio
+  setTimeout(function(){
+    document.querySelectorAll(".agent-origin-item input").forEach(function(r){
+      r.onchange=function(){
+        document.querySelectorAll(".agent-origin-item").forEach(function(l){l.style.borderColor="var(--line)";l.style.background="#fff";});
+        const lbl=r.closest("label");
+        if(lbl){lbl.style.borderColor="var(--brand)";lbl.style.background="#FCF3F5";}
+      };
+    });
+  },100);
+}
+
+function openReassignStep2(originId){
+  const originAgent=state.agents.find(function(ag){return ag.id===originId;});
+  const citasOrigen=state.appointments.filter(function(a){return a.assignedAgent===originId&&["Confirmada","Reprogramada"].includes(a.status);});
+  const otherAgents=state.agents.filter(function(ag){return ag.id!==originId&&ag.status!=="Inactivo";});
+
+  openModal({
+    title:"Reasignar citas",
+    subtitle:"Paso 2 de 2 — "+originAgent.name,
+    confirm:"Confirmar reasignación",
+    confirmClass:"success",
+    size:"large",
+    body:'<div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">'+
+      // Citas del agente origen
+      '<div>'+
+      '<strong style="font-size:13px;display:block;margin-bottom:10px">Citas de '+originAgent.name.split(" ")[0]+'</strong>'+
+      '<div style="display:grid;gap:6px" id="citasReasignList">'+
+      citasOrigen.map(function(a){
+        return '<label style="display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid var(--line);border-radius:7px;cursor:pointer;background:#fff" class="cita-reasign-item">'+
+          '<input type="checkbox" class="cita-reasign-cb" data-cita-id="'+a.id+'" style="accent-color:var(--brand);flex-shrink:0">'+
+          '<div><strong style="font-size:12px;display:block">'+a.name+'</strong>'+
+          '<span style="font-size:11px;color:var(--muted)">'+a.date+' · '+a.time+' · '+a.type+'</span></div>'+
+          '</label>';
+      }).join('')+
+      '</div>'+
+      '<p style="margin:10px 0 0;font-size:12px;color:var(--muted)" id="reasignCount">0 seleccionadas</p>'+
+      '</div>'+
+      // Agente destino
+      '<div>'+
+      '<strong style="font-size:13px;display:block;margin-bottom:10px">Reasignar a</strong>'+
+      '<div style="display:grid;gap:6px">'+
+      otherAgents.map(function(ag){
+        const cnt=state.appointments.filter(function(a){return a.assignedAgent===ag.id&&["Confirmada","Reprogramada"].includes(a.status);}).length;
+        const parts=ag.name.trim().split(" ");
+        const initials=(parts[0][0]+(parts[1]?parts[1][0]:'')).toUpperCase();
+        return '<label style="display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid var(--line);border-radius:7px;cursor:pointer;background:#fff" class="agent-dest-item">'+
+          '<input type="radio" name="agentDest" value="'+ag.id+'" style="accent-color:var(--brand);flex-shrink:0">'+
+          '<span style="width:28px;height:28px;border-radius:50%;background:var(--brand);color:#fff;display:grid;place-items:center;font-size:11px;font-weight:800;flex-shrink:0">'+initials+'</span>'+
+          '<div style="flex:1"><strong style="font-size:12px;display:block">'+ag.name.split(" ").slice(0,2).join(" ")+'</strong>'+
+          '<span style="font-size:11px;color:var(--muted)">'+ag.site+' · '+cnt+' citas actuales</span></div>'+
+          badge(ag.status)+
+          '</label>';
+      }).join('')+
+      '</div>'+
+      '</div>'+
+      '</div>'+
+      '<div class="notice" style="margin-top:14px;font-size:12px">La reasignación quedará registrada en bitácora indicando que fue realizada por el Administrador.</div>',
+    onConfirm:function(){
+      const checked=[...document.querySelectorAll(".cita-reasign-cb:checked")];
+      const destRadio=document.querySelector("input[name='agentDest']:checked");
+      if(!checked.length){toast("Selecciona al menos una cita para reasignar.","warning");return;}
+      if(!destRadio){toast("Selecciona el agente destino.","warning");return;}
+      const destAgent=state.agents.find(function(ag){return ag.id===destRadio.value;});
+      checked.forEach(function(cb){
+        const a=appointmentById(cb.dataset.citaId);
+        if(a){a.assignedAgent=destAgent.id;a.agent=destAgent.name;a.assignedBy="admin";}
+      });
+      closeModal();
+      toast(checked.length+" cita"+(checked.length>1?"s":"")+" reasignada"+(checked.length>1?"s":"")+" a "+destAgent.name.split(" ")[0]+" por el Administrador.");
+      renderAppointments();
+    }
+  });
+  // Estilos interactivos
+  setTimeout(function(){
+    document.querySelectorAll(".cita-reasign-cb").forEach(function(cb){
+      cb.onchange=function(){
+        const n=document.querySelectorAll(".cita-reasign-cb:checked").length;
+        const el=document.getElementById("reasignCount");
+        if(el) el.textContent=n+" seleccionada"+(n!==1?"s":"");
+        const lbl=cb.closest("label");
+        if(lbl){lbl.style.borderColor=cb.checked?"var(--brand)":"var(--line)";lbl.style.background=cb.checked?"#FCF3F5":"#fff";}
+      };
+    });
+    document.querySelectorAll(".agent-dest-item input").forEach(function(r){
+      r.onchange=function(){
+        document.querySelectorAll(".agent-dest-item").forEach(function(l){l.style.borderColor="var(--line)";l.style.background="#fff";});
+        const lbl=r.closest("label");
+        if(lbl){lbl.style.borderColor="var(--green)";lbl.style.background="#F0FBF4";}
+      };
+    });
+  },100);
+}
+
 function renderAppointments(){
+  const MY_AGENT_ID3="AG-00001";
   const filtered=state.appointments.filter(a=>{
     const search=(a.request+" "+a.name).toLowerCase().includes(state.appointmentSearch.toLowerCase());
     const status=state.appointmentFilter==="all"||a.status===state.appointmentFilter;
     const date=state.appointmentDate==="all"||a.date===state.appointmentDate;
-    return search&&status&&date;
+    const matchAgent=state.role==="admin"||a.assignedAgent===MY_AGENT_ID3||!a.assignedAgent;
+    return search&&status&&matchAgent&&date;
   });
   const visible=filtered.slice(0,state.pageSize.appointments);
-  content.innerHTML=pageHeader("Citas","Consulta y atiende las citas que provienen de solicitudes aprobadas documentalmente.",`<button class="button primary" id="todayAppointments">${icon("calendar")}Ver agenda del día</button>`) +
+  content.innerHTML=pageHeader("Citas","Consulta y atiende las citas que provienen de solicitudes aprobadas documentalmente.",`<button class="button primary" id="todayAppointments">${icon("calendar")}Ver agenda del día</button>`,[{label:"Inicio",view:"dashboard"},{label:"Citas",view:"appointments"}]) +
   `<div class="notice"><strong>Alcance del agente:</strong> puedes atender, marcar inasistencia y solicitar reprogramación de tus citas. La reasignación entre agentes corresponde al administrador.</div>
   <section class="stats-grid" style="margin-top:18px">
     ${stat("calendar","Total de citas",state.appointments.length,"Asignadas al agente")}
     ${stat("check-circle","Confirmadas",state.appointments.filter(a=>a.status==="Confirmada").length,"Listas para atender","blue")}
-    ${stat("clock","Por confirmar",state.appointments.filter(a=>a.status==="Pendiente de confirmación").length,"Esperando respuesta","amber")}
+    ${stat("refresh","Reprogramadas",state.appointments.filter(a=>a.status==="Reprogramada").length,"Con nueva fecha asignada","amber")}
     ${stat("check-circle","Atendidas",state.appointments.filter(a=>a.status==="Atendida").length,"Proceso presencial concluido","green")}
   </section>
   ${filterDisclosure("appointments","Filtros de citas","Filtra por estatus y fecha programada.",`<div class="filter-panel embedded">
-    <div class="field"><label>Estatus</label><select id="appointmentStatus"><option value="all">Todos</option>${["Confirmada","Pendiente de confirmación","Reprogramación requerida","Atendida","No se presentó","Cancelada"].map(s=>`<option ${state.appointmentFilter===s?"selected":""}>${s}</option>`).join("")}</select></div>
+    <div class="field"><label>Estatus</label><select id="appointmentStatus"><option value="all">Todos</option>${["Confirmada","Reprogramada","Atendida","Cancelada"].map(s=>`<option ${state.appointmentFilter===s?"selected":""}>${s}</option>`).join("")}</select></div>
     <div class="field"><label>Fecha programada</label><select id="appointmentDate"><option value="all">Todas</option>${[...new Set(state.appointments.map(a=>a.date))].map(d=>`<option ${state.appointmentDate===d?"selected":""}>${d}</option>`).join("")}</select></div>
     <button class="button secondary" id="clearAppointmentFilters">Limpiar filtros</button>
   </div>`)}
   <section class="appointment-legend" aria-label="Convenciones de acciones"><span><i class="legend-dot green"></i> Lista para atender</span><span><i class="legend-dot amber"></i> Requiere seguimiento</span><span><i class="legend-dot red"></i> Incidencia</span></section>
   <section class="card table-card appointments-card frest-table-card"><div class="card-header"><div><h2>Mis citas asignadas</h2><p>Las acciones disponibles cambian de acuerdo con el estatus de cada cita.</p></div><span class="records-summary">${filtered.length} registros</span></div>
   ${dataTableToolbar("appointments","appointmentSearch",state.appointmentSearch,"exportAppointments",state.appointments.length)}
-  <div class="table-wrap"><table class="appointments-table"><thead><tr><th>Cita / solicitud</th><th>Ciudadano</th><th>Trámite</th><th>Fecha y hora</th>${state.role==="admin"?`<th>Agente asignado</th>`:""}<th>Estatus</th><th>Acciones</th></tr></thead><tbody>${visible.map(a=>`<tr class="appointment-row ${appointmentRowClass(a.status)}"><td><span class="folio">${a.id}</span><span class="subtext">${a.request}</span></td><td><strong>${a.name}</strong><span class="subtext">Sede Victoria Centro</span></td><td>${a.type}<span class="subtext">${appointmentModality(a.type)}</span></td><td><strong>${a.date}</strong><span class="appointment-time">${icon("clock")} ${a.time} h</span></td>${state.role==="admin"?`<td>${appointmentAgentCell(a)}</td>`:""}<td>${badge(a.status)}</td><td class="actions-cell appointment-actions-cell">${appointmentActions(a)}<button class="action-icon neutral" title="Ver bitácora" onclick="openLogModal('appointments','${a.id}','${a.name}')">${icon("clock")}</button></td></tr>`).join("")||`<tr><td colspan="7" class="empty-state">No hay citas con estos criterios.</td></tr>`}</tbody></table></div><div class="pagination"><span>Mostrando ${visible.length?1:0} a ${visible.length} de ${filtered.length} citas</span><div class="pagination-buttons"><button disabled>Anterior</button><button class="active" data-page="1">1</button><button disabled>Siguiente</button></div></div></section>`;
+  <div class="table-wrap"><table class="appointments-table"><thead><tr><th>Cita / solicitud</th><th>Ciudadano</th><th>Trámite</th><th>Fecha y hora</th><th>Agente asignado</th><th>Estatus</th><th>Acciones</th></tr></thead><tbody>${visible.map(a=>`<tr class="appointment-row ${appointmentRowClass(a.status)}"><td><span class="folio">${a.id}</span><span class="subtext">${a.request}</span></td><td><strong>${a.name}</strong><span class="subtext">Sede Victoria Centro</span></td><td>${a.type}<span class="subtext">${appointmentModality(a.type)}</span></td><td><strong>${a.date}</strong><span class="appointment-time">${icon("clock")} ${a.time} h</span></td><td>${appointmentAgentCell(a)}</td><td>${badge(a.status)}</td><td class="actions-cell appointment-actions-cell">${appointmentActions(a)}${a.status==="Atendida"?`<button class="action-icon ${a.actaUploaded?"neutral":"warning"}" title="${a.actaUploaded?"Acta subida — ver":"Acta pendiente de subir"}" data-acta-status="${a.id}">${icon(a.actaUploaded?"file-text":"alert")}</button>`:""}<button class="action-icon neutral" title="Ver bitácora" onclick="openLogModal('appointments','${a.id}','${a.name}')">${icon("clock")}</button></td></tr>`).join("")||`<tr><td colspan="7" class="empty-state">No hay citas con estos criterios.</td></tr>`}</tbody></table></div><div class="pagination"><span>Mostrando ${visible.length?1:0} a ${visible.length} de ${filtered.length} citas</span><div class="pagination-buttons"><button disabled>Anterior</button><button class="active" data-page="1">1</button><button disabled>Siguiente</button></div></div></section>`;
   if($("#appointmentStatus")) $("#appointmentStatus").onchange=e=>{state.appointmentFilter=e.target.value;renderAppointments()};
   $("#appointmentSearch").oninput=e=>{state.appointmentSearch=e.target.value;renderAppointments()};
   if($("#appointmentDate")) $("#appointmentDate").onchange=e=>{state.appointmentDate=e.target.value;renderAppointments()};
@@ -1769,31 +1997,35 @@ function appointmentAgentCell(a){
   if(agent){
     const parts=agent.name.trim().split(" ").filter(Boolean);
     const initials=(parts.length>=2?parts[0][0]+parts[1][0]:parts[0][0]).toUpperCase();
-    return `<div style="display:flex;align-items:center;gap:8px">
-      <span style="width:28px;height:28px;border-radius:50%;background:var(--brand);color:#fff;display:grid;place-items:center;font-size:11px;font-weight:800;flex-shrink:0">${initials}</span>
-      <span style="font-size:12px;font-weight:600">${agent.name.split(" ").slice(0,2).join(" ")}</span>
-    </div>`;
+    const byLabel=a.assignedBy==="admin"
+      ?'<span style="font-size:10px;background:#EDE9F6;color:#6B4EAB;padding:2px 6px;border-radius:8px;font-weight:700">Admin</span>'
+      :'<span style="font-size:10px;background:#E9F5FB;color:#1A7FA8;padding:2px 6px;border-radius:8px;font-weight:700">Agente</span>';
+    return '<div style="display:flex;align-items:center;gap:8px">'+
+      '<span style="width:28px;height:28px;border-radius:50%;background:var(--brand);color:#fff;display:grid;place-items:center;font-size:11px;font-weight:800;flex-shrink:0">'+initials+'</span>'+
+      '<div><span style="font-size:12px;font-weight:600;display:block">'+agent.name.split(" ").slice(0,2).join(" ")+'</span>'+byLabel+'</div>'+
+      (state.role==="admin"?'<button class="action-icon neutral" data-assign-agent="'+a.id+'" title="Reasignar agente" style="margin-left:4px">'+icon("refresh")+'</button>':'')+
+      '</div>';
   }
-  if(["Atendida","No se presentó","Cancelada"].includes(a.status)) return `<span style="font-size:12px;color:var(--muted)">—</span>`;
-  if(state.role==="admin") return `<button class="button ghost small" data-assign-agent="${a.id}" style="font-size:11px;padding:4px 10px;border-style:dashed">${icon("plus")}Asignar</button>`;
-  return `<span style="font-size:12px;color:var(--muted)">Sin asignar</span>`;
+  if(["Atendida","Cancelada"].includes(a.status)) return '<span style="font-size:12px;color:var(--muted)">—</span>';
+  if(state.role==="admin") return '<button class="button ghost small" data-assign-agent="'+a.id+'" style="font-size:11px;padding:4px 10px;border-style:dashed">'+icon("plus")+'Asignar</button>';
+  // Agente: puede seleccionar la cita para sí mismo
+  return '<button class="button ghost small" data-self-assign="'+a.id+'" style="font-size:11px;padding:4px 10px;border-style:dashed;border-color:var(--blue);color:var(--blue)">'+icon("plus")+'Seleccionar</button>';
 }
 function appointmentModality(type){
   return type==="Revocación"?"Validación y firma":"Cotejo presencial";
 }
 function appointmentRowClass(status){
   if(status==="Confirmada") return "is-confirmed";
-  if(["Pendiente de confirmación","Reprogramación requerida"].includes(status)) return "needs-follow-up";
-  if(["No se presentó","Cancelada"].includes(status)) return "has-incident";
+  if(["Reprogramada"].includes(status)) return "needs-follow-up";
+  if(["Cancelada"].includes(status)) return "has-incident";
   return "is-complete";
 }
 function appointmentContext(a){
   const contexts={
     "Confirmada":`<strong>Documentación aprobada</strong><span class="subtext">Puede iniciar la atención presencial.</span>`,
-    "Pendiente de confirmación":`<strong>Confirmación pendiente</strong><span class="subtext">Se puede reenviar el recordatorio.</span>`,
-    "Reprogramación requerida":`<strong>Cambio solicitado</strong><span class="subtext">Selecciona una nueva fecha y hora.</span>`,
+    "Reprogramada":`<strong>Fecha reprogramada</strong><span class="subtext">Nueva fecha asignada.</span>`,
     "Atendida":`<strong>Atención concluida</strong><span class="subtext">Consulta el resultado generado.</span>`,
-    "No se presentó":`<strong>Inasistencia registrada</strong><span class="subtext">Puede reprogramarse conforme a la regla.</span>`,
+    "Cancelada":`<strong>Cita cancelada</strong><span class="subtext">No se llevará a cabo.</span>`,
     "Cancelada":`<strong>Cita cerrada</strong><span class="subtext">Disponible únicamente para consulta.</span>`
   };
   return contexts[a.status]||`<span class="subtext">Sin acciones pendientes.</span>`;
@@ -1802,27 +2034,261 @@ function appointmentActions(a,compact=false){
   const detail=`<button class="action-icon neutral" title="Ver detalle" aria-label="Ver detalle de ${a.name}" data-appointment-detail="${a.id}">${icon("eye")}</button>`;
   const reschedule=`<button class="action-icon warning" title="Reprogramar cita" aria-label="Reprogramar cita de ${a.name}" data-reschedule="${a.id}">${icon("calendar")}</button>`;
   if(a.status==="Confirmada") return `<button class="button success small appointment-primary" data-attend="${a.id}">${icon("play")}Atender</button>${reschedule}<button class="action-icon danger" title="Registrar inasistencia" aria-label="Registrar inasistencia de ${a.name}" data-no-show="${a.id}">${icon("alert")}</button>${detail}`;
-  if(a.status==="Pendiente de confirmación") return `<button class="button reminder small appointment-primary" data-remind-appointment="${a.id}">${icon("bell")}Recordar</button>${detail}`;
-  if(a.status==="Reprogramación requerida") return `<button class="button warning small appointment-primary" data-reschedule="${a.id}">${icon("calendar")}Reprogramar</button>${detail}`;
-  if(a.status==="No se presentó") return `${reschedule}${detail}`;
+  
+  if(a.status==="Reprogramada") return `<button class="button warning small appointment-primary" data-reschedule="${a.id}">${icon("calendar")}Reprogramar</button>${detail}`;
+  if(a.status==="Cancelada") return `${reschedule}${detail}`;
   return detail;
 }
 function renderTodayAppointments(){
   const day=state.selectedAgendaDay;
-  const dayAppointments=day===22?state.appointments.filter(a=>a.date==="22 may 2026"):[];
-  content.innerHTML=pageHeader("Citas del día","Agenda del 22 de mayo de 2026 y disponibilidad de atención.",`<button class="button secondary" data-view-link="appointments">Regresar a lista</button>`) +
-  `<section class="stats-grid">${stat("calendar","Citas de hoy",dayAppointments.length,"Agenda de la sede","amber")}${stat("check-circle","Confirmadas",dayAppointments.filter(a=>a.status==="Confirmada").length,"Listas para ventanilla","blue")}${stat("check-circle","Atendidas",dayAppointments.filter(a=>a.status==="Atendida").length,"Con cotejo completo","green")}${stat("alert","Por confirmar",dayAppointments.filter(a=>a.status==="Pendiente de confirmación").length,"Requieren seguimiento")}</section>
-  <section class="calendar-layout">
-    <div><article class="card"><div class="card-header"><h2>Mayo 2026</h2><span class="calendar-context">${icon("calendar")} Agenda mensual</span></div><div class="calendar">${["Lu","Ma","Mi","Ju","Vi","Sa","Do"].map(x=>`<span class="weekday">${x}</span>`).join("")}${Array.from({length:31},(_,i)=>{const d=i+1;const disabled=[2,3,9,10,16,17,23,24,30,31].includes(d);return `<button class="calendar-day ${d===day?"selected":disabled?"disabled":""}" data-day="${d}" ${disabled?"disabled":""}>${d}</button>`}).join("")}</div></article><article class="card" style="margin-top:18px"><h2>Disponibilidad del día</h2><p>Dos turnos cada media hora de 08:30 a 16:30.</p><div class="page-actions">${["08:30","09:00","09:30","10:00","10:30","11:00"].map((t,i)=>`<button class="time-slot ${i<2?"busy":i===4?"selected":""}" data-slot="${t}" ${i<2?"disabled":""}>${t}</button>`).join("")}</div></article></div>
-    <article class="card"><div class="card-header"><div><h2>Agenda del ${day} de mayo</h2><p>Solo contiene solicitudes aprobadas documentalmente.</p></div><button class="button ghost small" id="exportDayAgenda">${icon("download")}Exportar</button></div><div class="table-wrap"><table><thead><tr><th>Hora</th><th>Solicitante</th><th>Estatus</th><th>Acciones</th></tr></thead><tbody>${dayAppointments.length?dayAppointments.map(a=>`<tr class="${appointmentRowClass(a.status)}"><td class="folio">${a.time}</td><td><strong>${a.name}</strong><span class="subtext">${a.request} · ${a.type}</span></td><td>${badge(a.status)}</td><td class="actions-cell appointment-actions-cell">${appointmentActions(a,true)}</td></tr>`).join(""):`<tr><td colspan="4" class="empty-state">No hay citas programadas para este día.</td></tr>`}</tbody></table></div></article>
-  </section>`;
+  const MY_AGENT_ID2="AG-00001";
+  const allDay=day===22?state.appointments.filter(a=>a.date==="22 may 2026"):[];
+  const dayAppointments=state.role==="admin"?allDay:allDay.filter(a=>a.assignedAgent===MY_AGENT_ID2||!a.assignedAgent);
+  if(state.role==="admin"){renderAdminAgenda(day,allDay);return;}
+  // ── Vista agente: agenda personal ────────────────────────────────────────
+  content.innerHTML=pageHeader("Mi agenda del día","Citas asignadas y disponibles para el "+day+" de mayo de 2026.",`<button class="button secondary" data-view-link="appointments">${icon("library")}Regresar</button>`,[{label:"Inicio",view:"dashboard"},{label:"Citas",view:"appointments"},{label:"Agenda del día"}])+
+  `<section class="stats-grid">
+    ${stat("calendar","Mis citas hoy",dayAppointments.length,"Asignadas a mí","blue")}
+    ${stat("check-circle","Atendidas",dayAppointments.filter(a=>a.status==="Atendida").length,"Completadas","green")}
+    ${stat("clock","Pendientes",dayAppointments.filter(a=>["Confirmada","Reprogramada"].includes(a.status)&&a.assignedAgent===MY_AGENT_ID2).length,"En mi agenda")}
+    ${stat("refresh","Sin asignar",allDay.filter(a=>!a.assignedAgent&&["Confirmada","Reprogramada"].includes(a.status)).length,"Disponibles para tomar","amber")}
+  </section>
+  <article class="card table-card">
+    <div class="card-header"><div><h2>Agenda del ${day} de mayo</h2><p>Citas asignadas a ti y disponibles.</p></div>
+    <button class="button ghost small" id="exportDayAgenda">${icon("download")}Exportar</button></div>
+    <div class="table-wrap"><table><thead><tr><th>Hora</th><th>Solicitante</th><th>Trámite</th><th>Estatus</th><th>Acciones</th></tr></thead>
+    <tbody>${dayAppointments.length?dayAppointments.map(a=>`<tr class="${appointmentRowClass(a.status)}">
+      <td><strong>${a.time}</strong></td>
+      <td><strong>${a.name}</strong><span class="subtext">${a.request}</span></td>
+      <td>${a.type}</td>
+      <td>${badge(a.status)}</td>
+      <td class="actions-cell">${appointmentActions(a,true)}
+        ${!a.assignedAgent?`<button class="button ghost small" data-self-assign="${a.id}" style="font-size:11px;border-color:var(--blue);color:var(--blue)">${icon("plus")}Seleccionar</button>`:""}
+      </td>
+    </tr>`).join(""):`<tr><td colspan="5" class="empty-state">No hay citas en tu agenda para este día.</td></tr>`}
+    </tbody></table></div>
+  </article>`;
   $$("[data-day]").forEach(b=>b.onclick=()=>{state.selectedAgendaDay=Number(b.dataset.day);renderTodayAppointments()});
-  $$("[data-slot]").forEach(b=>b.onclick=()=>toast(`Turno ${b.dataset.slot} disponible para reprogramación.`));
-  $("#exportDayAgenda").onclick=()=>exportTable(`agenda-${day}-mayo`,["Hora","Solicitante","Estatus"],dayAppointments.map(a=>[a.time,a.name,a.status]));
+  if($("#exportDayAgenda")) $("#exportDayAgenda").onclick=()=>exportTable("mi-agenda-"+day+"-mayo",["Hora","Solicitante","Estatus"],dayAppointments.map(a=>[a.time,a.name,a.status]));
   bindCommonActions();bindAppointmentActions();
+}
+
+function renderAdminAgenda(day,allDay){
+  if(!state.agendaAgentFilter) state.agendaAgentFilter="all";
+  if(!state.agendaStatusFilter) state.agendaStatusFilter="all";
+  // Datos de agentes con citas hoy
+  const agentsData=state.agents.filter(a=>a.status!=="Inactivo").map(function(ag){
+    const citasHoy=allDay.filter(function(c){return c.assignedAgent===ag.id;});
+    const atendidas=citasHoy.filter(function(c){return c.status==="Atendida";}).length;
+    const pendientes=citasHoy.filter(function(c){return ["Confirmada","Reprogramada"].includes(c.status);}).length;
+    const pct=ag.load>0?Math.round(citasHoy.length/Math.max(ag.load,1)*100):0;
+    return {ag,citasHoy:citasHoy.length,atendidas,pendientes,pct};
+  });
+  const sinAsignar=allDay.filter(function(c){return !c.assignedAgent&&["Confirmada","Reprogramada"].includes(c.status);});
+  const totalHoy=allDay.length;
+  const atendidas=allDay.filter(function(c){return c.status==="Atendida";}).length;
+  const capPct=totalHoy>0?Math.round(atendidas/totalHoy*100):0;
+  // Filtrar citas para la tabla
+  const filteredDay=allDay.filter(function(a){
+    const matchAgent=state.agendaAgentFilter==="all"||a.assignedAgent===state.agendaAgentFilter;
+    const matchStatus=state.agendaStatusFilter==="all"||a.status===state.agendaStatusFilter;
+    const ag=state.agents&&state.agents.find(function(x){return x.id===a.assignedAgent;});
+    const matchSite=state.agendaSiteFilter==="all"||!a.assignedAgent||(ag&&ag.site===state.agendaSiteFilter);
+    return matchAgent&&matchStatus&&matchSite;
+  });
+
+  content.innerHTML=pageHeader("Agenda del día","Panel de control operativo · "+day+" de mayo de 2026.",`<button class="button secondary" data-view-link="appointments">${icon("library")}Regresar</button>`+
+    `<button class="button warning" id="reassignCitasBtn">${icon("refresh")}Reasignar citas</button>`,[{label:"Inicio",view:"dashboard"},{label:"Citas",view:"appointments"},{label:"Agenda del día"}])+
+
+  // KPIs
+  `<section class="stats-grid" style="margin-bottom:20px">
+    ${stat("calendar","Citas programadas hoy",totalHoy,"Total del día","blue")}
+    ${stat("check-circle","Atendidas",atendidas,"Completadas","green")}
+    ${stat("alert","Sin asignar",sinAsignar.length,sinAsignar.length>0?"Requieren asignación":"Todo asignado",sinAsignar.length>0?"amber":"")}
+    ${stat("users","Agentes activos",agentsData.length,"En operación hoy")}
+  </section>
+
+  <!-- Carga por agente -->
+  <section class="card" style="padding:0;overflow:hidden;margin-bottom:20px">
+    <div class="card-header" style="padding:14px 20px">
+      <div><h2>Carga por agente</h2><p>Citas asignadas hoy por agente. Haz clic en "Reasignar" para redistribuir.</p></div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <select id="agendaSiteFilterAgents" style="font-size:12px;padding:6px 10px;border:1px solid var(--line);border-radius:6px">
+          <option value="all">Todas las sedes</option>
+          ${[...new Set(state.agents.filter(function(a){return a.status!=="Inactivo";}).map(function(a){return a.site;}))].map(function(s){return '<option value="'+s+'" '+(state.agendaSiteFilter===s?"selected":"")+'>'+s+'</option>';}).join("")}
+        </select>
+      </div>
+    </div>
+    <div class="table-wrap"><table><thead><tr>
+      <th>Agente</th><th>Sede</th><th>Citas hoy</th><th>Atendidas</th><th>Pendientes</th><th>Capacidad del día</th><th>Acción</th>
+    </tr></thead><tbody>
+    `+agentsData.map(function(d){
+      const pct=d.citasHoy>0?Math.round(d.citasHoy/6*100):0;
+      const barColor=pct>=90?"var(--red)":pct>=70?"var(--amber)":"var(--green)";
+      const parts=d.ag.name.trim().split(" ");
+      const initials=(parts[0][0]+(parts[1]?parts[1][0]:"")).toUpperCase();
+      return '<tr>'+
+        '<td><div style="display:flex;align-items:center;gap:8px">'+
+        '<span style="width:28px;height:28px;border-radius:50%;background:var(--brand);color:#fff;display:grid;place-items:center;font-size:11px;font-weight:800;flex-shrink:0">'+initials+'</span>'+
+        '<strong>'+d.ag.name.split(" ").slice(0,2).join(" ")+'</strong></div></td>'+
+        '<td><span class="subtext">'+d.ag.site+'</span></td>'+
+        '<td><strong>'+d.citasHoy+'</strong></td>'+
+        '<td>'+d.atendidas+'</td>'+
+        '<td>'+d.pendientes+'</td>'+
+        '<td><div style="display:flex;align-items:center;gap:10px">'+
+        '<div style="width:80px;height:6px;background:#F0F2F5;border-radius:3px;overflow:hidden">'+
+        '<div style="height:100%;width:'+pct+'%;background:'+barColor+';border-radius:3px"></div></div>'+
+        '<span style="font-size:12px;color:'+barColor+';font-weight:700">'+pct+'%</span>'+
+        '</div></td>'+
+        '<td><button class="button ghost small" data-reassign-from="'+d.ag.id+'">'+(icon("refresh"))+'Reasignar</button></td>'+
+        '</tr>';
+    }).join("")+
+    `</tbody></table></div>
+  </section>
+
+  <!-- Tabla de citas del día con filtros -->
+  <section class="card" style="padding:0;overflow:hidden">
+    <div class="card-header" style="padding:14px 20px">
+      <div><h2>Citas del día</h2><p>Todas las citas programadas. Las citas sin agente asignado aparecen resaltadas.</p></div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <select id="agendaSiteFilter" style="font-size:12px;padding:6px 10px;border:1px solid var(--line);border-radius:6px">
+          <option value="all">Todas las sedes</option>
+          ${[...new Set(state.agents.filter(function(a){return a.status!=="Inactivo";}).map(function(a){return a.site;}))].map(function(s){return '<option value="'+s+'" '+(state.agendaSiteFilter===s?"selected":"")+'>'+s+'</option>';}).join("")}
+        </select>
+        <select id="agendaAgentFilter" style="font-size:12px;padding:6px 10px;border:1px solid var(--line);border-radius:6px">
+          <option value="all">Todos los agentes</option>
+          <option value="">Sin asignar</option>
+          ${state.agents.filter(function(a){return a.status!=="Inactivo"&&(state.agendaSiteFilter==="all"||a.site===state.agendaSiteFilter);}).map(function(ag){
+            return '<option value="'+ag.id+'" '+(state.agendaAgentFilter===ag.id?"selected":"")+'>'+ag.name.split(" ").slice(0,2).join(" ")+'</option>';
+          }).join("")}
+        </select>
+        <select id="agendaStatusFilter" style="font-size:12px;padding:6px 10px;border:1px solid var(--line);border-radius:6px">
+          <option value="all">Todos los estatus</option>
+          ${["Confirmada","Reprogramada","Atendida","Cancelada"].map(function(s){
+            return '<option value="'+s+'" '+(state.agendaStatusFilter===s?"selected":"")+'>'+s+'</option>';
+          }).join("")}
+        </select>
+        <button class="button ghost small" id="exportDayAgenda">${icon("download")}Exportar</button>
+      </div>
+    </div>
+    <div class="table-wrap"><table><thead><tr>
+      <th>Hora</th><th>Ciudadano</th><th>Trámite</th><th>Agente asignado</th><th>Estatus</th><th>Acciones</th>
+    </tr></thead><tbody>
+    `+filteredDay.map(function(a){
+      const ag=state.agents&&state.agents.find(function(x){return x.id===a.assignedAgent;});
+      const agCell=ag?(function(){
+        const parts=ag.name.trim().split(" ");
+        const ini=(parts[0][0]+(parts[1]?parts[1][0]:"")).toUpperCase();
+        const lbl=a.assignedBy==="admin"
+          ?'<span style="font-size:10px;background:#EDE9F6;color:#6B4EAB;padding:1px 6px;border-radius:8px;font-weight:700">Admin</span>'
+          :'<span style="font-size:10px;background:#E9F5FB;color:#0C447C;padding:1px 6px;border-radius:8px;font-weight:700">Agente</span>';
+        return '<div style="display:flex;align-items:center;gap:6px">'+
+          '<span style="width:24px;height:24px;border-radius:50%;background:var(--brand);color:#fff;display:grid;place-items:center;font-size:10px;font-weight:800;flex-shrink:0">'+ini+'</span>'+
+          '<span style="font-size:12px;font-weight:600">'+ag.name.split(" ").slice(0,2).join(" ")+'</span>'+lbl+'</div>';
+      })()
+      :'<button class="button ghost small" data-assign-agent="'+a.id+'" style="font-size:11px;padding:4px 10px;border-style:dashed">'+icon("plus")+'Asignar</button>';
+      const rowBg=!a.assignedAgent&&["Confirmada","Reprogramada"].includes(a.status)?'style="background:#FFF8E6"':"";
+      return '<tr '+rowBg+'>'+
+        '<td><strong>'+a.time+'</strong></td>'+
+        '<td><strong>'+a.name+'</strong><span class="subtext">'+a.request+'</span></td>'+
+        '<td>'+a.type+'</td>'+
+        '<td>'+agCell+'</td>'+
+        '<td>'+badge(a.status)+'</td>'+
+        '<td class="actions-cell">'+
+          (ag?'<button class="button ghost small" data-reassign-single="'+a.id+'">'+icon("refresh")+'Reasignar</button>':'')+
+          '<button class="action-icon neutral" title="Ver bitácora" onclick="openLogModal(\'appointments\',\''+a.id+'\',\''+a.name+'\')">'+icon("clock")+'</button>'+
+        '</td>'+
+        '</tr>';
+    }).join("")+
+    `${filteredDay.length?"":'<tr><td colspan="6" class="empty-state">No hay citas con estos filtros.</td></tr>'}
+    </tbody></table></div>
+  </section>`;
+
+  // Bindings
+  if($("#reassignCitasBtn")) $("#reassignCitasBtn").onclick=()=>openReassignCitasModal();
+  if($("#agendaSiteFilterAgents")) $("#agendaSiteFilterAgents").onchange=function(e){state.agendaSiteFilter=e.target.value;state.agendaAgentFilter="all";renderTodayAppointments();};
+  if($("#agendaSiteFilter")) $("#agendaSiteFilter").onchange=function(e){state.agendaSiteFilter=e.target.value;state.agendaAgentFilter="all";renderTodayAppointments();};
+  if($("#agendaAgentFilter")) $("#agendaAgentFilter").onchange=function(e){state.agendaAgentFilter=e.target.value;renderTodayAppointments();};
+  if($("#agendaStatusFilter")) $("#agendaStatusFilter").onchange=function(e){state.agendaStatusFilter=e.target.value;renderTodayAppointments();};
+  if($("#exportDayAgenda")) $("#exportDayAgenda").onclick=()=>exportTable("agenda-admin-"+day+"-mayo",["Hora","Ciudadano","Tipo","Agente","Estatus"],filteredDay.map(function(a){const ag=state.agents&&state.agents.find(function(x){return x.id===a.assignedAgent;});return [a.time,a.name,a.type,ag?ag.name:"Sin asignar",a.status];}));
+  $$("[data-reassign-from]").forEach(function(b){b.onclick=function(){openReassignStep2(b.dataset.reassignFrom);};});
+  $$("[data-reassign-single]").forEach(function(b){b.onclick=function(){
+    const a=appointmentById(b.dataset.reassignSingle);
+    if(!a) return;
+    const agentOptions=state.agents.filter(function(ag){return ag.status!=="Inactivo";}).map(function(ag){
+      const parts=ag.name.trim().split(" ");const ini=(parts[0][0]+(parts[1]?parts[1][0]:"")).toUpperCase();
+      return '<label style="display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid var(--line);border-radius:7px;cursor:pointer;background:#fff" class="agent-dest-item">'+
+        '<input type="radio" name="singleDest" value="'+ag.id+'" style="accent-color:var(--brand);flex-shrink:0">'+
+        '<span style="width:24px;height:24px;border-radius:50%;background:var(--brand);color:#fff;display:grid;place-items:center;font-size:10px;font-weight:800">'+ini+'</span>'+
+        '<div><strong style="font-size:12px;display:block">'+ag.name.split(" ").slice(0,2).join(" ")+'</strong></div>'+
+        badge(ag.status)+'</label>';
+    }).join("");
+    openModal({title:"Reasignar cita",subtitle:a.name+" · "+a.time,confirm:"Confirmar",confirmClass:"success",
+      body:'<div style="display:grid;gap:8px">'+agentOptions+'</div>',
+      onConfirm:function(){
+        const sel=document.querySelector("input[name='singleDest']:checked");
+        if(!sel){toast("Selecciona un agente.","warning");return;}
+        const dest=state.agents.find(function(ag){return ag.id===sel.value;});
+        a.assignedAgent=dest.id;a.agent=dest.name;a.assignedBy="admin";
+        closeModal();toast("Cita reasignada a "+dest.name.split(" ")[0]+".");renderTodayAppointments();
+      }
+    });
+    setTimeout(function(){
+      document.querySelectorAll(".agent-dest-item input").forEach(function(r){
+        r.onchange=function(){
+          document.querySelectorAll(".agent-dest-item").forEach(function(l){l.style.borderColor="var(--line)";l.style.background="#fff";});
+          const lbl=r.closest("label");if(lbl){lbl.style.borderColor="var(--green)";lbl.style.background="#F0FBF4";}
+        };
+      });
+    },100);
+  };});
+  $$("[data-assign-agent]").forEach(function(b){b.onclick=function(){
+    const a=appointmentById(b.dataset.assignAgent);if(!a) return;
+    const agentOptions=state.agents.filter(function(ag){return ag.status!=="Inactivo";}).map(function(ag){
+      return '<option value="'+ag.id+'">'+ag.name+'</option>';}).join("");
+    openModal({title:"Asignar agente",subtitle:a.name+" · "+a.time,confirm:"Guardar",confirmClass:"primary",
+      body:'<div class="field"><label>Agente</label><select id="assignAgentSel"><option value="">Sin asignar</option>'+agentOptions+'</select></div>',
+      onConfirm:function(){
+        const sel=$("#assignAgentSel").value;
+        const dest=state.agents&&state.agents.find(function(ag){return ag.id===sel;});
+        a.assignedAgent=sel;a.agent=dest?dest.name:"";a.assignedBy="admin";
+        closeModal();toast(dest?dest.name.split(" ")[0]+" asignado.":"Asignación eliminada.");renderTodayAppointments();
+      }
+    });
+  };});
+  bindCommonActions();
 }
 function appointmentById(id){return state.appointments.find(a=>a.id===id)}
 function bindAppointmentActions(){
+  if($("#reassignCitasBtn")) $("#reassignCitasBtn").onclick=()=>openReassignCitasModal();
+  if($("#selectCitasBtn")) $("#selectCitasBtn").onclick=()=>openSelectCitasModal();
+  if($("#attendNextCitaBtn")) $("#attendNextCitaBtn").onclick=()=>{
+    const next=state.appointments.find(a=>["Confirmada","Reprogramada"].includes(a.status));
+    if(!next){toast("No hay citas disponibles.","warning");return;}
+    navigate("attend");
+  };
+  $$("[data-self-assign]").forEach(b=>b.onclick=()=>{
+    const a=appointmentById(b.dataset.selfAssign);
+    if(!a) return;
+    openModal({title:"Seleccionar cita",subtitle:a.name+" · "+a.date+" "+a.time,confirm:"Confirmar",confirmClass:"primary",
+      body:'<div style="display:grid;gap:12px">'+
+        '<div style="background:#F7F8FA;border-radius:8px;padding:14px 16px;display:grid;grid-template-columns:1fr 1fr;gap:8px">'+
+        '<div><small style="font-size:11px;color:var(--muted);font-weight:700;text-transform:uppercase">Fecha</small><strong style="display:block;font-size:13px">'+a.date+'</strong></div>'+
+        '<div><small style="font-size:11px;color:var(--muted);font-weight:700;text-transform:uppercase">Hora</small><strong style="display:block;font-size:13px">'+a.time+'</strong></div>'+
+        '<div><small style="font-size:11px;color:var(--muted);font-weight:700;text-transform:uppercase">Ciudadano</small><strong style="display:block;font-size:13px">'+a.name+'</strong></div>'+
+        '<div><small style="font-size:11px;color:var(--muted);font-weight:700;text-transform:uppercase">Trámite</small><strong style="display:block;font-size:13px">'+a.type+'</strong></div>'+
+        '</div>'+
+        '<div class="notice" style="font-size:12px">La cita quedará asignada a ti y aparecerá en tu agenda del día.</div>'+
+        '</div>',
+      onConfirm:()=>{
+        const selfAgent=state.agents&&state.agents.find(ag=>ag.id==="AG-00001");
+        a.assignedAgent="AG-00001";
+        a.agent=selfAgent?selfAgent.name:"Luis Hernández Pérez";
+        a.assignedBy="agent";
+        closeModal();toast("Cita seleccionada y asignada a tu agenda.");renderAppointments();
+      }
+    });
+  });
   $$("[data-assign-agent]").forEach(b=>b.onclick=()=>{
     const a=appointmentById(b.dataset.assignAgent);
     if(!a) return;
@@ -1844,16 +2310,26 @@ function bindAppointmentActions(){
         const agentObj=state.agents&&state.agents.find(ag=>ag.id===sel);
         a.assignedAgent=sel;
         a.agent=agentObj?agentObj.name:"";
+        a.assignedBy=sel?"admin":"";
         closeModal();
         const currentView=state.view==="appointments"?renderAppointments:renderTodayAppointments;
         currentView();
-        toast(agentObj?`${agentObj.name} asignado a la cita.`:"Asignación eliminada.");
+        toast(agentObj?agentObj.name+" asignado a la cita por el Administrador.":"Asignación eliminada.");
       }
     });
   });
+  $$("[data-acta-status]").forEach(b=>b.onclick=()=>{
+    const a=appointmentById(b.dataset.actaStatus);
+    if(!a) return;
+    if(a.actaUploaded){
+      toast("El acta de esta cita ya fue subida correctamente.");
+    } else {
+      toast("El acta aún no ha sido subida. Accede a la atención de la cita para subirla.","warning");
+    }
+  });
   $$("[data-reschedule]").forEach(b=>b.onclick=()=>rescheduleAppointment(b.dataset.reschedule));
   $$("[data-remind-appointment]").forEach(b=>b.onclick=()=>{const a=appointmentById(b.dataset.remindAppointment);toast(`Recordatorio de confirmación enviado a ${a.name}.`)});
-  $$("[data-no-show]").forEach(b=>b.onclick=()=>{const a=appointmentById(b.dataset.noShow);openModal({title:"Registrar inasistencia",subtitle:`${a.name} · ${a.time}`,confirm:"Marcar no presentado",confirmClass:"danger",body:`<div class="notice"><strong>Esta acción quedará en bitácora.</strong> El ciudadano será notificado y la cita podrá reprogramarse conforme a las reglas vigentes.</div>`,onConfirm:()=>{a.status="No se presentó";closeModal();toast("La inasistencia quedó registrada.","warning");renderAppointments()}})});
+  $$("[data-no-show]").forEach(b=>b.onclick=()=>{const a=appointmentById(b.dataset.noShow);openModal({title:"Registrar inasistencia",subtitle:`${a.name} · ${a.time}`,confirm:"Cancelar cita",confirmClass:"danger",body:`<div class="notice"><strong>Esta acción quedará en bitácora.</strong> El ciudadano será notificado.</div>`,onConfirm:()=>{a.status="Cancelada";closeModal();toast("La inasistencia quedó registrada.","warning");renderAppointments()}})});
   $$("[data-appointment-detail]").forEach(b=>b.onclick=()=>{const a=appointmentById(b.dataset.appointmentDetail);openModal({title:"Detalle de cita",subtitle:a.id,confirm:"Cerrar",body:`<div class="info-grid"><div><small>Ciudadano</small><strong>${a.name}</strong></div><div><small>Trámite</small><strong>${a.type}</strong></div><div><small>Fecha</small><strong>${a.date}</strong></div><div><small>Hora</small><strong>${a.time}</strong></div><div><small>Agente</small><strong>${a.agent}</strong></div><div><small>Estatus</small>${badge(a.status)}</div></div>`,onConfirm:closeModal})});
 }
 function rescheduleAppointment(id){
@@ -1870,168 +2346,460 @@ function rescheduleAppointment(id){
   }});
 }
 
-function renderAttend(id=state.activeAppointment){
-  const a=appointmentById(id)||state.appointments[0];state.activeAppointment=a.id;
-  const allBio=Object.values(state.biometrics).every(Boolean);
-  const allChecks=Object.values(state.physicalChecks).every(Boolean);
-  const canFinish=allBio&&allChecks;
-  const docs=Object.values(state.documents);
-  content.innerHTML=pageHeader("Atención presencial","Coteja la identidad, captura los biométricos y formaliza la emisión del certificado.",
-    `<button class="button ghost" data-view-link="appointments">${icon("library")}Volver a citas</button>
-     <button class="button success" id="finishAppointment" ${canFinish?"":"disabled"}>${icon("check-circle")}Finalizar y generar certificado</button>`) +
-  `<section class="summary-banner">
-    <div><h2>${a.id}</h2><span>${a.name}</span></div>
-    <div class="summary-item"><small>Trámite</small><strong>${a.type}</strong></div>
-    <div class="summary-item"><small>Fecha</small><strong>${a.date}</strong></div>
-    <div class="summary-item"><small>Hora</small><strong>${a.time}</strong></div>
-    <div class="summary-item"><small>Solicitud</small><strong>${a.request}</strong></div>
-  </section>
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start">
-    <!-- Panel izquierdo: expediente completo en una sola vista -->
-    <article class="card" style="padding:0;overflow:hidden">
-      <div style="padding:14px 20px;border-bottom:1px solid var(--line);background:#FAFAFA">
-        <strong style="font-size:14px">Expediente del ciudadano</strong>
-        <p style="margin:3px 0 0;font-size:12px;color:var(--muted)">Información aprobada en la revisión documental. Solo consulta.</p>
-      </div>
-      <!-- Datos personales -->
-      <div style="padding:16px 20px;border-bottom:1px solid var(--line)">
-        <p style="font-size:11px;font-weight:800;color:var(--brand);text-transform:uppercase;letter-spacing:.06em;margin:0 0 12px">Datos personales</p>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-          <div style="padding:8px 10px;background:#F7F8FA;border-radius:6px"><small style="font-size:10px;color:var(--muted);font-weight:700;text-transform:uppercase">CURP</small><strong style="display:block;font-size:12px;font-family:monospace;letter-spacing:.03em">PEGJ850215HTSMRN09</strong></div>
-          <div style="padding:8px 10px;background:#F7F8FA;border-radius:6px"><small style="font-size:10px;color:var(--muted);font-weight:700;text-transform:uppercase">RFC</small><strong style="display:block;font-size:12px;font-family:monospace;letter-spacing:.03em">PEGJ850215XYZ</strong></div>
-          <div style="padding:8px 10px;background:#F7F8FA;border-radius:6px;grid-column:1/-1"><small style="font-size:10px;color:var(--muted);font-weight:700;text-transform:uppercase">Nombre completo</small><strong style="display:block;font-size:13px">${a.name}</strong></div>
-          <div style="padding:8px 10px;background:#F7F8FA;border-radius:6px"><small style="font-size:10px;color:var(--muted);font-weight:700;text-transform:uppercase">Correo</small><strong style="display:block;font-size:12px">juan.perez@tamaulipas.gob.mx</strong></div>
-          <div style="padding:8px 10px;background:#F7F8FA;border-radius:6px"><small style="font-size:10px;color:var(--muted);font-weight:700;text-transform:uppercase">Teléfono</small><strong style="display:block;font-size:12px">834 123 4567</strong></div>
-        </div>
-      </div>
-      <!-- Datos laborales -->
-      <div style="padding:16px 20px;border-bottom:1px solid var(--line)">
-        <p style="font-size:11px;font-weight:800;color:var(--brand);text-transform:uppercase;letter-spacing:.06em;margin:0 0 12px">Datos laborales</p>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-          <div style="padding:8px 10px;background:#F7F8FA;border-radius:6px"><small style="font-size:10px;color:var(--muted);font-weight:700;text-transform:uppercase">Tipo de dependencia</small><strong style="display:block;font-size:12px">Gobierno Central</strong></div>
-          <div style="padding:8px 10px;background:#F7F8FA;border-radius:6px"><small style="font-size:10px;color:var(--muted);font-weight:700;text-transform:uppercase">Número de empleado</small><strong style="display:block;font-size:12px">1234567</strong></div>
-          <div style="padding:8px 10px;background:#F7F8FA;border-radius:6px;grid-column:1/-1"><small style="font-size:10px;color:var(--muted);font-weight:700;text-transform:uppercase">Dependencia</small><strong style="display:block;font-size:13px">Secretaría de Salud</strong></div>
-          <div style="padding:8px 10px;background:#F7F8FA;border-radius:6px"><small style="font-size:10px;color:var(--muted);font-weight:700;text-transform:uppercase">Área</small><strong style="display:block;font-size:12px">Dirección de Innovación</strong></div>
-          <div style="padding:8px 10px;background:#F7F8FA;border-radius:6px"><small style="font-size:10px;color:var(--muted);font-weight:700;text-transform:uppercase">Puesto</small><strong style="display:block;font-size:12px">Jefe de Departamento</strong></div>
-        </div>
-      </div>
-      <!-- Documentos presentados -->
-      <div style="padding:16px 20px">
-        <p style="font-size:11px;font-weight:800;color:var(--brand);text-transform:uppercase;letter-spacing:.06em;margin:0 0 12px">Documentos presentados en físico</p>
-        <div style="display:grid;gap:6px">
-          ${docs.map(d=>`<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;border:1px solid var(--line);border-radius:7px;background:#fff">
-            <div style="display:flex;align-items:center;gap:8px">
-              <span style="color:var(--green)">${icon("check-circle")}</span>
-              <div><strong style="font-size:12px">${d.name}</strong><small style="display:block;color:var(--muted)">${d.file}</small></div>
-            </div>
-            <span class="badge approved">Validado</span>
-          </div>`).join("")}
-        </div>
-      </div>
-    </article>
-    <!-- Panel derecho: cotejo y biométricos -->
-    <article class="card" style="padding:0;overflow:hidden">
-      <div style="padding:14px 20px;border-bottom:1px solid var(--line);background:#FAFAFA">
-        <strong style="font-size:14px">Cotejo y captura biométrica</strong>
-        <p style="margin:3px 0 0;font-size:12px;color:var(--muted)">Completa cada paso para habilitar la generación del certificado.</p>
-      </div>
-      <!-- Checklist de cotejo -->
-      <div style="padding:16px 20px;border-bottom:1px solid var(--line)">
-        <p style="font-size:11px;font-weight:800;color:var(--brand);text-transform:uppercase;letter-spacing:.06em;margin:0 0 12px">Lista de verificación</p>
-        <div style="display:grid;gap:8px">
-          ${[
-            ["identity","Identidad cotejada con identificación oficial presentada"],
-            ["originals","Documentos originales verificados contra los archivos aprobados"],
-            ["consent","Acta de Emisión y términos aceptados y firmados"],
-            ["duplicate","Validación de no duplicidad de clave pública completada"]
-          ].map(([key,label])=>`<label style="display:flex;align-items:flex-start;gap:10px;padding:11px 13px;border:1px solid ${state.physicalChecks[key]?"var(--green)":"var(--line)"};border-radius:7px;cursor:pointer;background:${state.physicalChecks[key]?"#F0FBF4":"#fff"};transition:all .15s">
-            <input type="checkbox" data-check="${key}" ${state.physicalChecks[key]?"checked":""} style="margin-top:1px;accent-color:var(--green);flex-shrink:0">
-            <span style="font-size:13px;color:${state.physicalChecks[key]?"var(--green)":"var(--ink)"}">${label}</span>
-          </label>`).join("")}
-        </div>
-      </div>
-      <!-- Biométricos -->
-      <div style="padding:16px 20px;border-bottom:1px solid var(--line)">
-        <p style="font-size:11px;font-weight:800;color:var(--brand);text-transform:uppercase;letter-spacing:.06em;margin:0 0 12px">Datos biométricos</p>
-        <div class="biometric-grid">
-          ${[
-            ["photo","camera","Fotografía","Captura facial"],
-            ["fingerprint","fingerprint","Huella dactilar","Índice derecho"],
-            ["signature","signature","Firma electrónica","Firma del titular"]
-          ].map(([key,iconName,title,desc])=>`<article class="biometric-card ${state.biometrics[key]?"complete":""}">
-            <span class="biometric-icon">${icon(state.biometrics[key]?"check-circle":iconName)}</span>
-            <h3>${title}</h3>
-            <p>${state.biometrics[key]?"Captura completada":desc}</p>
-            <button class="button ${state.biometrics[key]?"success":"primary"} small" data-biometric="${key}">${state.biometrics[key]?"Volver a capturar":"Capturar"}</button>
-          </article>`).join("")}
-        </div>
-      </div>
-      <!-- Estado del proceso -->
-      <div style="padding:14px 20px;background:#FAFAFA">
-        ${canFinish
-          ?`<div style="display:flex;align-items:center;gap:10px;padding:12px 16px;background:#F0FBF4;border:1px solid var(--green);border-radius:8px;margin-bottom:12px">
-              <span style="color:var(--green);flex-shrink:0">${icon("check-circle")}</span>
-              <span style="font-size:13px;color:var(--green);font-weight:600">Todo completo. Puedes generar el certificado.</span>
-            </div>`
-          :`<div style="display:flex;align-items:center;gap:10px;padding:12px 16px;background:#FFF8E6;border:1px solid var(--amber);border-radius:8px;margin-bottom:12px">
-              <span style="color:var(--amber);flex-shrink:0">${icon("clock")}</span>
-              <span style="font-size:13px;color:#805E29">
-                ${!allChecks&&!allBio?"Completa la verificación y los biométricos para continuar."
-                  :!allChecks?"Completa la lista de verificación para continuar."
-                  :"Captura todos los datos biométricos para continuar."}
-              </span>
-            </div>`}
-        <button class="button success wide" id="finishAppointment2" ${canFinish?"":"disabled"}>${icon("check-circle")}Finalizar y generar certificado</button>
-      </div>
-    </article>
-  </div>`;
-  $$("[data-check]").forEach(c=>c.onchange=()=>{state.physicalChecks[c.dataset.check]=c.checked;renderAttend()});
-  $$("[data-biometric]").forEach(b=>b.onclick=()=>captureBiometric(b.dataset.biometric));
-  $("#finishAppointment").onclick=()=>finishAppointment(a);
-  if($("#finishAppointment2")) $("#finishAppointment2").onclick=()=>finishAppointment(a);
-  bindCommonActions();
+function validateFeatPassword(){
+  const pwd=document.getElementById("featPassword");
+  const conf=document.getElementById("featPasswordConfirm");
+  if(!pwd) return;
+  const val=pwd.value;
+  const rules={
+    len: val.length>=8,
+    upper: /[A-Z]/.test(val),
+    lower: /[a-z]/.test(val),
+    number: /[0-9]/.test(val),
+    special: /[@#$%&*]/.test(val),
+  };
+  // Actualizar indicadores
+  Object.entries(rules).forEach(([key,ok])=>{
+    const dot=document.getElementById("rule_"+key);
+    const label=document.getElementById("ruleLabel_"+key);
+    if(dot){dot.style.background=ok?"var(--green)":"transparent";dot.style.borderColor=ok?"var(--green)":"var(--line)";dot.textContent=ok?"✓":"";}
+    if(label) label.style.color=ok?"var(--green)":"var(--muted)";
+  });
+  // Barra de fortaleza
+  const score=Object.values(rules).filter(Boolean).length;
+  const fill=document.getElementById("strengthFill");
+  const lbl=document.getElementById("strengthLabel");
+  const colors=["","var(--red)","var(--red)","var(--amber)","var(--amber)","var(--green)"];
+  const labels=["","Muy débil","Débil","Regular","Buena","Segura"];
+  if(fill){fill.style.width=(score/5*100)+"%";fill.style.background=colors[score];}
+  if(lbl){lbl.textContent=val.length?labels[score]:"";lbl.style.color=colors[score];}
+  // Confirmar
+  const allRules=Object.values(rules).every(Boolean);
+  const match=conf&&val===conf.value&&conf.value.length>0;
+  const matchLbl=document.getElementById("matchLabel");
+  if(matchLbl){
+    matchLbl.textContent=conf&&conf.value.length>0?(match?"✓ Las contraseñas coinciden":"✗ Las contraseñas no coinciden"):"";
+    matchLbl.style.color=match?"var(--green)":"var(--red)";
+  }
+  // Indicador general
+  const ready=allRules&&match;
+  state.featPasswordOk=ready;
+  const indicator=document.getElementById("passwordReadyIndicator");
+  if(indicator) indicator.hidden=!ready;
+  // Habilitar/deshabilitar botones
+  const btnCert=document.getElementById("btnGenerarCertificado");
+  const btnActa=document.getElementById("btnVerActa");
+  if(btnCert) btnCert.disabled=!ready;
 }
 function captureBiometric(key){
-  const labels={photo:"fotografía",fingerprint:"huella dactilar",signature:"firma"};
-  openModal({title:`Capturar ${labels[key]}`,subtitle:"Simulación del dispositivo de captura",confirm:"Confirmar captura",body:`<div class="empty-state"><span class="biometric-icon modal-capture-icon">${icon(key==="photo"?"camera":key)}</span><h3>Dispositivo conectado</h3><p>La captura simulada está lista. En el sistema real se habilitará el dispositivo correspondiente.</p></div>`,onConfirm:()=>{state.biometrics[key]=true;closeModal();toast(`${labels[key]} capturada correctamente.`);renderAttend()}});
+  const labels={photo:"Fotografía",fingerprint:"Huella dactilar",signature:"Firma electrónica"};
+  const icons={photo:"camera",fingerprint:"fingerprint",signature:"signature"};
+  const descs={
+    photo:"Posiciona al ciudadano frente a la cámara y asegúrate de que el rostro esté centrado y bien iluminado.",
+    fingerprint:"Solicita al ciudadano que coloque el dedo índice derecho sobre el lector de huellas.",
+    signature:"El ciudadano debe firmar en el pad de firma electrónica con su rúbrica habitual."
+  };
+  openModal({
+    title:`Capturar ${labels[key]}`,
+    subtitle:"Dispositivo listo para captura",
+    confirm:"Confirmar captura",
+    confirmClass:"success",
+    body:`<div style="display:grid;gap:16px">
+      <div style="display:flex;align-items:center;gap:14px;padding:16px;background:#F7F8FA;border-radius:8px">
+        <span style="width:52px;height:52px;border-radius:12px;background:var(--brand);color:#fff;display:grid;place-items:center;flex-shrink:0;font-size:24px">${icon(icons[key])}</span>
+        <div><strong style="display:block;font-size:15px;margin-bottom:4px">${labels[key]}</strong><span style="font-size:13px;color:var(--gray)">${descs[key]}</span></div>
+      </div>
+      <div style="border:2px dashed var(--line);border-radius:10px;padding:32px;text-align:center;background:#FAFAFA" id="bioCaptureArea">
+        <div id="bioPreCapture">
+          <span style="color:var(--muted);font-size:40px;display:block;margin-bottom:12px">${icon(icons[key])}</span>
+          <strong style="display:block;font-size:14px;margin-bottom:6px">Esperando captura del dispositivo</strong>
+          <p style="margin:0;font-size:12px;color:var(--muted)">Haz clic en "Iniciar captura" para activar el dispositivo.</p>
+          <button class="button primary" style="margin-top:16px" id="startCapture">Iniciar captura</button>
+        </div>
+        <div id="bioPostCapture" hidden>
+          <span style="color:var(--green);font-size:40px;display:block;margin-bottom:12px">${icon("check-circle")}</span>
+          <strong style="display:block;font-size:14px;color:var(--green);margin-bottom:6px">Captura exitosa</strong>
+          <p style="margin:0;font-size:12px;color:var(--muted)">La ${labels[key].toLowerCase()} fue capturada correctamente. Confirma para guardar.</p>
+        </div>
+      </div>
+      <div class="notice" style="font-size:12px"><strong>Nota:</strong> si la calidad de la captura no es óptima, puedes repetirla antes de confirmar.</div>
+    </div>`,
+    onConfirm:()=>{
+      state.biometrics[key]=true;
+      closeModal();
+      toast(`${labels[key]} capturada correctamente.`);
+      renderAttend();
+    }
+  });
+  // Simular activación del dispositivo
+  setTimeout(()=>{
+    const startBtn=$("#startCapture");
+    if(startBtn) startBtn.onclick=()=>{
+      startBtn.textContent="Capturando...";
+      startBtn.disabled=true;
+      setTimeout(()=>{
+        const pre=$("#bioPreCapture");
+        const post=$("#bioPostCapture");
+        if(pre) pre.hidden=true;
+        if(post) post.hidden=false;
+        const area=$("#bioCaptureArea");
+        if(area){
+          area.style.borderColor="var(--green)";
+          area.style.background="#F0FBF4";
+        }
+      },1500);
+    };
+  },100);
+}
+
+function renderAttend(id=state.activeAppointment){
+  const a=appointmentById(id)||state.appointments[0];
+  state.activeAppointment=a.id;
+  if(!state.attendTab||!['docs','biometrics','password'].includes(state.attendTab)) state.attendTab='docs';
+  if(!state.physicalDocStatus) state.physicalDocStatus={};
+  const docs=Object.entries(state.documents);
+  docs.forEach(([key])=>{ if(!state.physicalDocStatus[key]) state.physicalDocStatus[key]='Pendiente'; });
+  const allDocsOk=docs.every(([key])=>state.physicalDocStatus[key]==='Validado');
+  const allBio=Object.values(state.biometrics).every(Boolean);
+  const docValidatedCount=docs.filter(([key])=>state.physicalDocStatus[key]==='Validado').length;
+  const docObservedCount=docs.filter(([key])=>state.physicalDocStatus[key]==='Observado').length;
+  const activeDoc=state.documents[state.activeDocument];
+  const bioCount=Object.values(state.biometrics).filter(Boolean).length;
+
+  // ── Construir HTML por secciones ────────────────────────────────────────
+  const bannerHtml = pageHeader('Atención presencial','Coteja documentos físicos, captura biométricos y genera el certificado.',
+    '<button class="button ghost" data-view-link="appointments">'+icon('library')+'Volver a citas</button>',[{label:"Inicio",view:"dashboard"},{label:"Citas",view:"appointments"},{label:"Atención presencial"}]) +
+    '<section class="summary-banner" style="margin-bottom:20px">'+
+    '<div><h2>'+a.id+'</h2><span>'+a.name+'</span></div>'+
+    '<div class="summary-item"><small>Trámite</small><strong>'+a.type+'</strong></div>'+
+    '<div class="summary-item"><small>Fecha</small><strong>'+a.date+'</strong></div>'+
+    '<div class="summary-item"><small>Hora</small><strong>'+a.time+'</strong></div>'+
+    '<div class="summary-item"><small>Solicitud</small><strong>'+a.request+'</strong></div>'+
+    '</section>';
+
+  // Pestañas
+  const tabsHtml = '<div style="border-bottom:2px solid var(--line);margin-bottom:20px;display:flex;gap:0">' +
+    [['docs', icon('file-check')+' Cotejo documental',
+      allDocsOk?'✓ Completo':docObservedCount?docObservedCount+' observado'+(docObservedCount>1?'s':''):docValidatedCount+'/'+docs.length,
+      allDocsOk?'var(--green)':docObservedCount?'var(--brand)':'var(--muted)',
+      allDocsOk?'var(--green-bg)':docObservedCount?'#FEF0F3':'#F0F2F5'],
+     ['biometrics', icon('fingerprint')+' Captura biométrica',
+      allBio?'✓ Completo':bioCount+'/3 capturas',
+      allBio?'var(--green)':'var(--muted)',
+      allBio?'var(--green-bg)':'#F0F2F5'],
+     ['password', icon('signature')+' Generar contraseña',
+      state.featPasswordOk?'✓ Lista':'Pendiente',
+      state.featPasswordOk?'var(--green)':'var(--muted)',
+      state.featPasswordOk?'var(--green-bg)':'#F0F2F5'],
+    ].map(function(item){
+      const tabId=item[0],label=item[1],badgeText=item[2],badgeColor=item[3],badgeBg=item[4];
+      const isActive=state.attendTab===tabId;
+      return '<button id="tab_'+tabId+'" style="border:0;background:'+(isActive?'#fff':'#FAFAFA')+';padding:16px 24px;display:flex;align-items:center;gap:10px;border-bottom:3px solid '+(isActive?'var(--brand)':'transparent')+';color:'+(isActive?'var(--brand)':'var(--gray)')+';font-weight:'+(isActive?'800':'600')+';font-size:15px;cursor:pointer;white-space:nowrap;transition:all .15s;border-right:1px solid var(--line)">'+
+        label+
+        '<span style="font-size:11px;padding:3px 9px;border-radius:10px;font-weight:700;background:'+badgeBg+';color:'+badgeColor+'">'+badgeText+'</span>'+
+        '</button>';
+    }).join('') +
+    '</div>';
+
+  // Pestaña 1: Cotejo documental
+  let tab1Html = '';
+  if(state.attendTab==='docs'){
+    const docsListHtml = docs.map(function(entry){
+      const key=entry[0],d=entry[1];
+      const pStatus=state.physicalDocStatus[key]||'Pendiente';
+      const isActive=state.activeDocument===key;
+      const borderColor=pStatus==='Validado'?'var(--green)':pStatus==='Observado'?'var(--red)':isActive?'var(--brand)':'var(--line)';
+      const bg=pStatus==='Validado'?'#F0FBF4':pStatus==='Observado'?'#FEF0F3':isActive?'#FCF3F5':'#fff';
+      return '<button class="document-button" data-document="'+key+'" style="border-color:'+borderColor+';background:'+bg+'">'+
+        '<div style="text-align:left;flex:1">'+
+        '<strong style="font-size:12px;display:block">'+d.name+'</strong>'+
+        '<small style="color:var(--muted)">'+d.file+'</small>'+
+        '<div style="display:flex;align-items:center;gap:6px;margin-top:4px">'+
+        '<span style="font-size:10px;color:var(--muted)">Digital:</span>'+badge(d.status)+
+        '<span style="font-size:10px;color:var(--muted);margin-left:4px">Físico:</span>'+badge(pStatus)+
+        '</div></div></button>';
+    }).join('');
+    const continuarBtn = allDocsOk
+      ? '<button class="button primary wide" id="goToBiometrics">'+icon('fingerprint')+' Continuar con captura biométrica</button>'
+      : '<p style="margin:0;font-size:12px;color:var(--muted);text-align:center">Valida cada documento para continuar.</p>';
+    const pStatus2=state.physicalDocStatus[state.activeDocument]||'Pendiente';
+    const dotColor=pStatus2==='Validado'?'var(--green)':pStatus2==='Observado'?'var(--red)':'var(--amber)';
+    tab1Html =
+      '<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start">'+
+      '<article class="card" style="padding:0;overflow:hidden;position:sticky;top:96px;max-height:calc(100vh - 140px);display:flex;flex-direction:column">'+
+      '<div style="padding:14px 20px;border-bottom:1px solid var(--line);background:#FAFAFA">'+
+      '<div style="display:flex;align-items:center;justify-content:space-between">'+
+      '<div style="display:flex;align-items:center;gap:10px">'+
+      '<span style="width:32px;height:32px;border-radius:50%;background:var(--brand);color:#fff;display:grid;place-items:center;font-size:13px;font-weight:800">JP</span>'+
+      '<div><strong style="font-size:13px">'+a.name+'</strong><p style="margin:2px 0 0;font-size:11px;color:var(--muted)">CURP: PEGJ850215HTSMRN09 · Secretaría de Salud</p></div>'+
+      '</div><button id="toggleExpediente" class="button ghost small">'+icon('chevron-down')+' Datos</button></div>'+
+      '<div id="expedienteDetail" hidden style="margin-top:12px;display:grid;grid-template-columns:1fr 1fr;gap:6px">'+
+      '<div style="padding:7px 10px;background:#fff;border-radius:6px;border:1px solid var(--line)"><small style="font-size:10px;color:var(--muted);font-weight:700;text-transform:uppercase">RFC</small><strong style="display:block;font-size:12px;font-family:monospace">PEGJ850215XYZ</strong></div>'+
+      '<div style="padding:7px 10px;background:#fff;border-radius:6px;border:1px solid var(--line)"><small style="font-size:10px;color:var(--muted);font-weight:700;text-transform:uppercase">Tipo dependencia</small><strong style="display:block;font-size:12px">Gobierno Central</strong></div>'+
+      '<div style="padding:7px 10px;background:#fff;border-radius:6px;border:1px solid var(--line);grid-column:1/-1"><small style="font-size:10px;color:var(--muted);font-weight:700;text-transform:uppercase">Dependencia</small><strong style="display:block;font-size:12px">Secretaría de Salud</strong></div>'+
+      '<div style="padding:7px 10px;background:#fff;border-radius:6px;border:1px solid var(--line)"><small style="font-size:10px;color:var(--muted);font-weight:700;text-transform:uppercase">Puesto</small><strong style="display:block;font-size:12px">Jefe de Departamento</strong></div>'+
+      '<div style="padding:7px 10px;background:#fff;border-radius:6px;border:1px solid var(--line)"><small style="font-size:10px;color:var(--muted);font-weight:700;text-transform:uppercase">No. empleado</small><strong style="display:block;font-size:12px">1234567</strong></div>'+
+      '</div></div>'+
+      '<div style="padding:14px 20px;flex:1;overflow-y:auto">'+
+      '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">'+
+      '<strong style="font-size:13px">Documentos a cotejar</strong>'+
+      '<span style="font-size:11px;color:var(--muted)">'+docValidatedCount+' de '+docs.length+' validados</span>'+
+      '</div><div style="display:grid;gap:6px">'+docsListHtml+'</div></div>'+
+      '<div style="padding:12px 20px;border-top:1px solid var(--line);background:#FAFAFA">'+continuarBtn+'</div>'+
+      '</article>'+
+      '<article class="card" style="padding:0;overflow:hidden">'+
+      '<div style="padding:13px 20px;border-bottom:1px solid var(--line);background:#F7F8FA;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">'+
+      '<div style="display:flex;align-items:center;gap:10px">'+
+      '<span style="width:8px;height:8px;border-radius:50%;background:'+dotColor+';flex-shrink:0"></span>'+
+      '<div><strong style="font-size:14px">'+activeDoc.name+'</strong>'+
+      '<p style="margin:2px 0 0;font-size:11px;color:var(--muted)">'+activeDoc.file+' · Digital: '+activeDoc.status+' · Físico: '+pStatus2+'</p></div>'+
+      '</div>'+
+      '<div style="display:flex;align-items:center;gap:6px">'+
+      '<button class="action-icon" id="downloadActiveDoc" title="Descargar">'+icon('download')+'</button>'+
+      '<div style="display:flex;align-items:center;gap:4px;border:1px solid var(--line);border-radius:6px;padding:2px 6px;background:#fff">'+
+      '<button class="button ghost small" id="attendZoomOut" style="min-height:28px;padding:4px 8px">−</button>'+
+      '<span style="font-size:12px;font-weight:700;min-width:36px;text-align:center">'+(state.viewerZoom||100)+'%</span>'+
+      '<button class="button ghost small" id="attendZoomIn" style="min-height:28px;padding:4px 8px">+</button>'+
+      '</div></div></div>'+
+      '<div class="document-viewer" style="margin:0;border-radius:0;min-height:360px">'+
+      '<div class="viewer-toolbar"><span style="font-size:11px">'+activeDoc.file+' — Versión electrónica</span><span style="font-size:11px">Pág. 1 / 2</span></div>'+
+      '<div style="transform:scale('+(state.viewerZoom||100)/100+');transform-origin:top center;transition:transform .15s">'+documentPaper(state.activeDocument)+'</div>'+
+      '</div>'+
+      '<div style="padding:14px 20px;border-top:1px solid var(--line);background:#FAFAFA">'+
+      '<p style="margin:0 0 10px;font-size:12px;color:var(--gray)"><strong>Instrucción:</strong> compara el documento electrónico con el original físico que presenta el ciudadano.</p>'+
+      '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">'+
+      '<button class="button secondary" id="physicalObserveDoc">'+icon('alert')+' Observar físico</button>'+
+      '<button class="button success" id="physicalValidateDoc">'+icon('check-circle')+' Validar físico</button>'+
+      '<button class="button ghost" id="physicalSkipDoc">'+icon('refresh')+' Siguiente</button>'+
+      '</div>'+
+      '<div class="notice" style="margin-top:10px;font-size:12px"><strong>Importante:</strong> si el documento físico no coincide, está vencido o parece apócrifo, márcalo como Observado.</div>'+
+      '</div></article></div>';
+  }
+
+  // Pestaña 2: Biométricos
+  let tab2Html = '';
+  if(state.attendTab==='biometrics'){
+    const bioCards = [['photo','camera','Fotografía','Captura facial del titular'],['fingerprint','fingerprint','Huella dactilar','Índice derecho'],['signature','signature','Firma electrónica','Firma del titular']].map(function(item){
+      const key=item[0],ic=item[1],title=item[2],desc=item[3];
+      const done=state.biometrics[key];
+      return '<article class="biometric-card '+(done?'complete':'')+'">'+
+        '<span class="biometric-icon">'+icon(done?'check-circle':ic)+'</span>'+
+        '<h3>'+title+'</h3>'+
+        '<p>'+(done?'Captura completada':desc)+'</p>'+
+        '<button class="button '+(done?'success':'primary')+' small" data-biometric="'+key+'">'+(done?'Volver a capturar':'Capturar')+'</button>'+
+        '</article>';
+    }).join('');
+    const instrCards = [['camera','Fotografía','Posiciona al ciudadano frente a la cámara. Rostro centrado y bien iluminado.'],['fingerprint','Huella dactilar','Solicita el dedo índice derecho sobre el lector. Presión firme y dedo limpio.'],['signature','Firma electrónica','El ciudadano firma en el pad con su rúbrica habitual.']].map(function(item){
+      return '<div style="display:flex;align-items:flex-start;gap:12px;padding:12px 14px;background:#F7F8FA;border-radius:8px">'+
+        '<span style="color:var(--brand);flex-shrink:0;margin-top:2px">'+icon(item[0])+'</span>'+
+        '<div><strong style="font-size:13px;display:block;margin-bottom:3px">'+item[1]+'</strong><span style="font-size:12px;color:var(--muted)">'+item[2]+'</span></div></div>';
+    }).join('');
+    const continuarBio = allBio
+      ? '<button class="button primary wide" id="goToPassword">'+icon('signature')+' Continuar a generar contraseña</button>'
+      : '<p style="margin:0;font-size:12px;color:var(--muted);text-align:center">Captura los tres datos biométricos para continuar.</p>';
+    const alertDocs = !allDocsOk ? '<div style="padding:12px 14px;background:#FEF0F3;border:1px solid var(--brand);border-radius:8px;font-size:12px;color:var(--brand);margin-bottom:14px">'+icon('alert')+' <strong>Cotejo documental incompleto.</strong> Regresa a la primera pestaña.</div>' : '';
+    tab2Html =
+      '<div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start">'+
+      '<article class="card" style="padding:0;overflow:hidden">'+
+      '<div style="padding:14px 20px;border-bottom:1px solid var(--line);background:#FAFAFA">'+
+      '<strong style="font-size:15px">Captura biométrica</strong>'+
+      '<p style="margin:4px 0 0;font-size:13px;color:var(--muted)">Tres capturas requeridas: fotografía, huella dactilar y firma.</p></div>'+
+      '<div style="padding:16px 20px">'+alertDocs+'<div class="biometric-grid">'+bioCards+'</div></div>'+
+      '<div style="padding:14px 20px;border-top:1px solid var(--line);background:#FAFAFA">'+continuarBio+'</div>'+
+      '</article>'+
+      '<article class="card" style="padding:22px">'+
+      '<strong style="font-size:15px;display:block;margin-bottom:8px">Instrucciones de captura</strong>'+
+      '<div style="display:grid;gap:10px">'+instrCards+'</div></article>'+
+      '</div>';
+  }
+
+  // Pestaña 3: Contraseña
+  let tab3Html = '';
+  if(state.attendTab==='password'){
+    const alertPrev = (!allDocsOk||!allBio)
+      ? '<div style="padding:12px 14px;background:#FEF0F3;border:1px solid var(--brand);border-radius:8px;font-size:12px;color:var(--brand);margin-bottom:16px;display:flex;align-items:flex-start;gap:8px">'+
+        '<span style="flex-shrink:0">'+icon('alert')+'</span>'+
+        '<span>'+(!allDocsOk&&!allBio?'Completa el cotejo documental y la captura biométrica antes de continuar.':!allDocsOk?'<strong>Cotejo documental incompleto.</strong> Regresa a la primera pestaña.':'<strong>Captura biométrica incompleta.</strong> Regresa a la pestaña anterior.')+'</span></div>'
+      : '';
+    const rulesHtml = [['len','Mínimo 8 caracteres'],['upper','Al menos una letra mayúscula (A-Z)'],['lower','Al menos una letra minúscula (a-z)'],['number','Al menos un número (0-9)'],['special','Al menos un carácter especial (@ # $ % & *)']].map(function(r){
+      return '<div style="display:flex;align-items:center;gap:8px;font-size:12px">'+
+        '<span id="rule_'+r[0]+'" style="width:16px;height:16px;border-radius:50%;border:2px solid var(--line);display:grid;place-items:center;flex-shrink:0;font-size:9px;font-weight:800"></span>'+
+        '<span id="ruleLabel_'+r[0]+'" style="color:var(--muted)">'+r[1]+'</span></div>';
+    }).join('');
+    const instrHtml = [['brand','Personal e intransferible','El sistema no la almacena. Si la olvida deberá revocarse el certificado.'],['amber','Resguardarla de forma segura','No anotarla en lugares visibles. Se recomienda un gestor de contraseñas.'],['blue','Requerida en cada firma','Sin la contraseña, el archivo .key no puede usarse para firmar documentos.'],['green','Sin recuperación posible','Si la pierde, deberá iniciar un nuevo trámite de emisión.']].map(function(item){
+      return '<div style="display:flex;align-items:flex-start;gap:12px;padding:12px 14px;background:#F7F8FA;border-radius:8px;border-left:3px solid var(--'+item[0]+')">'+
+        '<div><strong style="font-size:13px;display:block;margin-bottom:3px">'+item[1]+'</strong><span style="font-size:12px;color:var(--muted)">'+item[2]+'</span></div></div>';
+    }).join('');
+    const btnVerActa = '<button class="button ghost wide" id="btnVerActa" '+(allDocsOk&&allBio?'':'disabled')+'>'+icon('file-text')+' Ver e imprimir acta</button>';
+    const btnCert = '<button class="button primary wide" id="btnGenerarCertificado" '+(allDocsOk&&allBio&&state.featPasswordOk?'':'disabled')+'>'+icon('award')+' Generar certificado FEAT</button>';
+    const readyIndicator = state.featPasswordOk
+      ? '<div id="passwordReadyIndicator" style="padding:12px 14px;background:#F0FBF4;border:1px solid var(--green);border-radius:8px;display:flex;align-items:center;gap:10px;margin-bottom:16px"><span style="color:var(--green)">'+icon('check-circle')+'</span><span style="font-size:13px;color:var(--green);font-weight:600">Contraseña válida y confirmada.</span></div>'
+      : '<div id="passwordReadyIndicator" hidden></div>';
+    tab3Html =
+      '<div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start">'+
+      '<article class="card" style="padding:0;overflow:hidden">'+
+      '<div style="padding:16px 22px;border-bottom:1px solid var(--line);background:#FAFAFA">'+
+      '<strong style="font-size:15px">Contraseña de la Firma Electrónica</strong>'+
+      '<p style="margin:4px 0 0;font-size:13px;color:var(--muted)">El solicitante captura su contraseña. Protegerá su archivo <strong>.key</strong> — personal e intransferible.</p></div>'+
+      '<div style="padding:20px 22px">'+alertPrev+
+      '<div style="padding:14px 16px;background:#F7F8FA;border-radius:8px;margin-bottom:20px">'+
+      '<strong style="font-size:12px;color:var(--brand);display:block;margin-bottom:10px;text-transform:uppercase;letter-spacing:.05em">Requisitos de la contraseña</strong>'+
+      '<div style="display:grid;gap:7px">'+rulesHtml+'</div></div>'+
+      '<div class="field" style="margin-bottom:14px">'+
+      '<label style="font-size:13px;font-weight:700">Nueva contraseña *</label>'+
+      '<input id="featPassword" type="password" placeholder="Captura la contraseña" style="font-family:monospace;letter-spacing:.1em" oninput="validateFeatPassword()">'+
+      '<div id="strengthBar" style="height:5px;border-radius:3px;margin-top:8px;background:#F0F2F5;overflow:hidden"><div id="strengthFill" style="height:100%;width:0%;transition:width .3s,background .3s;border-radius:3px"></div></div>'+
+      '<small id="strengthLabel" style="font-size:11px;color:var(--muted);margin-top:4px;display:block"></small></div>'+
+      '<div class="field" style="margin-bottom:20px">'+
+      '<label style="font-size:13px;font-weight:700">Confirmar contraseña *</label>'+
+      '<input id="featPasswordConfirm" type="password" placeholder="Repite la contraseña" style="font-family:monospace;letter-spacing:.1em" oninput="validateFeatPassword()">'+
+      '<small id="matchLabel" style="font-size:11px;margin-top:4px;display:block"></small></div>'+
+      readyIndicator+
+      '<div style="display:grid;gap:10px">'+btnVerActa+btnCert+'</div>'+
+      '</div></article>'+
+      '<article class="card" style="padding:22px">'+
+      '<strong style="font-size:15px;display:block;margin-bottom:6px">Instrucciones para el solicitante</strong>'+
+      '<p style="font-size:13px;color:var(--gray);margin:0 0 20px">Indícale que capture su contraseña directamente. No debe compartirla con nadie.</p>'+
+      '<div style="display:grid;gap:12px">'+instrHtml+'</div></article></div>';
+  }
+
+  content.innerHTML = bannerHtml + tabsHtml + tab1Html + tab2Html + tab3Html;
+
+  // ── Bindings ──────────────────────────────────────────────────────────────
+  if($("#tab_docs")) $("#tab_docs").onclick=()=>{state.attendTab="docs";renderAttend()};
+  if($("#tab_biometrics")) $("#tab_biometrics").onclick=()=>{state.attendTab="biometrics";renderAttend()};
+  if($("#tab_password")) $("#tab_password").onclick=()=>{state.attendTab="password";renderAttend()};
+  if($("#toggleExpediente")) $("#toggleExpediente").onclick=()=>{const d=$("#expedienteDetail");d.hidden=!d.hidden;};
+  if($("#goToBiometrics")) $("#goToBiometrics").onclick=()=>{state.attendTab="biometrics";renderAttend()};
+  if($("#goToPassword")) $("#goToPassword").onclick=()=>{state.attendTab="password";renderAttend()};
+  $$("[data-document]").forEach(b=>b.onclick=()=>{state.activeDocument=b.dataset.document;renderAttend()});
+  if($("#attendZoomIn")) $("#attendZoomIn").onclick=()=>{state.viewerZoom=Math.min((state.viewerZoom||100)+15,150);renderAttend()};
+  if($("#attendZoomOut")) $("#attendZoomOut").onclick=()=>{state.viewerZoom=Math.max((state.viewerZoom||100)-15,50);renderAttend()};
+  if($("#physicalValidateDoc")) $("#physicalValidateDoc").onclick=()=>{
+    state.physicalDocStatus[state.activeDocument]="Validado";
+    const pending=Object.entries(state.documents).find(([key])=>!state.physicalDocStatus[key]||state.physicalDocStatus[key]==="Pendiente");
+    if(pending) state.activeDocument=pending[0];
+    renderAttend();
+  };
+  if($("#physicalObserveDoc")) $("#physicalObserveDoc").onclick=()=>{
+    openModal({title:"Observar documento físico",subtitle:state.documents[state.activeDocument].name,confirm:"Confirmar observación",confirmClass:"danger",
+      body:'<div style="display:grid;gap:12px">'+
+        '<div style="padding:12px 16px;background:#FEF0F3;border:1px solid #F8D0D8;border-radius:8px;font-size:13px">'+
+        '<strong style="display:block;margin-bottom:4px">'+state.documents[state.activeDocument].name+'</strong>'+
+        '<span style="color:var(--muted)">El documento físico no coincide con la versión electrónica validada.</span></div>'+
+        '<div class="field"><label>Motivo *</label><select id="physicalObserveReason">'+
+        '<option>No coincide con la versión electrónica</option><option>Documento vencido</option>'+
+        '<option>Documento apócrifo o alterado</option><option>Documento ilegible o dañado</option><option>Otro</option>'+
+        '</select></div>'+
+        '<div class="field"><label>Comentarios</label><textarea id="physicalObserveComment" rows="3" placeholder="Describe el detalle encontrado..."></textarea></div></div>',
+      onConfirm:()=>{state.physicalDocStatus[state.activeDocument]="Observado";closeModal();renderAttend();}
+    });
+  };
+  if($("#physicalSkipDoc")) $("#physicalSkipDoc").onclick=()=>{
+    const allDocs=Object.entries(state.documents);
+    const idx=allDocs.findIndex(([key])=>key===state.activeDocument);
+    state.activeDocument=allDocs[(idx+1)%allDocs.length][0];
+    renderAttend();
+  };
+  $$("[data-biometric]").forEach(b=>b.onclick=()=>captureBiometric(b.dataset.biometric));
+  if($("#btnVerActa")) $("#btnVerActa").onclick=()=>{
+    const actaId="ACTA-2026-"+String(100+state.procedures.length).padStart(5,"0");
+    state.lastActa={actaId,certId:null,appointmentId:a.id,name:a.name,type:a.type,date:a.date,time:a.time,request:a.request,agent:"Luis Hernández Pérez",agentDep:"Secretaría de Administración — Dirección de Innovación",municipio:"Ciudad Victoria",curp:"PEGJ850215HTSMRN09",actaUploaded:false};
+    renderActaEmision();
+  };
+  if($("#btnGenerarCertificado")) $("#btnGenerarCertificado").onclick=()=>{
+    if(!allDocsOk){toast("Completa el cotejo documental antes de generar el certificado.","warning");return;}
+    if(!allBio){toast("Completa la captura biométrica antes de generar el certificado.","warning");return;}
+    if(!state.featPasswordOk){toast("Captura y confirma la contraseña antes de generar el certificado.","warning");return;}
+    openModal({
+      title:"Generar certificado FEAT",subtitle:a.name,confirm:"Confirmar y generar",confirmClass:"success",
+      body:'<div style="display:grid;gap:14px">'+
+        '<div class="notice" style="display:flex;align-items:center;gap:12px;padding:14px 16px">'+
+        '<span style="width:36px;height:36px;border-radius:8px;background:var(--green);color:#fff;display:grid;place-items:center;flex-shrink:0">'+icon("award")+'</span>'+
+        '<div><strong style="display:block;margin-bottom:3px">Confirmar generación del certificado</strong>'+
+        '<span style="font-size:13px;color:var(--gray)">Se generará el par de claves (.cer y .key) vinculado a la contraseña capturada.</span></div></div>'+
+        '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;background:#F7F8FA;border-radius:8px;padding:14px">'+
+        '<div><small style="font-size:11px;color:var(--muted);font-weight:700;text-transform:uppercase">Titular</small><strong style="display:block;margin-top:3px">'+a.name+'</strong></div>'+
+        '<div><small style="font-size:11px;color:var(--muted);font-weight:700;text-transform:uppercase">Trámite</small><strong style="display:block;margin-top:3px">'+a.type+'</strong></div></div>'+
+        '<div style="display:grid;gap:8px">'+
+        '<div style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--gray)"><span style="color:var(--blue)">'+icon("bell")+'</span>Se notificará al ciudadano por correo que su certificado está disponible.</div>'+
+        '<div style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--gray)"><span style="color:var(--green)">'+icon("check-circle")+'</span>El ciudadano podrá descargarlo desde el portal en <strong>"Mis certificados"</strong>.</div>'+
+        '<div style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--gray)"><span style="color:var(--brand)">'+icon("file-text")+'</span>El acta de emisión puede imprimirse antes o después.</div>'+
+        '</div></div>',
+      onConfirm:()=>{
+        const number="FEAT-2026-"+String(930+state.certificates.length).padStart(6,"0");
+        const actaId="ACTA-2026-"+String(100+state.procedures.length).padStart(5,"0");
+        a.status="Atendida"; a.actaUploaded=false;
+        state.procedures.unshift({id:"TRM-2026-"+String(120+state.procedures.length).padStart(6,"0"),citizen:a.name,type:a.type,result:"Emitido",document:number,actaId:actaId,period:"2026-05",actaUploaded:false});
+        state.certificates.unshift({id:number,citizen:a.name,type:a.type,status:"Vigente",validity:"22/05/2026 - 22/05/2028"});
+        state.lastActa={actaId:actaId,certId:number,appointmentId:a.id,name:a.name,type:a.type,date:a.date,time:a.time,request:a.request,agent:"Luis Hernández Pérez",agentDep:"Secretaría de Administración — Dirección de Innovación",municipio:"Ciudad Victoria",curp:"PEGJ850215HTSMRN09",actaUploaded:false};
+        state.featPasswordOk=false;
+        closeModal();
+        openModal({
+          title:"¡Certificado generado exitosamente!",subtitle:number,confirm:"Volver a citas",confirmClass:"success",
+          body:'<div style="display:grid;gap:14px">'+
+            '<div style="text-align:center;padding:20px">'+
+            '<span style="font-size:52px;color:var(--green);display:block;margin-bottom:12px">'+icon("check-circle")+'</span>'+
+            '<strong style="font-size:17px;display:block;margin-bottom:6px">Certificado FEAT emitido</strong>'+
+            '<span style="font-family:monospace;font-size:15px;color:var(--brand)">'+number+'</span></div>'+
+            '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;background:#F7F8FA;border-radius:8px;padding:14px">'+
+            '<div><small style="font-size:11px;color:var(--muted);font-weight:700;text-transform:uppercase">Titular</small><strong style="display:block;margin-top:3px">'+a.name+'</strong></div>'+
+            '<div><small style="font-size:11px;color:var(--muted);font-weight:700;text-transform:uppercase">Vigencia</small><strong style="display:block;margin-top:3px">22/05/2026 – 22/05/2028</strong></div></div>'+
+            '<div style="display:grid;gap:8px">'+
+            '<div style="display:flex;align-items:center;gap:8px;font-size:12px"><span style="color:var(--green)">'+icon("check-circle")+'</span>Notificación enviada al ciudadano.</div>'+
+            '<div style="display:flex;align-items:center;gap:8px;font-size:12px"><span style="color:var(--blue)">'+icon("award")+'</span>Disponible en el portal — "Mis certificados".</div>'+
+            '<div style="display:flex;align-items:center;gap:8px;font-size:12px"><span style="color:var(--amber)">'+icon("file-text")+'</span>Recuerda imprimir y firmar el Acta de Emisión.</div>'+
+            '</div></div>',
+          onConfirm:()=>{closeModal();navigate("appointments");}
+        });
+      }
+    });
+  };
+  bindCommonActions();
+  bindAppointmentActions();
 }
 function finishAppointment(a){
   openModal({
-    title:"Finalizar atención",
-    subtitle:"Se generará el certificado y el acta de emisión.",
-    confirm:"Generar certificado",
-    confirmClass:"success",
-    body:`<div style="display:grid;gap:12px">
+    title:"Revisar y firmar acta",
+    subtitle:"Se generará el Acta de Emisión para revisión y firma.",
+    confirm:"Ver acta",
+    confirmClass:"primary",
+    body:`<div style="display:grid;gap:14px">
       <div class="notice" style="display:flex;align-items:center;gap:12px;padding:14px 16px">
-        <span style="width:36px;height:36px;border-radius:8px;background:var(--green);color:#fff;display:grid;place-items:center;flex-shrink:0">${icon("check-circle")}</span>
-        <div><strong style="display:block;margin-bottom:3px">Validaciones completas</strong><span style="font-size:13px;color:var(--gray)">Al continuar se generará el certificado y el Acta de Emisión FEAT.</span></div>
+        <span style="width:36px;height:36px;border-radius:8px;background:var(--brand);color:#fff;display:grid;place-items:center;flex-shrink:0">${icon("file-text")}</span>
+        <div><strong style="display:block;margin-bottom:3px">Proceso completo</strong><span style="font-size:13px;color:var(--gray)">Biométricos y cotejo documental completados. El siguiente paso es revisar, imprimir y firmar el acta.</span></div>
       </div>
-      <div style="background:#F7F8FA;border-radius:8px;padding:14px 16px;font-size:13px;display:grid;gap:6px">
-        <div style="display:flex;justify-content:space-between"><span style="color:var(--muted)">Titular</span><strong>${a.name}</strong></div>
-        <div style="display:flex;justify-content:space-between"><span style="color:var(--muted)">Trámite</span><strong>${a.type}</strong></div>
-        <div style="display:flex;justify-content:space-between"><span style="color:var(--muted)">Fecha de atención</span><strong>${a.date} · ${a.time}</strong></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px 20px;background:#F7F8FA;border-radius:8px;padding:16px">
+        <div><small style="font-size:11px;color:var(--muted);text-transform:uppercase;font-weight:700">Titular</small><strong style="display:block;margin-top:4px">${a.name}</strong></div>
+        <div><small style="font-size:11px;color:var(--muted);text-transform:uppercase;font-weight:700">Trámite</small><strong style="display:block;margin-top:4px">${a.type}</strong></div>
+        <div><small style="font-size:11px;color:var(--muted);text-transform:uppercase;font-weight:700">Fecha</small><strong style="display:block;margin-top:4px">${a.date}</strong></div>
+        <div><small style="font-size:11px;color:var(--muted);text-transform:uppercase;font-weight:700">Hora</small><strong style="display:block;margin-top:4px">${a.time}</strong></div>
       </div>
-      <p style="margin:0;font-size:12px;color:var(--muted)">Se enviará una notificación al correo del ciudadano con el archivo .cer y el acta firmada.</p>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px">
+        <div style="padding:10px;text-align:center;background:#F0FBF4;border-radius:8px;font-size:12px"><span style="color:var(--green);display:block;margin-bottom:4px">${icon("file-text")}</span><strong>1. Ver acta</strong></div>
+        <div style="padding:10px;text-align:center;background:#F7F8FA;border-radius:8px;font-size:12px"><span style="color:var(--muted);display:block;margin-bottom:4px">${icon("edit")}</span><strong>2. Imprimir y firmar</strong></div>
+        <div style="padding:10px;text-align:center;background:#F7F8FA;border-radius:8px;font-size:12px"><span style="color:var(--muted);display:block;margin-bottom:4px">${icon("award")}</span><strong>3. Generar certificado</strong></div>
+      </div>
     </div>`,
     onConfirm:()=>{
-      a.status="Atendida";
-      const number=`FEAT-2026-${String(930+state.certificates.length).padStart(6,"0")}`;
+      // Preparar datos del acta — aún no genera certificado
       const actaId=`ACTA-2026-${String(100+state.procedures.length).padStart(5,"0")}`;
-      state.procedures.unshift({id:`TRM-2026-${String(120+state.procedures.length).padStart(6,"0")}`,citizen:a.name,type:a.type,result:"Emitido",document:number,period:"2026-05"});
-      state.certificates.unshift({id:number,citizen:a.name,type:a.type,status:"Vigente",validity:"22/05/2026 - 22/05/2028"});
-      // Guardar datos del acta para la pantalla de cierre
       state.lastActa={
-        actaId, certId:number,
+        actaId,
+        certId:null, // Se generará al subir el acta firmada
+        appointmentId:a.id,
         name:a.name, type:a.type,
         date:a.date, time:a.time,
         request:a.request,
         agent:"Luis Hernández Pérez",
         agentDep:"Secretaría de Administración — Dirección de Innovación",
         municipio:"Ciudad Victoria",
-        curp:"PEGJ850215HTSMRN09"
+        curp:"PEGJ850215HTSMRN09",
+        actaUploaded:false
       };
       state.biometrics={photo:false,fingerprint:false,signature:false};
       state.physicalChecks={identity:false,originals:false,consent:false,duplicate:false};
+      state.physicalDocStatus={};
       closeModal();
       renderActaEmision();
     }
@@ -2045,11 +2813,12 @@ function renderActaEmision(){
   const fecha=d.date||"22 de mayo de 2026";
   state.actaZoom=state.actaZoom||100;
 
-  content.innerHTML=pageHeader("Acta de Emisión","Revisión final antes de entregar al ciudadano.",
-    `<button class="button ghost" id="backToAttend">${icon("library")}Volver</button>
-     <button class="button ghost" id="printActa">${icon("download")}Imprimir</button>
-     <button class="button ghost" id="downloadActa">${icon("download")}Descargar PDF</button>
-     <button class="button primary" id="goToProcedures">${icon("check-circle")}Confirmar y cerrar trámite</button>`)+
+  content.innerHTML=pageHeader("Acta de Emisión","Revisión final antes de entregar al ciudadano.",`<button class="button ghost" id="backToAttend">${icon("library")}Volver</button>
+     <button class="button ghost" id="printActa">${icon("download")}Imprimir acta</button>
+     ${d.actaUploaded
+       ?`<button class="button success" id="goToProcedures">${icon("calendar")}Volver a citas</button>`
+       :`<button class="button warning" id="uploadActaBtn">${icon("download")}Subir acta firmada y generar certificado</button>
+        <button class="button ghost" id="goToProcedures" style="opacity:.5">${icon("calendar")}Volver a citas</button>`}`,[{label:"Inicio",view:"dashboard"},{label:"Citas",view:"appointments"},{label:"Atención presencial",view:"attend"},{label:"Acta de Emisión"}])+
   `<section class="summary-banner" style="margin-bottom:20px">
     <div><h2>${d.certId}</h2><span>${d.name}</span></div>
     <div class="summary-item"><small>Acta</small><strong>${d.actaId}</strong></div>
@@ -2126,12 +2895,89 @@ function renderActaEmision(){
       </div>
     </div>
   </section>
-  <div class="notice" style="margin-top:16px;font-size:12px"><strong>Siguiente paso:</strong> entrega el archivo .cer al ciudadano e indica que ya puede usar su Firma Electrónica Avanzada. Al confirmar, el trámite quedará cerrado en el sistema.</div>`;
+  ${d.actaUploaded
+    ?`<div class="notice" style="display:flex;align-items:center;gap:10px;margin-top:16px;background:#F0FBF4;border-color:var(--green)">
+        <span style="color:var(--green);flex-shrink:0">${icon("check-circle")}</span>
+        <div style="font-size:12px"><strong style="color:var(--green)">Acta subida y certificado generado.</strong> El ciudadano ya puede descargar su certificado desde el portal en "Mis certificados".</div>
+      </div>`
+    :`<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-top:16px">
+      <div class="notice" style="display:flex;align-items:flex-start;gap:10px;font-size:12px">
+        <span style="color:var(--amber);flex-shrink:0">${icon("alert")}</span>
+        <div><strong>Paso 1 — Imprimir:</strong> genera la copia física del acta.</div>
+      </div>
+      <div class="notice" style="display:flex;align-items:flex-start;gap:10px;font-size:12px">
+        <span style="color:var(--brand);flex-shrink:0">${icon("edit")}</span>
+        <div><strong>Paso 2 — Firmar:</strong> agente y solicitante firman. El ciudadano se lleva su copia.</div>
+      </div>
+      <div class="notice" style="display:flex;align-items:flex-start;gap:10px;font-size:12px">
+        <span style="color:var(--blue);flex-shrink:0">${icon("download")}</span>
+        <div><strong>Paso 3 — Subir:</strong> escanea el acta firmada y súbela. Esto genera el certificado.</div>
+      </div>
+    </div>`}`;
 
   $("#actaZoomIn").onclick=()=>{state.actaZoom=Math.min(state.actaZoom+15,150);renderActaEmision()};
   $("#actaZoomOut").onclick=()=>{state.actaZoom=Math.max(state.actaZoom-15,50);renderActaEmision()};
   $("#backToAttend").onclick=()=>navigate("appointments");
-  $("#goToProcedures").onclick=()=>{toast("Trámite cerrado. Acta registrada en el expediente.");navigate("procedures")};
+  if($("#uploadActaBtn")) $("#uploadActaBtn").onclick=()=>{
+    openModal({title:"Subir acta firmada y generar certificado",subtitle:d.actaId,confirm:"Subir y generar certificado",confirmClass:"success",
+      body:`<div style="display:grid;gap:14px">
+        <div style="display:flex;align-items:flex-start;gap:10px;padding:12px 16px;background:#FFF8E6;border:1px solid var(--amber);border-radius:8px;font-size:12px">
+          <span style="color:var(--amber);flex-shrink:0">${icon("alert")}</span>
+          <span>Asegúrate de que el acta esté <strong>firmada por el agente y el solicitante</strong>. Al confirmar se generará el certificado de forma automática.</span>
+        </div>
+        <div class="field"><label>Folio del acta</label><input value="${d.actaId}" readonly style="background:#F4F5F7;font-family:monospace"></div>
+        <label style="display:flex;align-items:center;gap:12px;border:2px dashed var(--line);border-radius:8px;padding:20px;cursor:pointer;background:#FAFAFA" id="actaUploadLabel">
+          <span style="color:var(--brand);font-size:24px">${icon("download")}</span>
+          <div><span id="actaFileName" style="font-size:13px;color:var(--muted);display:block">Seleccionar archivo del acta firmada...</span>
+          <small style="color:var(--muted)">PDF, JPG o PNG · Máx. 5 MB</small></div>
+          <input type="file" id="actaFileInput" accept=".pdf,.jpg,.png" style="display:none">
+        </label>
+        <div class="notice" style="font-size:12px;display:grid;gap:6px">
+          <div style="display:flex;align-items:center;gap:8px"><span style="color:var(--green)">${icon("check-circle")}</span><span>Al confirmar se generará el certificado FEAT</span></div>
+          <div style="display:flex;align-items:center;gap:8px"><span style="color:var(--blue)">${icon("bell")}</span><span>Se notificará al ciudadano que puede descargarlo en su portal</span></div>
+          <div style="display:flex;align-items:center;gap:8px"><span style="color:var(--brand)">${icon("file-text")}</span><span>El acta quedará registrada en el expediente del trámite</span></div>
+        </div>
+      </div>`,
+      onConfirm:()=>{
+        // Ahora sí se genera el certificado
+        const number=`FEAT-2026-${String(930+state.certificates.length).padStart(6,"0")}`;
+        d.certId=number;
+        d.actaUploaded=true;
+        // Actualizar cita
+        const cita=state.appointments.find(ap=>ap.id===d.appointmentId||ap.request===d.request);
+        if(cita){cita.status="Atendida";cita.actaUploaded=true;}
+        // Crear trámite
+        if(!state.procedures.some(p=>p.actaId===d.actaId)){
+          state.procedures.unshift({
+            id:`TRM-2026-${String(120+state.procedures.length).padStart(6,"0")}`,
+            citizen:d.name, type:d.type, result:"Emitido",
+            document:number, actaId:d.actaId, period:"2026-05", actaUploaded:true
+          });
+        }
+        // Crear certificado
+        state.certificates.unshift({id:number,citizen:d.name,type:d.type,status:"Vigente",validity:"22/05/2026 - 22/05/2028"});
+        closeModal();
+        toast("Acta subida. Certificado "+number+" generado. Ciudadano notificado.");
+        renderActaEmision();
+      }
+    });
+    setTimeout(()=>{
+      const fi=$("#actaFileInput");
+      if(fi) fi.onchange=e=>{
+        const f=e.target.files[0];
+        if(!f) return;
+        if(f.size>5242880){toast("El archivo no debe superar 5 MB.","warning");return;}
+        const fn=$("#actaFileName");if(fn)fn.textContent=f.name;
+        const lbl=$("#actaUploadLabel");
+        if(lbl){lbl.style.borderColor="var(--green)";lbl.style.background="#F0FBF4";}
+      };
+    },100);
+  };
+  $("#goToProcedures").onclick=()=>{
+    if(!d.actaUploaded){toast("Sube el acta firmada antes de cerrar el trámite.","warning");return;}
+    toast("Trámite cerrado. Acta y certificado registrados en el expediente.");
+    navigate("appointments");
+  };
   const printFn=()=>{
     const docHtml=document.getElementById("actaDoc").innerHTML;
     const w=window.open("","_blank","width=900,height=700");
@@ -2141,107 +2987,153 @@ function renderActaEmision(){
   };
   $("#printActa").onclick=printFn;
   if($("#printActa2")) $("#printActa2").onclick=printFn;
-  if($("#downloadActa")) $("#downloadActa").onclick=()=>toast("En el sistema real se generaría el PDF firmado digitalmente.");
   bindCommonActions();
 }
 
 function procedureActions(p){
-  const eyeBtn=`<button class="action-icon neutral" title="Ver detalle" data-procedure="${p.id}">${icon("eye")}</button>`;
-  if(p.result==="Por cerrar") return eyeBtn+`<button class="action-icon success" title="Completar cierre" data-close-procedure="${p.id}">${icon("check-circle")}</button>`;
+  const eyeBtn='<button class="action-icon neutral" title="Ver detalle" data-procedure="'+p.id+'">'+icon("eye")+'</button>';
   const isCert=["Emitido","Renovado"].includes(p.result);
-  return eyeBtn+
-    (isCert?`<button class="action-icon blue" title="Descargar certificado .cer" data-dl-cert="${p.id}">${icon("award")}</button><button class="action-icon neutral" title="Descargar acta de emisión" data-dl-acta="${p.id}">${icon("file-text")}</button>`:"") +
-    (p.result==="Revocado"?`<button class="action-icon neutral" title="Descargar acuse de revocación" data-dl-acuse="${p.id}">${icon("file-text")}</button>`:"");
+  const actaBtn=isCert&&p.actaId
+    ?'<button class="action-icon '+(p.actaUploaded?"neutral":"amber")+'" title="'+(p.actaUploaded?"Ver acta firmada":"Acta pendiente — se sube desde Citas")+'" data-dl-acta="'+p.id+'">'+icon(p.actaUploaded?"file-check":"upload")+'</button>'
+    :"";
+  const regenBtn=isCert
+    ?'<button class="action-icon blue" title="Generar nuevamente certificado" data-regen-cert="'+p.id+'">'+icon("refresh")+'</button>'
+    :"";
+  const acuseBtn=p.result==="Revocado"
+    ?'<button class="action-icon neutral" title="Descargar acuse de revocación" data-dl-acuse="'+p.id+'">'+icon("file-text")+'</button>'
+    :"";
+  const logBtn='<button class="action-icon neutral" title="Ver bitácora" onclick="openLogModal(\'procedures\',\''+p.id+'\',\''+p.citizen+'\')">'+icon("clock")+'</button>';
+  return eyeBtn+regenBtn+actaBtn+acuseBtn+logBtn;
 }
+
 function renderProcedures(){
-  const filtered=state.procedures.filter(p=>(p.id+" "+p.citizen).toLowerCase().includes(state.procedureSearch.toLowerCase())&&(state.procedureResult==="all"||p.result===state.procedureResult)&&(state.procedureType==="all"||p.type===state.procedureType)&&(!state.procedurePeriod||p.period===state.procedurePeriod));
+  const sites=[...new Set(state.procedures.filter(p=>p.site).map(p=>p.site))];
+  const agents=[...new Set(state.procedures.filter(p=>p.agent).map(p=>p.agent))];
+  const deps=[...new Set(state.procedures.filter(p=>p.dependency).map(p=>p.dependency))];
+  const filtered=state.procedures.filter(p=>{
+    const matchSearch=(p.id+" "+p.citizen).toLowerCase().includes(state.procedureSearch.toLowerCase());
+    const matchResult=state.procedureResult==="all"||p.result===state.procedureResult;
+    const matchType=state.procedureType==="all"||p.type===state.procedureType;
+    const matchPeriod=!state.procedurePeriod||p.period===state.procedurePeriod;
+    const matchSite=state.procedureSite==="all"||p.site===state.procedureSite;
+    const matchAgent=state.procedureAgent==="all"||p.agent===state.procedureAgent;
+    const matchDep=state.procedureDep==="all"||p.dependency===state.procedureDep;
+    return matchSearch&&matchResult&&matchType&&matchPeriod&&matchSite&&matchAgent&&matchDep;
+  });
   const visible=filtered.slice(0,state.pageSize.procedures);
-  content.innerHTML=pageHeader("Trámites","Historial de atenciones concluidas, certificados emitidos y acuses de revocación.",
-    `<button class="button ghost" id="exportProceduresBtn">${icon("download")}Exportar</button>`)+
-  `<div class="notice"><strong>Alcance del agente:</strong> consulta el resultado, descarga el certificado .cer, el acta de emisión o el acuse de revocación según corresponda.</div>
-  <section class="stats-grid" style="margin-top:18px">
-    ${stat("check-circle","Trámites concluidos",state.procedures.filter(x=>x.result!=="Por cerrar").length,"Ciclos completos","green")}
-    ${stat("award","Certificados emitidos",state.procedures.filter(x=>["Emitido","Renovado"].includes(x.result)).length,"Archivo .cer generado","blue")}
-    ${stat("refresh","Renovaciones",state.procedures.filter(x=>x.result==="Renovado").length,"Certificados renovados")}
-    ${stat("clock","Pendientes de cierre",state.procedures.filter(x=>x.result==="Por cerrar").length,"Requieren acta o firma","amber")}
-  </section>
-  ${filterDisclosure("procedures","Filtros","Filtra por tipo de trámite, resultado y periodo.",`<div class="filter-panel embedded" style="display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:12px">
-    <div class="field"><label>Resultado</label><select id="procedureResult"><option value="all">Todos</option>${["Emitido","Renovado","Revocado","Por cerrar"].map(s=>`<option ${state.procedureResult===s?"selected":""}>${s}</option>`).join("")}</select></div>
-    <div class="field"><label>Tipo de trámite</label><select id="procedureType"><option value="all">Todos</option>${["Emisión","Renovación","Revocación"].map(s=>`<option ${state.procedureType===s?"selected":""}>${s}</option>`).join("")}</select></div>
-    <div class="field"><label>Periodo</label><select id="procedurePeriod"><option value="">Todos</option>${[...new Set(state.procedures.map(p=>p.period))].map(s=>`<option ${state.procedurePeriod===s?"selected":""}>${s}</option>`).join("")}</select></div>
-    <button class="button secondary" id="clearProcedureFilters" style="align-self:end">Limpiar</button>
-  </div>`)}
-  <section class="card table-card frest-table-card">
-    <div class="card-header"><div><h2>Historial de trámites</h2><p>Cada registro es el cierre de un ciclo completo: solicitud → revisión → cita → atención presencial.</p></div></div>
-    ${dataTableToolbar("procedures","procedureSearch",state.procedureSearch,"exportProcedures",state.procedures.length)}
-    <div class="table-wrap"><table><thead><tr>
-      <th>Folio trámite</th><th>Ciudadano</th><th>Tipo</th><th>Resultado</th><th>Documentos generados</th><th>Acciones</th>
-    </tr></thead><tbody>
-    ${visible.map(p=>`<tr>
-      <td><span class="folio">${p.id}</span><span class="subtext">${p.period}</span></td>
-      <td><strong>${p.citizen}</strong><span class="subtext">Sede Victoria Centro</span></td>
-      <td>${p.type}</td>
-      <td>${badge(p.result)}</td>
-      <td>${["Emitido","Renovado"].includes(p.result)?`
-        <div style="display:grid;gap:4px">
-          <span style="font-size:12px;display:flex;align-items:center;gap:6px"><span style="color:var(--blue)">${icon("award")}</span><span style="font-family:monospace;font-size:11px">${p.document}</span></span>
-          ${p.actaId?`<span style="font-size:11px;display:flex;align-items:center;gap:6px;color:var(--muted)">${icon("file-text")}<span>${p.actaId}</span></span>`:""}
-        </div>`:
-      p.result==="Revocado"?`<span style="font-size:12px;display:flex;align-items:center;gap:6px"><span style="color:var(--muted)">${icon("file-text")}</span><span style="font-family:monospace;font-size:11px">${p.document}</span></span>`:
-      `<span style="color:var(--muted);font-size:12px;font-style:italic">Pendiente</span>`}
-      </td>
-      <td><div class="actions-cell">${procedureActions(p)}<button class="action-icon neutral" title="Ver bitácora" onclick="openLogModal('procedures','${p.id}','${p.citizen}')">${icon("clock")}</button></div></td>
-    </tr>`).join("")||`<tr><td colspan="6" class="empty-state">No hay trámites con estos criterios.</td></tr>`}
-    </tbody></table></div>
-    <div class="pagination"><span>Mostrando ${visible.length?1:0} a ${visible.length} de ${filtered.length} registros</span><div class="pagination-buttons"><button disabled>Anterior</button><button class="active" data-page="1">1</button><button disabled>Siguiente</button></div></div>
-  </section>`;
+
+  content.innerHTML=pageHeader("Historial de trámites","Registro de todos los trámites realizados: emisiones, renovaciones y revocaciones.",'<button class="button ghost" id="exportProceduresBtn">'+icon("download")+'Exportar</button>',[{label:"Inicio",view:"dashboard"},{label:"Historial de trámites",view:"procedures"}])+
+  '<div class="notice">'+
+  '<strong>Módulo de consulta:</strong> aquí se registra el historial completo de trámites. Para el estado de vigencia de los certificados consulta el módulo de <strong>Certificados</strong>.'+
+  '</div>'+
+  '<section class="stats-grid" style="margin-top:18px">'+
+    stat("check-circle","Trámites concluidos",state.procedures.filter(x=>x.result!=="Por cerrar").length,"Ciclos completos","green")+
+    stat("award","Emisiones",state.procedures.filter(x=>x.result==="Emitido").length,"Certificados nuevos","blue")+
+    stat("refresh","Renovaciones",state.procedures.filter(x=>x.result==="Renovado").length,"Certificados renovados")+
+    stat("ban","Revocaciones",state.procedures.filter(x=>x.result==="Revocado").length,"Certificados revocados")+
+  '</section>'+
+  filterDisclosure("procedures","Filtros","Filtra por resultado, tipo, sede, agente y periodo.",
+    '<div class="filter-panel embedded" style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr auto;gap:12px">'+
+    '<div class="field"><label>Resultado</label><select id="procedureResult"><option value="all">Todos</option>'+["Emitido","Renovado","Revocado"].map(s=>'<option '+(state.procedureResult===s?'selected':'')+'>'+s+'</option>').join('')+'</select></div>'+
+    '<div class="field"><label>Tipo</label><select id="procedureType"><option value="all">Todos</option>'+["Emisión","Renovación","Revocación"].map(s=>'<option '+(state.procedureType===s?'selected':'')+'>'+s+'</option>').join('')+'</select></div>'+
+    (state.role==="admin"?
+      '<div class="field"><label>Sede</label><select id="procedureSite"><option value="all">Todas</option>'+sites.map(s=>'<option '+(state.procedureSite===s?'selected':'')+'>'+s+'</option>').join('')+'</select></div>'+
+      '<div class="field"><label>Agente</label><select id="procedureAgent"><option value="all">Todos</option>'+agents.map(s=>'<option '+(state.procedureAgent===s?'selected':'')+'>'+s+'</option>').join('')+'</select></div>'
+    :'')+
+    '<div class="field"><label>Periodo</label><select id="procedurePeriod"><option value="">Todos</option>'+[...new Set(state.procedures.map(p=>p.period))].map(s=>'<option '+(state.procedurePeriod===s?'selected':'')+'>'+s+'</option>').join('')+'</select></div>'+
+    '<div class="field"><label>Dependencia</label><select id="procedureDep"><option value="all">Todas</option>'+deps.map(function(s){return '<option '+(state.procedureDep===s?'selected':'')+'>'+s+'</option>';}).join('')+'</select></div>'+
+    '<button class="button secondary" id="clearProcedureFilters" style="align-self:end">Limpiar</button>'+
+    '</div>')+
+  '<section class="card table-card frest-table-card">'+
+    
+    dataTableToolbar("procedures","procedureSearch",state.procedureSearch,"exportProcedures",state.procedures.length)+
+    '<div class="table-wrap"><table><thead><tr>'+
+    '<th>Fecha</th><th>Folio</th><th>Solicitante</th><th>Tipo</th><th>Resultado</th><th>Documentos generados</th><th>Acciones</th>'+
+    '</tr></thead><tbody>'+
+    (visible.length?visible.map(function(p){
+      const docHtml = ["Emitido","Renovado"].includes(p.result)?
+        '<div style="display:grid;gap:4px">'+
+        '<span style="font-size:12px;display:flex;align-items:center;gap:6px"><span style="color:var(--blue)">'+icon("award")+'</span><span style="font-family:monospace;font-size:11px">'+p.document+'</span></span>'+
+        (p.actaId?'<span style="font-size:11px;display:flex;align-items:center;gap:6px;color:'+(p.actaUploaded?'var(--green)':'var(--amber)')+'">'+icon(p.actaUploaded?'check-circle':'alert')+'<span>'+p.actaId+' '+(p.actaUploaded?'· Firmada':'· Pendiente')+'</span></span>':'')+
+        '</div>':
+      p.result==="Revocado"?
+        '<span style="font-size:12px;display:flex;align-items:center;gap:6px"><span style="color:var(--muted)">'+icon("file-text")+'</span><span style="font-family:monospace;font-size:11px">'+p.document+'</span></span>':
+        '<span style="color:var(--muted);font-size:12px;font-style:italic">Pendiente</span>';
+      return '<tr>'+
+        '<td><strong style="font-size:12px">'+(p.date||"Sin fecha")+'</strong>'+(p.site?'<span class="subtext">'+p.site+'</span>':'')+'</td>'+
+        '<td><span class="folio">'+p.id+'</span></td>'+
+        '<td><strong>'+p.citizen+'</strong><span class="subtext">'+(p.laborType||'Servidor público')+(p.dependency?' · '+p.dependency:'')+'</span></td>'+
+        '<td>'+p.type+'</td>'+
+        '<td>'+badge(p.result)+'</td>'+
+        '<td>'+docHtml+'</td>'+
+        '<td><div class="actions-cell">'+procedureActions(p)+'</div></td>'+
+        '</tr>';
+    }).join(''):'<tr><td colspan="7" class="empty-state">No hay trámites con estos criterios.</td></tr>')+
+    '</tbody></table></div>'+
+    '<div class="pagination"><span>Mostrando '+(visible.length?1:0)+' a '+visible.length+' de '+filtered.length+' registros</span><div class="pagination-buttons"><button disabled>Anterior</button><button class="active" data-page="1">1</button><button disabled>Siguiente</button></div></div>'+
+  '</section>';
+
   $("#procedureSearch").oninput=e=>{state.procedureSearch=e.target.value;renderProcedures()};
   if($("#procedureResult")) $("#procedureResult").onchange=e=>{state.procedureResult=e.target.value;renderProcedures()};
   if($("#procedureType")) $("#procedureType").onchange=e=>{state.procedureType=e.target.value;renderProcedures()};
   if($("#procedurePeriod")) $("#procedurePeriod").onchange=e=>{state.procedurePeriod=e.target.value;renderProcedures()};
-  if($("#clearProcedureFilters")) $("#clearProcedureFilters").onclick=()=>{state.procedureResult="all";state.procedureType="all";state.procedurePeriod="";renderProcedures()};
+  if($("#procedureSite")) $("#procedureSite").onchange=e=>{state.procedureSite=e.target.value;renderProcedures()};
+  if($("#procedureAgent")) $("#procedureAgent").onchange=e=>{state.procedureAgent=e.target.value;renderProcedures()};
+  if($("#procedureDep")) $("#procedureDep").onchange=e=>{state.procedureDep=e.target.value;renderProcedures()};
+  if($("#clearProcedureFilters")) $("#clearProcedureFilters").onclick=()=>{state.procedureResult="all";state.procedureType="all";state.procedurePeriod="";state.procedureSite="all";state.procedureAgent="all";state.procedureDep="all";renderProcedures()};
   $("#proceduresPageSize").onchange=e=>{state.pageSize.procedures=Number(e.target.value);renderProcedures()};
-  if($("#exportProceduresBtn")) $("#exportProceduresBtn").onclick=()=>exportTable("tramites-feat",["Folio","Ciudadano","Tipo","Resultado","Documento","Acta"],filtered.map(p=>[p.id,p.citizen,p.type,p.result,p.document,p.actaId||""]));
-  if($("#exportProcedures")) $("#exportProcedures").onclick=()=>exportTable("tramites-feat",["Folio","Ciudadano","Tipo","Resultado","Documento"],filtered.map(p=>[p.id,p.citizen,p.type,p.result,p.document]));
+  if($("#exportProceduresBtn")) $("#exportProceduresBtn").onclick=()=>exportTable("historial-tramites-feat",["Fecha","Folio","Solicitante","Tipo","Resultado","Documento","Acta","Sede","Agente"],filtered.map(p=>[p.date||p.period,p.id,p.citizen,p.type,p.result,p.document,p.actaId||"",p.site||"",p.agent||""]));
+  if($("#exportProcedures")) $("#exportProcedures").onclick=()=>exportTable("historial-tramites-feat",["Folio","Solicitante","Tipo","Resultado","Documento"],filtered.map(p=>[p.id,p.citizen,p.type,p.result,p.document]));
   $$("[data-procedure]").forEach(b=>b.onclick=()=>{
     const p=state.procedures.find(x=>x.id===b.dataset.procedure);
     openModal({title:"Detalle del trámite",subtitle:p.id,confirm:"Cerrar",confirmClass:"primary",
-      body:`<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px 20px;background:#F7F8FA;border-radius:8px;padding:16px">
-        <div><small style="font-size:11px;color:var(--muted);font-weight:700;text-transform:uppercase">Ciudadano</small><strong style="display:block;margin-top:4px">${p.citizen}</strong></div>
-        <div><small style="font-size:11px;color:var(--muted);font-weight:700;text-transform:uppercase">Tipo</small><strong style="display:block;margin-top:4px">${p.type}</strong></div>
-        <div><small style="font-size:11px;color:var(--muted);font-weight:700;text-transform:uppercase">Resultado</small><div style="margin-top:4px">${badge(p.result)}</div></div>
-        <div><small style="font-size:11px;color:var(--muted);font-weight:700;text-transform:uppercase">Periodo</small><strong style="display:block;margin-top:4px">${p.period}</strong></div>
-        ${p.document?`<div style="grid-column:1/-1"><small style="font-size:11px;color:var(--muted);font-weight:700;text-transform:uppercase">${["Emitido","Renovado"].includes(p.result)?"Número de certificado":"Acuse"}</small><strong style="display:block;margin-top:4px;font-family:monospace">${p.document}</strong></div>`:""}
-        ${p.actaId?`<div style="grid-column:1/-1"><small style="font-size:11px;color:var(--muted);font-weight:700;text-transform:uppercase">Folio de acta</small><strong style="display:block;margin-top:4px;font-family:monospace">${p.actaId}</strong></div>`:""}
-      </div>
-      ${["Emitido","Renovado"].includes(p.result)?`<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px">
-        <button class="button primary wide" data-dl-cert-modal="${p.document}">${icon("award")}Descargar certificado .cer</button>
-        <button class="button ghost wide" data-dl-acta-modal="${p.actaId||p.id}">${icon("file-text")}Descargar acta de emisión</button>
-      </div>`:""}
-      ${p.result==="Revocado"?`<button class="button ghost wide" style="margin-top:14px" data-dl-acuse-modal="${p.document}">${icon("file-text")}Descargar acuse de revocación</button>`:""}`,
+      body:'<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px 20px;background:#F7F8FA;border-radius:8px;padding:16px">'+
+        '<div><small style="font-size:11px;color:var(--muted);font-weight:700;text-transform:uppercase">Fecha</small><strong style="display:block;margin-top:4px">'+(p.date||"Sin fecha")+'</strong></div>'+
+        '<div><small style="font-size:11px;color:var(--muted);font-weight:700;text-transform:uppercase">Tipo</small><strong style="display:block;margin-top:4px">'+p.type+'</strong></div>'+
+        '<div><small style="font-size:11px;color:var(--muted);font-weight:700;text-transform:uppercase">Solicitante</small><strong style="display:block;margin-top:4px">'+p.citizen+'</strong></div>'+
+        '<div><small style="font-size:11px;color:var(--muted);font-weight:700;text-transform:uppercase">Tipo de solicitante</small><strong style="display:block;margin-top:4px">'+(p.laborType||'Servidor público')+'</strong></div>'+
+        (p.dependency?'<div style="grid-column:1/-1"><small style="font-size:11px;color:var(--muted);font-weight:700;text-transform:uppercase">Dependencia</small><strong style="display:block;margin-top:4px">'+p.dependency+'</strong></div>':'')+
+        '<div><small style="font-size:11px;color:var(--muted);font-weight:700;text-transform:uppercase">Resultado</small><div style="margin-top:4px">'+badge(p.result)+'</div></div>'+
+        '<div><small style="font-size:11px;color:var(--muted);font-weight:700;text-transform:uppercase">Periodo</small><strong style="display:block;margin-top:4px">'+p.period+'</strong></div>'+
+        (p.site?'<div><small style="font-size:11px;color:var(--muted);font-weight:700;text-transform:uppercase">Sede</small><strong style="display:block;margin-top:4px">'+p.site+'</strong></div>':'')+
+        (p.agent?'<div><small style="font-size:11px;color:var(--muted);font-weight:700;text-transform:uppercase">Agente</small><strong style="display:block;margin-top:4px">'+p.agent+'</strong></div>':'')+
+        (p.document?'<div style="grid-column:1/-1"><small style="font-size:11px;color:var(--muted);font-weight:700;text-transform:uppercase">'+(['Emitido','Renovado'].includes(p.result)?"Número de certificado":"Acuse")+'</small><strong style="display:block;margin-top:4px;font-family:monospace">'+p.document+'</strong></div>':'')+
+        (p.actaId?'<div style="grid-column:1/-1"><small style="font-size:11px;color:var(--muted);font-weight:700;text-transform:uppercase">Folio de acta</small><strong style="display:block;margin-top:4px;font-family:monospace">'+p.actaId+'</strong></div>':'')+
+        '</div>'+
+        (['Emitido','Renovado'].includes(p.result)?
+          '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px">'+
+          '<button class="button primary wide" data-regen-cert-modal="'+p.document+'">'+icon("refresh")+'Generar nuevamente certificado</button>'+
+          '<button class="button ghost wide" data-dl-acta-modal="'+(p.actaId||p.id)+'">'+icon("file-text")+'Ver acta de emisión</button>'+
+          '</div>':'')+
+        (p.result==="Revocado"?'<button class="button ghost wide" style="margin-top:14px" data-dl-acuse-modal="'+p.document+'">'+icon("file-text")+'Descargar acuse de revocación</button>':''),
       onConfirm:closeModal
     });
     setTimeout(()=>{
-      $$("[data-dl-cert-modal]").forEach(btn=>btn.onclick=()=>{closeModal();toast(`Descargando ${btn.dataset.dlCertModal}...`);});
-      $$("[data-dl-acta-modal]").forEach(btn=>btn.onclick=()=>{closeModal();toast(`Descargando acta ${btn.dataset.dlActaModal}...`);});
-      $$("[data-dl-acuse-modal]").forEach(btn=>btn.onclick=()=>{closeModal();toast(`Descargando acuse ${btn.dataset.dlAcuseModal}...`);});
+      $$("[data-regen-cert-modal]").forEach(btn=>btn.onclick=()=>{
+        closeModal();
+        openModal({title:"Generar nuevamente certificado",subtitle:btn.dataset.regenCertModal,confirm:"Confirmar regeneración",confirmClass:"primary",
+          body:'<div style="display:grid;gap:12px">'+
+            '<div class="notice" style="display:flex;align-items:flex-start;gap:10px;font-size:13px">'+icon("alert")+
+            '<span>Esta acción regenerará el certificado y lo dejará disponible nuevamente en el portal del solicitante en la sección <strong>"Mis certificados"</strong>.</span></div>'+
+            '<div class="notice" style="font-size:12px">El solicitante deberá ingresar a su portal para descargarlo. No se entrega por correo ni en físico.</div></div>',
+          onConfirm:()=>{closeModal();toast("Certificado regenerado. Disponible en el portal del solicitante.");}
+        });
+      });
+      $$("[data-dl-acta-modal]").forEach(btn=>btn.onclick=()=>{closeModal();toast("Descargando acta "+btn.dataset.dlActaModal+"...");});
+      $$("[data-dl-acuse-modal]").forEach(btn=>btn.onclick=()=>{closeModal();toast("Descargando acuse "+btn.dataset.dlAcuseModal+"...");});
     },100);
   });
-  $$("[data-dl-cert]").forEach(b=>b.onclick=()=>{const p=state.procedures.find(x=>x.id===b.dataset.dlCert);toast(`Descargando certificado ${p?.document||""}...`);});
-  $$("[data-dl-acta]").forEach(b=>b.onclick=()=>{const p=state.procedures.find(x=>x.id===b.dataset.dlActa);toast(`Descargando acta ${p?.actaId||p?.id||""}...`);});
-  $$("[data-dl-acuse]").forEach(b=>b.onclick=()=>{const p=state.procedures.find(x=>x.id===b.dataset.dlAcuse);toast(`Descargando acuse ${p?.document||""}...`);});
-  $$("[data-close-procedure]").forEach(b=>b.onclick=()=>{
-    const p=state.procedures.find(x=>x.id===b.dataset.closeProcedure);
-    openModal({title:"Completar cierre del trámite",subtitle:p.id,confirm:"Firmar acta y cerrar",confirmClass:"success",
-      body:`<div class="notice"><strong>Validación final:</strong> se firmará el Acta de Emisión, se asociará al expediente y se notificará al ciudadano con el archivo .cer.</div>`,
-      onConfirm:()=>{
-        p.result="Emitido";
-        p.document=`FEAT-2026-${String(900+state.certificates.length).padStart(6,"0")}`;
-        p.actaId=`ACTA-2026-${String(100+state.procedures.length).padStart(5,"0")}`;
-        closeModal();toast("Trámite cerrado. Certificado y acta generados.");renderProcedures();
-      }
+  $$("[data-regen-cert]").forEach(b=>b.onclick=()=>{
+    openModal({title:"Generar nuevamente certificado",subtitle:b.dataset.regenCert,confirm:"Confirmar regeneración",confirmClass:"primary",
+      body:'<div style="display:grid;gap:12px">'+
+        '<div class="notice" style="display:flex;align-items:flex-start;gap:10px;font-size:13px">'+icon("alert")+
+        '<span>El certificado quedará disponible nuevamente en el portal del solicitante en <strong>"Mis certificados"</strong>. No se descarga desde aquí.</span></div></div>',
+      onConfirm:()=>{closeModal();toast("Certificado regenerado. Disponible en el portal del solicitante.");}
     });
   });
+  $$("[data-dl-acta]").forEach(b=>b.onclick=()=>{const p=state.procedures.find(x=>x.id===b.dataset.dlActa);toast("Descargando acta "+(p&&p.actaId||b.dataset.dlActa)+"...");});
+  $$("[data-dl-acuse]").forEach(b=>b.onclick=()=>{const p=state.procedures.find(x=>x.id===b.dataset.dlAcuse);toast("Descargando acuse "+(p&&p.document||"")+"...");});
+
   bindCommonActions();
 }
 function renderCertificates(){
@@ -2254,8 +3146,7 @@ function renderCertificates(){
   const expiring=state.certificates.filter(c=>c.status==="Por vencer");
   const revoked=state.certificates.filter(c=>c.status==="Revocado");
 
-  content.innerHTML=pageHeader("Certificados","Estado de vigencia de los certificados emitidos. Identifica vencimientos próximos y gestiona notificaciones.",
-    state.role==="admin"?`<button class="button ghost" id="exportCertBtn">${icon("download")}Exportar</button>`:`<button class="button ghost" id="exportCertBtn">${icon("download")}Exportar</button>`)+
+  content.innerHTML=pageHeader("Certificados","Estado de vigencia de los certificados emitidos. Identifica vencimientos próximos y gestiona notificaciones.",state.role==="admin"?`<button class="button ghost" id="exportCertBtn">${icon("download")}Exportar</button>`:`<button class="button ghost" id="exportCertBtn">${icon("download")}Exportar</button>`,[{label:"Inicio",view:"dashboard"},{label:"Certificados",view:"certificates"}])+
   // Alerta de vencimientos próximos
   (expiring.length?`<div style="border:1px solid var(--amber);background:var(--amber-bg);border-radius:8px;padding:14px 18px;margin-bottom:18px;display:flex;align-items:center;gap:14px">
     <span style="color:var(--amber);flex-shrink:0">${icon("alert")}</span>
@@ -2374,7 +3265,7 @@ function renderCatalogs(){
     return searchable.includes(query)&&(state.catalogGroup==="all"||c.group===state.catalogGroup);
   });
   const totalRecords=catalogDefinitions.reduce((sum,c)=>sum+c.rows.length,0);
-  content.innerHTML=pageHeader("Catálogos","Administra la información de referencia utilizada por los módulos y flujos de FEAT.")+
+  content.innerHTML=pageHeader("Catálogos","Administra la información de referencia utilizada por los módulos y flujos de FEAT.","",[{label:"Inicio",view:"dashboard"},{label:"Catálogos",view:"catalogs"}])+
   `<section class="catalog-summary">
     <div><span>${icon("library")}</span><strong>${catalogDefinitions.length}</strong><small>Catálogos disponibles</small></div>
     <div><span>${icon("file-text")}</span><strong>${totalRecords}</strong><small>Registros de consulta</small></div>
@@ -2439,6 +3330,7 @@ function documentCatalogOptions(value=""){
 function renderCatalogTable(id){
   const catalog=catalogDefinitions.find(item=>item.id===id);
   if(!catalog){state.activeCatalogNav="tramites";return renderCatalogs()}
+  const isReadOnly=catalog.readOnly===true;
   const query=state.catalogRecordSearch.trim().toLowerCase();
   const indexedRows=catalog.rows.map((row,index)=>({row,index})).filter(({row})=>!query||row.join(" ").toLowerCase().includes(query));
   const pageSize=state.pageSize.catalogs;
@@ -2448,10 +3340,15 @@ function renderCatalogTable(id){
   const visible=indexedRows.slice(start,start+pageSize);
   const statusColumn=catalogStatusColumn(catalog);
   const visibleColumnIndexes=catalog.id==="documentos"?catalog.columns.map((_,index)=>index).filter(index=>index!==2):catalog.columns.map((_,index)=>index);
-  content.innerHTML=pageHeader(catalog.title,catalog.description,`<button class="button ghost" id="backToCatalogs">${icon("library")}Catálogos</button><button class="button primary" id="newCatalogRecord">${icon("plus")}Nuevo</button>`)+
+  content.innerHTML=pageHeader(catalog.title,catalog.description,`<button class="button ghost" id="backToCatalogs">${icon("library")}Catálogos</button>`+
+    (isReadOnly?'':`<button class="button primary" id="newCatalogRecord">${icon("plus")}Nuevo</button>`),[{label:"Inicio",view:"dashboard"},{label:"Catálogos",view:"catalogs"},{label:catalog.title}])+
+  (isReadOnly?`<div class="notice" style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
+    <span style="color:var(--muted)">${icon("eye")}</span>
+    <span><strong>Catálogo de solo lectura.</strong> Estos estatus son generados automáticamente por el sistema según el flujo operativo de FEAT. No se pueden editar, agregar ni eliminar.</span>
+  </div>`:'')+
   `<section class="catalog-detail-context">
     <span class="catalog-icon">${icon(catalog.icon)}</span>
-    <div><small>${catalog.group}</small><strong>${catalog.rows.length} registros</strong><p>Los cambios realizados se reflejan en los módulos relacionados del sistema.</p></div>
+    <div><small>${catalog.group}</small><strong>${catalog.rows.length} registros</strong><p>${isReadOnly?"Referencia del sistema — solo consulta.":"Los cambios realizados se reflejan en los módulos relacionados del sistema."}</p></div>
   </section>
   <article class="card table-card frest-table-card catalog-detail-table">
     ${dataTableToolbar("catalogs","catalogRecordSearch",state.catalogRecordSearch,"exportCatalog",catalog.rows.length)}
@@ -2459,10 +3356,12 @@ function renderCatalogTable(id){
       <tbody>${visible.length?visible.map(({row,index},visibleIndex)=>`<tr>
         <td>${start+visibleIndex+1}</td>${visibleColumnIndexes.map(column=>`<td class="${column===0?"folio":""}">${catalogCell(row[column])}</td>`).join("")}
         <td><div class="actions-cell">
-          <button class="action-icon warning" data-edit-catalog-record="${index}" title="Editar registro" aria-label="Editar registro">${icon("edit")}</button>
-          ${statusColumn>=0?`<button class="action-icon ${/inactiv/i.test(row[statusColumn])?"success":"neutral"}" data-toggle-catalog-record="${index}" title="${/inactiv/i.test(row[statusColumn])?"Activar":"Desactivar"} registro" aria-label="${/inactiv/i.test(row[statusColumn])?"Activar":"Desactivar"} registro">${icon(/inactiv/i.test(row[statusColumn])?"check-circle":"ban")}</button>`:""}
+          ${isReadOnly
+            ?`<button class="action-icon neutral" title="Ver bitácora" onclick="openLogModal('catalogs','CAT-${index}','')">${icon("clock")}</button>`
+            :`<button class="action-icon warning" data-edit-catalog-record="${index}" title="Editar registro" aria-label="Editar registro">${icon("edit")}</button>
+          ${statusColumn>=0?`<button class="action-icon ${/inactiv/i.test(row[statusColumn])?"success":"neutral"}" data-toggle-catalog-record="${index}" title="${/inactiv/i.test(row[statusColumn])?"Activar":"Desactivar"} registro">${icon(/inactiv/i.test(row[statusColumn])?"check-circle":"ban")}</button>`:""}
           <button class="action-icon neutral" title="Ver bitácora" onclick="openLogModal('catalogs','CAT-${index}','')">${icon("clock")}</button>
-          <button class="action-icon danger" data-delete-catalog-record="${index}" title="Eliminar registro" aria-label="Eliminar registro">${icon("trash")}</button>
+          <button class="action-icon danger" data-delete-catalog-record="${index}" title="Eliminar registro" aria-label="Eliminar registro">${icon("trash")}</button>`}
         </div></td>
       </tr>`).join(""):`<tr><td colspan="${visibleColumnIndexes.length+2}"><div class="empty-table">No hay registros que coincidan con la búsqueda.</div></td></tr>`}</tbody>
     </table></div>
@@ -2473,15 +3372,17 @@ function renderCatalogTable(id){
     </div></div>
   </article>`;
   $("#backToCatalogs").onclick=()=>selectCatalogSubmodule("tramites");
-  $("#newCatalogRecord").onclick=()=>openCatalogRecordModal(id);
+  if(!isReadOnly&&$("#newCatalogRecord")) $("#newCatalogRecord").onclick=()=>openCatalogRecordModal(id);
   $("#catalogRecordSearch").oninput=e=>{state.catalogRecordSearch=e.target.value};
   $("#catalogRecordSearch").onkeydown=e=>{if(e.key==="Enter"){state.catalogPage=1;renderCatalogTable(id)}};
   $("#catalogsPageSize").onchange=e=>{state.pageSize.catalogs=Number(e.target.value);state.catalogPage=1;renderCatalogTable(id)};
   $("#exportCatalog").onclick=()=>exportTable(`catalogo-${catalog.id}`,catalog.columns,indexedRows.map(item=>item.row));
   $$("[data-catalog-page]").forEach(button=>button.onclick=()=>{state.catalogPage=Number(button.dataset.catalogPage);renderCatalogTable(id)});
-  $$("[data-edit-catalog-record]").forEach(button=>button.onclick=()=>openCatalogRecordModal(id,Number(button.dataset.editCatalogRecord)));
-  $$("[data-toggle-catalog-record]").forEach(button=>button.onclick=()=>confirmToggleCatalogRecord(id,Number(button.dataset.toggleCatalogRecord)));
-  $$("[data-delete-catalog-record]").forEach(button=>button.onclick=()=>confirmDeleteCatalogRecord(id,Number(button.dataset.deleteCatalogRecord)));
+  if(!isReadOnly){
+    $$("[data-edit-catalog-record]").forEach(button=>button.onclick=()=>openCatalogRecordModal(id,Number(button.dataset.editCatalogRecord)));
+    $$("[data-toggle-catalog-record]").forEach(button=>button.onclick=()=>confirmToggleCatalogRecord(id,Number(button.dataset.toggleCatalogRecord)));
+    $$("[data-delete-catalog-record]").forEach(button=>button.onclick=()=>confirmDeleteCatalogRecord(id,Number(button.dataset.deleteCatalogRecord)));
+  }
 }
 
 function catalogFieldControl(catalog,column,value,index){
@@ -2773,7 +3674,7 @@ function procedureRequirementRows(procedure){
 function renderProcedureManagement(){
   const procedure=selectedProcedureConfiguration();
   if(!procedure){
-    content.innerHTML=pageHeader("Gesti&oacute;n de tr&aacute;mites y requisitos","Administra los tr&aacute;mites disponibles y los documentos que solicita el portal ciudadano.")+
+    content.innerHTML=pageHeader("Gesti&oacute;n de tr&aacute;mites y requisitos","Administra los tr&aacute;mites disponibles y los documentos que solicita el portal ciudadano.","",[{label:"Inicio",view:"dashboard"},{label:"Configuración",view:"settings"},{label:"Gestión de trámites"}])+
       `<section class="card empty-state"><h2>No hay tr&aacute;mites configurados</h2><p>Agrega un tr&aacute;mite existente del cat&aacute;logo para comenzar.</p><button class="button primary" id="addConfiguredProcedure">${icon("plus")}Agregar tr&aacute;mite</button></section>`;
     $("#addConfiguredProcedure").onclick=openAddProcedureModal;
     return;
@@ -2788,7 +3689,7 @@ function renderProcedureManagement(){
     <button class="button ghost" id="clearProcedureRequirementFilters">Limpiar</button>
     <button class="button primary" id="applyProcedureRequirementFilters">Aplicar</button>
   </div>`;
-  content.innerHTML=pageHeader("Gesti&oacute;n de tr&aacute;mites y requisitos","Administra los tr&aacute;mites, sus documentos requeridos, formatos permitidos y reglas de carga.",`<button class="button ghost" id="restoreProcedureConfiguration">${icon("refresh")}Restaurar predeterminado</button><button class="button primary" id="saveProcedureConfiguration">Guardar</button>`)+
+  content.innerHTML=pageHeader("Gesti&oacute;n de tr&aacute;mites y requisitos","Administra los tr&aacute;mites, sus documentos requeridos, formatos permitidos y reglas de carga.",`<button class="button ghost" id="restoreProcedureConfiguration">${icon("refresh")}Restaurar predeterminado</button><button class="button primary" id="saveProcedureConfiguration">Guardar</button>`,[{label:"Inicio",view:"dashboard"},{label:"Configuración",view:"settings"},{label:"Gestión de trámites"}])+
   `<section class="procedure-management-grid">
     <aside class="card procedure-selector-card">
       <div class="card-header"><div><h2>Tr&aacute;mites configurados</h2><p>Selecciona un tr&aacute;mite para administrar sus requisitos.</p></div></div>
@@ -3149,7 +4050,7 @@ function renderAgents(){
     return matchSearch&&matchSite&&matchStatus;
   });
   content.innerHTML=pageHeader("Agentes certificadores","Administra altas, bajas, sedes, carga operativa, permisos y reasignación de solicitudes.",
-    `<button class="button primary" id="newAgentBtn">${icon("plus")}Nuevo agente</button>`)+
+    `<button class="button primary" id="newAgentBtn">${icon("plus")}Nuevo agente</button>`,[{label:"Inicio",view:"dashboard"},{label:"Configuración",view:"settings"},{label:"Agentes"}])+
   `<section class="stats-grid" style="margin-bottom:22px">
     <article class="stat-card"><span class="stat-icon">${icon("file-check")}</span><div><h3>Agentes activos</h3><strong>${active.length}</strong></div><small class="positive">${active.length-incidents.length} disponibles</small></article>
     <article class="stat-card blue"><span class="stat-icon" style="background:var(--blue-bg);color:var(--blue)">${icon("clipboard")}</span><div><h3>Solicitudes asignadas</h3><strong>${totalLoad}</strong></div><small>Carga operativa actual</small></article>
@@ -3218,7 +4119,7 @@ function settingField(label,value,type="text"){
 }
 
 function renderGeneralSettings(){
-  content.innerHTML=pageHeader("Configuración general","Define valores base del sistema. Las sedes pueden sobrescribirlos cuando sea necesario.",`<button class="button ghost" id="restoreSettings">${icon("refresh")}Restaurar valores</button><button class="button primary" id="saveSettings">Guardar</button>`)+
+  content.innerHTML=pageHeader("Configuración general","Define valores base del sistema. Las sedes pueden sobrescribirlos cuando sea necesario.",`<button class="button ghost" id="restoreSettings">${icon("refresh")}Restaurar valores</button><button class="button primary" id="saveSettings">Guardar</button>`,[{label:"Inicio",view:"dashboard"},{label:"Configuración",view:"settings"},{label:"General"}])+
   `<section class="settings-board">
     <article class="card setting-panel">
       <div class="setting-title"><span>1</span><h2>Reglas de citas</h2></div>
@@ -3258,7 +4159,7 @@ function settingsCalendarMarkup(){
 function renderSiteCalendar(){
   const selectedDate=new Date(2026,4,state.settingsDay);
   const selectedLabel=selectedDate.toLocaleDateString("es-MX",{weekday:"long",day:"numeric",month:"long",year:"numeric"});
-  content.innerHTML=pageHeader("Calendario de disponibilidad","Selecciona un día para consultar, bloquear o ajustar horarios de atención por sede.",`<button class="button primary" id="newException">Nueva excepción</button>`)+
+  content.innerHTML=pageHeader("Calendario de disponibilidad","Selecciona un día para consultar, bloquear o ajustar horarios de atención por sede.",`<button class="button primary" id="newException">Nueva excepción</button>`,[{label:"Inicio",view:"dashboard"},{label:"Configuración",view:"settings"},{label:"Por sede",view:"settings"},{label:"Calendario"}])+
   // Datos de sedes con indicador de horario
   `<section class="site-filter-bar">
     <label><strong>Sede</strong><select id="settingsSite"><option>Victoria, Tamaulipas</option><option>Tampico, Tamaulipas</option><option>Reynosa, Tamaulipas</option></select></label>
@@ -3302,7 +4203,7 @@ function renderSiteCalendar(){
 }
 
 function renderNewException(){
-  content.innerHTML=pageHeader("Nueva excepción de calendario","Configura un horario especial con uno o varios horarios de atención para una sede y fecha específica.",`<button class="button secondary" id="cancelExceptionTop">Cancelar</button><button class="button primary" id="saveExceptionTop">Guardar</button>`)+
+  content.innerHTML=pageHeader("Nueva excepción de calendario","Configura un horario especial con uno o varios horarios de atención para una sede y fecha específica.",`<button class="button secondary" id="cancelExceptionTop">Cancelar</button><button class="button primary" id="saveExceptionTop">Guardar</button>`,[{label:"Inicio",view:"dashboard"},{label:"Configuración",view:"settings"},{label:"Por sede",view:"settings"},{label:"Nueva excepción"}])+
   `<div class="exception-layout">
     <article class="card exception-form">
       <div class="card-header"><div><h2>Datos de la excepción</h2><p>El horario especial sustituye el horario base solo durante el día seleccionado.</p></div></div>
@@ -3329,7 +4230,7 @@ function renderNewException(){
 
 function renderReports(){
   if(state.role!=="admin"){
-    content.innerHTML=pageHeader("Reportes","Consulta indicadores de tu actividad como agente certificador.")+
+    content.innerHTML=pageHeader("Reportes","Consulta indicadores de tu actividad como agente certificador.","",[{label:"Inicio",view:"dashboard"},{label:"Reportes",view:"reports"}])+
     `<div class="notice"><strong>Próximamente:</strong> los reportes personales del agente estarán disponibles en la siguiente etapa del sistema.</div>`;
     return;
   }
@@ -3359,12 +4260,11 @@ function renderReports(){
     site:a.site, load:a.load, status:a.status
   }));
 
-  content.innerHTML=pageHeader("Reportes","Indicadores consolidados de operación FEAT · Mayo 2026.",
-    `<div style="display:flex;gap:8px;align-items:center">
+  content.innerHTML=pageHeader("Reportes","Indicadores consolidados de operación FEAT · Mayo 2026.",`<div style="display:flex;gap:8px;align-items:center">
       <select id="reportPeriod" style="font-size:12px;padding:7px 10px;border:1px solid var(--line);border-radius:6px"><option>Mayo 2026</option><option>Abril 2026</option><option>Marzo 2026</option></select>
       <select id="reportSite" style="font-size:12px;padding:7px 10px;border:1px solid var(--line);border-radius:6px"><option>Todas las sedes</option><option>Victoria Centro</option><option>Tampico Centro</option><option>Reynosa Norte</option><option>El Mante</option></select>
       <button class="button ghost small" id="exportFullReport">${icon("download")}Exportar</button>
-    </div>`)+
+    </div>`,[{label:"Inicio",view:"dashboard"},{label:"Reportes",view:"reports"}])+
 
   // ── KPIs principales ──────────────────────────────────────────────────────
   `<section class="stats-grid" style="margin-bottom:24px">
@@ -3473,9 +4373,9 @@ function renderReports(){
         ${[
           ["Confirmada",citasConfirmadas,"var(--green)"],
           ["Atendida",citasAtendidas,"var(--blue)"],
-          ["Pendiente de confirmación",state.appointments.filter(a=>a.status==="Pendiente de confirmación").length,"var(--amber)"],
-          ["No se presentó",state.appointments.filter(a=>a.status==="No se presentó").length,"var(--red)"],
-          ["Reprogramación requerida",state.appointments.filter(a=>a.status==="Reprogramación requerida").length,"var(--muted)"],
+          ["Reprogramada",state.appointments.filter(a=>a.status==="Reprogramada").length,"var(--amber)"],
+          ["Cancelada",state.appointments.filter(a=>a.status==="Cancelada").length,"var(--red)"],
+          
         ].map(([label,val,color])=>`
           <div style="display:flex;align-items:center;gap:12px">
             <span style="font-size:12px;min-width:170px;color:var(--gray)">${label}</span>
