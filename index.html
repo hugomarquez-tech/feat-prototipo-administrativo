@@ -794,6 +794,8 @@ const state = {
   lastActa: null,
   physicalDocStatus: {},
   featPasswordOk: false,
+  passwordGenerated: false,
+  certificateGenerated: false,
   activeAppointment: null,
   activeTab: "general",
   attendTab: "onsite",
@@ -2347,6 +2349,8 @@ function rescheduleAppointment(id){
 }
 
 function validateFeatPassword(){
+  // Si modifica la contraseña después de confirmarla, resetear
+  if(state.passwordGenerated){ state.passwordGenerated=false; }
   const pwd=document.getElementById("featPassword");
   const conf=document.getElementById("featPasswordConfirm");
   if(!pwd) return;
@@ -2386,10 +2390,13 @@ function validateFeatPassword(){
   state.featPasswordOk=ready;
   const indicator=document.getElementById("passwordReadyIndicator");
   if(indicator) indicator.hidden=!ready;
-  // Habilitar/deshabilitar botones
+  // Solo habilitar "Confirmar contraseña" — acta y certificado requieren passwordGenerated
+  const btnConfirm=document.getElementById("btnGenerarPassword");
+  if(btnConfirm) btnConfirm.disabled=!ready;
   const btnCert=document.getElementById("btnGenerarCertificado");
   const btnActa=document.getElementById("btnVerActa");
-  if(btnCert) btnCert.disabled=!ready;
+  if(btnCert) btnCert.disabled=!(state.passwordGenerated&&!state.certificateGenerated);
+  if(btnActa) btnActa.disabled=!(state.passwordGenerated||state.certificateGenerated);
 }
 function captureBiometric(key){
   const labels={photo:"Fotografía",fingerprint:"Huella dactilar",signature:"Firma electrónica"};
@@ -2630,11 +2637,18 @@ function renderAttend(id=state.activeAppointment){
       return '<div style="display:flex;align-items:flex-start;gap:12px;padding:12px 14px;background:#F7F8FA;border-radius:8px;border-left:3px solid var(--'+item[0]+')">'+
         '<div><strong style="font-size:13px;display:block;margin-bottom:3px">'+item[1]+'</strong><span style="font-size:12px;color:var(--muted)">'+item[2]+'</span></div></div>';
     }).join('');
-    const btnVerActa = '<button class="button ghost wide" id="btnVerActa" '+(allDocsOk&&allBio?'':'disabled')+'>'+icon('file-text')+' Ver e imprimir acta</button>';
-    const btnCert = '<button class="button primary wide" id="btnGenerarCertificado" '+(allDocsOk&&allBio&&state.featPasswordOk?'':'disabled')+'>'+icon('award')+' Generar certificado FEAT</button>';
-    const readyIndicator = state.featPasswordOk
-      ? '<div id="passwordReadyIndicator" style="padding:12px 14px;background:#F0FBF4;border:1px solid var(--green);border-radius:8px;display:flex;align-items:center;gap:10px;margin-bottom:16px"><span style="color:var(--green)">'+icon('check-circle')+'</span><span style="font-size:13px;color:var(--green);font-weight:600">Contraseña válida y confirmada.</span></div>'
-      : '<div id="passwordReadyIndicator" hidden></div>';
+    const pwdGenerated = state.passwordGenerated;
+    const canGenPwd = allDocsOk&&allBio&&state.featPasswordOk;
+    const btnGenPwd = !pwdGenerated
+      ? '<button class="button primary wide" id="btnGenerarPassword" '+(canGenPwd?'':'disabled')+'>'+icon('check-circle')+' Confirmar contraseña</button>'
+      : '<div style="display:flex;align-items:center;gap:10px;padding:12px 14px;background:#F0FBF4;border:1px solid var(--green);border-radius:8px;margin-bottom:4px">'+
+        '<span style="color:var(--green)">'+icon('check-circle')+'</span>'+
+        '<span style="font-size:13px;color:var(--green);font-weight:600">Contraseña confirmada y registrada.</span>'+
+        '</div>';
+    const certGenerated = state.certificateGenerated;
+    const btnVerActa = '<button class="button ghost wide" id="btnVerActa" '+(pwdGenerated||certGenerated?'':'disabled')+'>'+icon('file-text')+' Ver e imprimir acta</button>';
+    const btnCert = '<button class="button primary wide" id="btnGenerarCertificado" '+(pwdGenerated&&!certGenerated?'':'disabled')+' '+(certGenerated?'title="Certificado ya generado"':'')+'>'+icon('award')+' Generar certificado FEAT</button>';
+    const readyIndicator = '';
     tab3Html =
       '<div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start">'+
       '<article class="card" style="padding:0;overflow:hidden">'+
@@ -2654,8 +2668,7 @@ function renderAttend(id=state.activeAppointment){
       '<label style="font-size:13px;font-weight:700">Confirmar contraseña *</label>'+
       '<input id="featPasswordConfirm" type="password" placeholder="Repite la contraseña" style="font-family:monospace;letter-spacing:.1em" oninput="validateFeatPassword()">'+
       '<small id="matchLabel" style="font-size:11px;margin-top:4px;display:block"></small></div>'+
-      readyIndicator+
-      '<div style="display:grid;gap:10px">'+btnVerActa+btnCert+'</div>'+
+      '<div style="display:grid;gap:10px">'+btnGenPwd+'<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">'+btnVerActa+btnCert+'</div></div>'+
       '</div></article>'+
       '<article class="card" style="padding:22px">'+
       '<strong style="font-size:15px;display:block;margin-bottom:6px">Instrucciones para el solicitante</strong>'+
@@ -2702,6 +2715,30 @@ function renderAttend(id=state.activeAppointment){
     renderAttend();
   };
   $$("[data-biometric]").forEach(b=>b.onclick=()=>captureBiometric(b.dataset.biometric));
+  if($("#btnGenerarPassword")) $("#btnGenerarPassword").onclick=()=>{
+    if(!state.featPasswordOk){toast("Captura y confirma la contraseña antes de continuar.","warning");return;}
+    openModal({
+      title:"Confirmar contraseña",
+      subtitle:"La contraseña quedará registrada para generar el certificado.",
+      confirm:"Confirmar",
+      confirmClass:"success",
+      body:'<div style="display:grid;gap:14px">'+
+        '<div style="text-align:center;padding:16px">'+
+        '<span style="font-size:44px;color:var(--green);display:block;margin-bottom:10px">'+icon("check-circle")+'</span>'+
+        '<strong style="font-size:16px;display:block;margin-bottom:6px">Contraseña generada exitosamente</strong>'+
+        '<p style="font-size:13px;color:var(--muted);margin:0">La contraseña ha sido registrada. Ya puedes imprimir el acta y generar el certificado.</p>'+
+        '</div>'+
+        '<div style="display:grid;gap:8px">'+
+        '<div style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--gray)"><span style="color:var(--green)">'+icon("check-circle")+'</span>La contraseña protegerá el archivo .key del titular.</div>'+
+        '<div style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--gray)"><span style="color:var(--amber)">'+icon("alert")+'</span>No se almacena en el sistema. Es responsabilidad del titular resguardarla.</div>'+
+        '</div></div>',
+      onConfirm:()=>{
+        state.passwordGenerated=true;
+        closeModal();
+        renderAttend();
+      }
+    });
+  };
   if($("#btnVerActa")) $("#btnVerActa").onclick=()=>{
     const actaId="ACTA-2026-"+String(100+state.procedures.length).padStart(5,"0");
     state.lastActa={actaId,certId:null,appointmentId:a.id,name:a.name,type:a.type,date:a.date,time:a.time,request:a.request,agent:"Luis Hernández Pérez",agentDep:"Secretaría de Administración — Dirección de Innovación",municipio:"Ciudad Victoria",curp:"PEGJ850215HTSMRN09",actaUploaded:false};
@@ -2710,7 +2747,7 @@ function renderAttend(id=state.activeAppointment){
   if($("#btnGenerarCertificado")) $("#btnGenerarCertificado").onclick=()=>{
     if(!allDocsOk){toast("Completa el cotejo documental antes de generar el certificado.","warning");return;}
     if(!allBio){toast("Completa la captura biométrica antes de generar el certificado.","warning");return;}
-    if(!state.featPasswordOk){toast("Captura y confirma la contraseña antes de generar el certificado.","warning");return;}
+    if(!state.passwordGenerated){toast("Confirma la contraseña antes de generar el certificado.","warning");return;}
     openModal({
       title:"Generar certificado FEAT",subtitle:a.name,confirm:"Confirmar y generar",confirmClass:"success",
       body:'<div style="display:grid;gap:14px">'+
@@ -2734,9 +2771,13 @@ function renderAttend(id=state.activeAppointment){
         state.certificates.unshift({id:number,citizen:a.name,type:a.type,status:"Vigente",validity:"22/05/2026 - 22/05/2028"});
         state.lastActa={actaId:actaId,certId:number,appointmentId:a.id,name:a.name,type:a.type,date:a.date,time:a.time,request:a.request,agent:"Luis Hernández Pérez",agentDep:"Secretaría de Administración — Dirección de Innovación",municipio:"Ciudad Victoria",curp:"PEGJ850215HTSMRN09",actaUploaded:false};
         state.featPasswordOk=false;
+        state.passwordGenerated=true;  // Mantener para que acta siga habilitada
+        state.certificateGenerated=true;  // Certificado ya generado
         closeModal();
         openModal({
-          title:"¡Certificado generado exitosamente!",subtitle:number,confirm:"Volver a citas",confirmClass:"success",
+          title:"¡Certificado generado exitosamente!",subtitle:number,
+          confirm:"Volver a citas",confirmClass:"success",
+          cancelLabel:"Ver e imprimir acta",
           body:'<div style="display:grid;gap:14px">'+
             '<div style="text-align:center;padding:20px">'+
             '<span style="font-size:52px;color:var(--green);display:block;margin-bottom:12px">'+icon("check-circle")+'</span>'+
@@ -2749,9 +2790,28 @@ function renderAttend(id=state.activeAppointment){
             '<div style="display:flex;align-items:center;gap:8px;font-size:12px"><span style="color:var(--green)">'+icon("check-circle")+'</span>Notificación enviada al ciudadano.</div>'+
             '<div style="display:flex;align-items:center;gap:8px;font-size:12px"><span style="color:var(--blue)">'+icon("award")+'</span>Disponible en el portal — "Mis certificados".</div>'+
             '<div style="display:flex;align-items:center;gap:8px;font-size:12px"><span style="color:var(--amber)">'+icon("file-text")+'</span>Recuerda imprimir y firmar el Acta de Emisión.</div>'+
+            '</div>'+
+            '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:4px">'+
+            '<button class="button ghost wide" id="btnIrActa" style="justify-content:center">'+icon("file-text")+'Ver e imprimir acta</button>'+
+            '<button class="button success wide" id="btnVolverCitas" style="justify-content:center">'+icon("calendar")+'Volver a citas</button>'+
             '</div></div>',
           onConfirm:()=>{closeModal();navigate("appointments");}
         });
+        // Botones dentro del modal de éxito
+        setTimeout(()=>{
+          const btnActa=document.getElementById("btnIrActa");
+          const btnCitas=document.getElementById("btnVolverCitas");
+          if(btnActa) btnActa.onclick=()=>{
+            closeModal();
+            // Regresar a la pestaña de contraseña para imprimir el acta
+            state.attendTab="password";
+            renderAttend();
+          };
+          if(btnCitas) btnCitas.onclick=()=>{closeModal();navigate("appointments");};
+          // Ocultar los botones por defecto del modal
+          const modalConfirm=document.getElementById("modalConfirm");
+          if(modalConfirm) modalConfirm.style.display="none";
+        },100);
       }
     });
   };
@@ -2813,9 +2873,7 @@ function renderActaEmision(){
   const fecha=d.date||"22 de mayo de 2026";
   state.actaZoom=state.actaZoom||100;
 
-  content.innerHTML=pageHeader("Acta de Emisión","Revisión final antes de entregar al ciudadano.",`<button class="button ghost" id="backToAttend">${icon("library")}Volver</button>
-     <button class="button ghost" id="printActa">${icon("download")}Imprimir acta</button>
-     ${d.actaUploaded
+  content.innerHTML=pageHeader("Acta de Emisión","Revisión final antes de entregar al ciudadano.",`${d.actaUploaded
        ?`<button class="button success" id="goToProcedures">${icon("calendar")}Volver a citas</button>`
        :`<button class="button warning" id="uploadActaBtn">${icon("download")}Subir acta firmada y generar certificado</button>
         <button class="button ghost" id="goToProcedures" style="opacity:.5">${icon("calendar")}Volver a citas</button>`}`,[{label:"Inicio",view:"dashboard"},{label:"Citas",view:"appointments"},{label:"Atención presencial",view:"attend"},{label:"Acta de Emisión"}])+
@@ -2824,7 +2882,6 @@ function renderActaEmision(){
     <div class="summary-item"><small>Acta</small><strong>${d.actaId}</strong></div>
     <div class="summary-item"><small>Trámite</small><strong>${d.type}</strong></div>
     <div class="summary-item"><small>Fecha</small><strong>${fecha}</strong></div>
-    <div class="summary-item"><small>Estatus</small><span class="badge approved">Emitido</span></div>
   </section>
   <!-- Visor PDF -->
   <section class="card" style="padding:0;overflow:hidden">
@@ -2917,7 +2974,6 @@ function renderActaEmision(){
 
   $("#actaZoomIn").onclick=()=>{state.actaZoom=Math.min(state.actaZoom+15,150);renderActaEmision()};
   $("#actaZoomOut").onclick=()=>{state.actaZoom=Math.max(state.actaZoom-15,50);renderActaEmision()};
-  $("#backToAttend").onclick=()=>navigate("appointments");
   if($("#uploadActaBtn")) $("#uploadActaBtn").onclick=()=>{
     openModal({title:"Subir acta firmada y generar certificado",subtitle:d.actaId,confirm:"Subir y generar certificado",confirmClass:"success",
       body:`<div style="display:grid;gap:14px">
@@ -2974,8 +3030,7 @@ function renderActaEmision(){
     },100);
   };
   $("#goToProcedures").onclick=()=>{
-    if(!d.actaUploaded){toast("Sube el acta firmada antes de cerrar el trámite.","warning");return;}
-    toast("Trámite cerrado. Acta y certificado registrados en el expediente.");
+    toast("Volviendo a citas. Recuerda subir el acta firmada desde las acciones de la cita.");
     navigate("appointments");
   };
   const printFn=()=>{
@@ -2985,7 +3040,6 @@ function renderActaEmision(){
     w.document.close();
     setTimeout(()=>w.print(),800);
   };
-  $("#printActa").onclick=printFn;
   if($("#printActa2")) $("#printActa2").onclick=printFn;
   bindCommonActions();
 }
