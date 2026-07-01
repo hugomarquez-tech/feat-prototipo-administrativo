@@ -806,7 +806,7 @@ const state = {
     "20 may, 10:24 · Revisión documental iniciada",
     "20 may, 10:31 · CURP y RFC validados"
   ],
-  biometrics: { photo: false, fingerprint: false, signature: false },
+  biometrics: { photo: false, fingerprint: false },
   physicalChecks: { identity: false, originals: false, consent: false, duplicate: false },
   requests: [
     { id:"FEAT-2026-041001", name:"Juan Pérez García", dependency:"Secretaría de Salud", depType:"Gobierno Central", type:"Emisión", status:"Pendiente", agent:"Luis Hernández", site:"Victoria Centro", date:"20 may 2026", priority:"Alta", deadline:"18 h hábiles", appointment:"22 may 2026 · 08:30", labor:"Servidor público", observations:0 },
@@ -1566,11 +1566,7 @@ function renderReview(id=state.activeRequest){
     <div class="summary-item"><small>Plazo</small><strong class="${["Pendiente","Observada"].includes(request.status)&&request.priority==="Alta"?"text-red":""}">${request.deadline}</strong></div>
   </section>
   <div class="workflow-steps">
-    <div class="workflow-step done">1. Solicitud recibida</div>
-    <div class="workflow-step current">2. Revisión documental</div>
-    <div class="workflow-step">3. Aprobación para cita</div>
-    <div class="workflow-step">4. Atención presencial</div>
-    <div class="workflow-step">5. Certificado</div>
+
   </div>
   <section class="review-layout">
     <article class="card" style="padding:0;overflow:hidden;position:sticky;top:96px;max-height:calc(100vh - 120px);display:flex;flex-direction:column">
@@ -2398,9 +2394,53 @@ function validateFeatPassword(){
   if(btnCert) btnCert.disabled=!(state.passwordGenerated&&!state.certificateGenerated);
   if(btnActa) btnActa.disabled=!(state.passwordGenerated||state.certificateGenerated);
 }
+
+// ── Panel de firma electrónica del agente ────────────────────────────────
+function openAgentSignModal(onSuccess){
+  openModal({
+    title:"Firma electrónica del agente",
+    subtitle:"Autenticación requerida para continuar",
+    confirm:"Firmar y continuar",
+    confirmClass:"primary",
+    body:'<div style="display:grid;gap:16px">'+
+      '<div style="display:flex;align-items:center;gap:14px;padding:16px;background:#F7F8FA;border:1px solid var(--line);border-radius:8px">'+
+        '<span style="width:44px;height:44px;border-radius:10px;background:var(--brand);color:#fff;display:grid;place-items:center;flex-shrink:0;font-size:22px">'+icon("award")+'</span>'+
+        '<div><strong style="display:block;font-size:15px;margin-bottom:3px">Firma Electrónica Avanzada — Agente</strong>'+
+        '<span style="font-size:12px;color:var(--muted)">Luis Hernández Pérez · Agente certificador · FEAT-2026-AG00001</span></div>'+
+      '</div>'+
+      '<div id="agentSignProgress" style="border:2px dashed var(--line);border-radius:10px;padding:28px;text-align:center;background:#FAFAFA">'+
+        '<span style="font-size:36px;color:var(--muted);display:block;margin-bottom:10px">'+icon("award")+'</span>'+
+        '<strong style="display:block;font-size:14px;margin-bottom:6px">Lista para firmar</strong>'+
+        '<p style="margin:0;font-size:12px;color:var(--muted)">Haz clic en "Firmar y continuar" para aplicar tu firma electrónica.</p>'+
+      '</div>'+
+      '<div id="agentSignStatus" hidden style="display:flex;align-items:center;gap:10px;padding:14px 16px;background:#F0FBF4;border:1px solid var(--green);border-radius:8px">'+
+        '<span style="color:var(--green);font-size:20px">'+icon("check-circle")+'</span>'+
+        '<div><strong style="display:block;font-size:13px;color:var(--green)">Firma aplicada correctamente</strong>'+
+        '<span style="font-size:12px;color:var(--muted)">El certificado queda vinculado a la firma del agente certificador.</span></div>'+
+      '</div>'+
+      '<div class="notice" style="font-size:12px">'+
+        '<strong>Al firmar, el agente certifica</strong> que el proceso de identificación, cotejo documental y captura biométrica se realizaron correctamente conforme a la normativa vigente.'+
+      '</div>'+
+    '</div>',
+    onConfirm:()=>{
+      // Simulación — igual que biométricos, no se requieren archivos reales
+      const status=document.getElementById("agentSignStatus");
+      const btn=document.getElementById("modalConfirm");
+      if(btn){btn.disabled=true;btn.textContent="Firmando...";}
+      setTimeout(()=>{
+        if(status) status.hidden=false;
+        setTimeout(()=>{
+          closeModal();
+          onSuccess();
+        },800);
+      },1200);
+    }
+  });
+}
+
 function captureBiometric(key){
-  const labels={photo:"Fotografía",fingerprint:"Huella dactilar",signature:"Firma electrónica"};
-  const icons={photo:"camera",fingerprint:"fingerprint",signature:"signature"};
+  const labels={photo:"Fotografía",fingerprint:"Huella dactilar"};
+  const icons={photo:"camera",fingerprint:"fingerprint"};
   const descs={
     photo:"Posiciona al ciudadano frente a la cámara y asegúrate de que el rostro esté centrado y bien iluminado.",
     fingerprint:"Solicita al ciudadano que coloque el dedo índice derecho sobre el lector de huellas.",
@@ -2461,6 +2501,17 @@ function captureBiometric(key){
 
 function renderAttend(id=state.activeAppointment){
   const a=appointmentById(id)||state.appointments[0];
+  // Si cambia de cita, resetear todo el estado de atención
+  if(state.activeAppointment!==a.id){
+    state.attendTab='docs';
+    state.physicalDocStatus={};
+    state.biometrics={photo:false,fingerprint:false};
+    state.physicalChecks={identity:false,originals:false,consent:false,duplicate:false};
+    state.featPasswordOk=false;
+    state.passwordGenerated=false;
+    state.certificateGenerated=false;
+    state.viewerZoom=100;
+  }
   state.activeAppointment=a.id;
   if(!state.attendTab||!['docs','biometrics','password'].includes(state.attendTab)) state.attendTab='docs';
   if(!state.physicalDocStatus) state.physicalDocStatus={};
@@ -2491,7 +2542,7 @@ function renderAttend(id=state.activeAppointment){
       allDocsOk?'var(--green)':docObservedCount?'var(--brand)':'var(--muted)',
       allDocsOk?'var(--green-bg)':docObservedCount?'#FEF0F3':'#F0F2F5'],
      ['biometrics', icon('fingerprint')+' Captura biométrica',
-      allBio?'✓ Completo':bioCount+'/3 capturas',
+      allBio?'✓ Completo':bioCount+'/2 capturas',
       allBio?'var(--green)':'var(--muted)',
       allBio?'var(--green-bg)':'#F0F2F5'],
      ['password', icon('signature')+' Generar contraseña',
@@ -2586,7 +2637,7 @@ function renderAttend(id=state.activeAppointment){
   // Pestaña 2: Biométricos
   let tab2Html = '';
   if(state.attendTab==='biometrics'){
-    const bioCards = [['photo','camera','Fotografía','Captura facial del titular'],['fingerprint','fingerprint','Huella dactilar','Índice derecho'],['signature','signature','Firma electrónica','Firma del titular']].map(function(item){
+    const bioCards = [['photo','camera','Fotografía','Captura facial del titular'],['fingerprint','fingerprint','Huella dactilar','Índice derecho']].map(function(item){
       const key=item[0],ic=item[1],title=item[2],desc=item[3];
       const done=state.biometrics[key];
       return '<article class="biometric-card '+(done?'complete':'')+'">'+
@@ -2610,7 +2661,7 @@ function renderAttend(id=state.activeAppointment){
       '<article class="card" style="padding:0;overflow:hidden">'+
       '<div style="padding:14px 20px;border-bottom:1px solid var(--line);background:#FAFAFA">'+
       '<strong style="font-size:15px">Captura biométrica</strong>'+
-      '<p style="margin:4px 0 0;font-size:13px;color:var(--muted)">Tres capturas requeridas: fotografía, huella dactilar y firma.</p></div>'+
+      '<p style="margin:4px 0 0;font-size:13px;color:var(--muted)">Dos capturas requeridas: fotografía y huella dactilar.</p></div>'+
       '<div style="padding:16px 20px">'+alertDocs+'<div class="biometric-grid">'+bioCards+'</div></div>'+
       '<div style="padding:14px 20px;border-top:1px solid var(--line);background:#FAFAFA">'+continuarBio+'</div>'+
       '</article>'+
@@ -2748,8 +2799,9 @@ function renderAttend(id=state.activeAppointment){
     if(!allDocsOk){toast("Completa el cotejo documental antes de generar el certificado.","warning");return;}
     if(!allBio){toast("Completa la captura biométrica antes de generar el certificado.","warning");return;}
     if(!state.passwordGenerated){toast("Confirma la contraseña antes de generar el certificado.","warning");return;}
-    openModal({
-      title:"Generar certificado FEAT",subtitle:a.name,confirm:"Confirmar y generar",confirmClass:"success",
+    openAgentSignModal(function(){
+      openModal({
+        title:"Generar certificado FEAT",subtitle:a.name,confirm:"Confirmar y generar",confirmClass:"success",
       body:'<div style="display:grid;gap:14px">'+
         '<div class="notice" style="display:flex;align-items:center;gap:12px;padding:14px 16px">'+
         '<span style="width:36px;height:36px;border-radius:8px;background:var(--green);color:#fff;display:grid;place-items:center;flex-shrink:0">'+icon("award")+'</span>'+
@@ -2812,8 +2864,9 @@ function renderAttend(id=state.activeAppointment){
           const modalConfirm=document.getElementById("modalConfirm");
           if(modalConfirm) modalConfirm.style.display="none";
         },100);
-      }
-    });
+        }
+      });
+    }); // cierre openAgentSignModal
   };
   bindCommonActions();
   bindAppointmentActions();
@@ -2857,7 +2910,7 @@ function finishAppointment(a){
         curp:"PEGJ850215HTSMRN09",
         actaUploaded:false
       };
-      state.biometrics={photo:false,fingerprint:false,signature:false};
+      state.biometrics={photo:false,fingerprint:false};
       state.physicalChecks={identity:false,originals:false,consent:false,duplicate:false};
       state.physicalDocStatus={};
       closeModal();
@@ -2875,8 +2928,8 @@ function renderActaEmision(){
 
   content.innerHTML=pageHeader("Acta de Emisión","Revisión final antes de entregar al ciudadano.",`${d.actaUploaded
        ?`<button class="button success" id="goToProcedures">${icon("calendar")}Volver a citas</button>`
-       :`<button class="button warning" id="uploadActaBtn">${icon("download")}Subir acta firmada y generar certificado</button>
-        <button class="button ghost" id="goToProcedures" style="opacity:.5">${icon("calendar")}Volver a citas</button>`}`,[{label:"Inicio",view:"dashboard"},{label:"Citas",view:"appointments"},{label:"Atención presencial",view:"attend"},{label:"Acta de Emisión"}])+
+       :`<button class="button warning" id="uploadActaBtn">${icon("download")}${state.certificateGenerated?"Subir acta firmada":"Subir acta firmada y generar certificado"}</button>
+        <button class="button ghost" id="goToProcedures">${icon("calendar")}Volver a citas</button>`}`,[{label:"Inicio",view:"dashboard"},{label:"Citas",view:"appointments"},{label:"Atención presencial",view:"attend"},{label:"Acta de Emisión"}])+
   `<section class="summary-banner" style="margin-bottom:20px">
     <div><h2>${d.certId}</h2><span>${d.name}</span></div>
     <div class="summary-item"><small>Acta</small><strong>${d.actaId}</strong></div>
@@ -2995,26 +3048,34 @@ function renderActaEmision(){
         </div>
       </div>`,
       onConfirm:()=>{
-        // Ahora sí se genera el certificado
-        const number=`FEAT-2026-${String(930+state.certificates.length).padStart(6,"0")}`;
-        d.certId=number;
         d.actaUploaded=true;
         // Actualizar cita
         const cita=state.appointments.find(ap=>ap.id===d.appointmentId||ap.request===d.request);
         if(cita){cita.status="Atendida";cita.actaUploaded=true;}
-        // Crear trámite
-        if(!state.procedures.some(p=>p.actaId===d.actaId)){
-          state.procedures.unshift({
-            id:`TRM-2026-${String(120+state.procedures.length).padStart(6,"0")}`,
-            citizen:d.name, type:d.type, result:"Emitido",
-            document:number, actaId:d.actaId, period:"2026-05", actaUploaded:true
-          });
+        if(state.certificateGenerated){
+          // Certificado ya fue generado — solo registrar acta
+          const tram=state.procedures.find(p=>p.actaId===d.actaId);
+          if(tram) tram.actaUploaded=true;
+          closeModal();
+          toast("Acta firmada subida correctamente. Expediente completo.");
+          renderActaEmision();
+        } else {
+          // Generar certificado junto con el acta
+          const number=`FEAT-2026-${String(930+state.certificates.length).padStart(6,"0")}`;
+          d.certId=number;
+          if(!state.procedures.some(p=>p.actaId===d.actaId)){
+            state.procedures.unshift({
+              id:`TRM-2026-${String(120+state.procedures.length).padStart(6,"0")}`,
+              citizen:d.name, type:d.type, result:"Emitido",
+              document:number, actaId:d.actaId, period:"2026-05", actaUploaded:true
+            });
+          }
+          state.certificates.unshift({id:number,citizen:d.name,type:d.type,status:"Vigente",validity:"22/05/2026 - 22/05/2028"});
+          state.certificateGenerated=true;
+          closeModal();
+          toast("Acta subida. Certificado "+number+" generado. Ciudadano notificado.");
+          renderActaEmision();
         }
-        // Crear certificado
-        state.certificates.unshift({id:number,citizen:d.name,type:d.type,status:"Vigente",validity:"22/05/2026 - 22/05/2028"});
-        closeModal();
-        toast("Acta subida. Certificado "+number+" generado. Ciudadano notificado.");
-        renderActaEmision();
       }
     });
     setTimeout(()=>{
