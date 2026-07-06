@@ -857,6 +857,12 @@ const state = {
   agendaAgentFilter: "all",
   agendaStatusFilter: "all",
   agendaSiteFilter: "all",
+  siteSchedules: {
+    "Victoria":  {custom:true,  start:"08:00", end:"15:00", days:["Lu","Ma","Mi","Ju","Vi"], maxCitas:8},
+    "Tampico":   {custom:false, start:"08:30", end:"16:30", days:["Lu","Ma","Mi","Ju","Vi"], maxCitas:6},
+    "Reynosa":   {custom:true,  start:"09:00", end:"17:00", days:["Lu","Ma","Mi","Ju","Vi"], maxCitas:6},
+    "Mante":     {custom:false, start:"08:30", end:"16:30", days:["Lu","Ma","Mi","Ju","Vi"], maxCitas:4}
+  },
   agentSite:"all",
   agentStatus:"all",
   documents: {
@@ -4283,18 +4289,19 @@ function renderSiteCalendar(){
   </section>
   <!-- Indicador de horario por sede -->
   <section style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px">
-    ${[
-      {sede:"Victoria",status:"propio",label:"Horario propio",desc:"08:00 – 15:00",color:"var(--brand)"},
-      {sede:"Tampico",status:"heredado",label:"Horario base",desc:"08:30 – 16:30 (heredado)",color:"var(--muted)"},
-      {sede:"Reynosa",status:"propio",label:"Horario propio",desc:"09:00 – 17:00",color:"var(--brand)"},
-      {sede:"Mante",status:"heredado",label:"Horario base",desc:"08:30 – 16:30 (heredado)",color:"var(--muted)"},
-    ].map(s=>`<div style="padding:13px 16px;border-radius:8px;border:1px solid ${s.status==="propio"?"var(--brand)":"var(--line)"};background:${s.status==="propio"?"#FCF3F5":"#FAFAFA"}">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
-        <strong style="font-size:13px">${s.sede}</strong>
-        <span style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:${s.color};background:${s.status==="propio"?"#F8D8DF":"#F0F2F5"};padding:3px 7px;border-radius:10px">${s.label}</span>
-      </div>
-      <span style="font-size:12px;color:var(--gray)">${s.desc}</span>
-    </div>`).join("")}
+    ${["Victoria","Tampico","Reynosa","Mante"].map(sede=>{
+      const sch=state.siteSchedules[sede]||{custom:false,start:"08:30",end:"16:30",maxCitas:6};
+      const isCustom=sch.custom;
+      const desc=isCustom?`${sch.start} – ${sch.end} · ${sch.maxCitas} citas/día`:"08:30 – 16:30 (heredado del base)";
+      return `<div style="padding:13px 16px;border-radius:8px;border:1px solid ${isCustom?"var(--brand)":"var(--line)"};background:${isCustom?"#FCF3F5":"#FAFAFA"}">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
+          <strong style="font-size:13px">${sede}</strong>
+          <span style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:${isCustom?"var(--brand)":"var(--muted)"};background:${isCustom?"#F8D8DF":"#F0F2F5"};padding:3px 7px;border-radius:10px">${isCustom?"Horario propio":"Horario base"}</span>
+        </div>
+        <span style="font-size:12px;color:var(--gray);display:block;margin-bottom:8px">${desc}</span>
+        <button class="button ghost small" style="font-size:11px;width:100%" data-edit-schedule="${sede}">${icon("edit")} Editar horario</button>
+      </div>`;
+    }).join("")}
   </section>
   <section class="site-calendar-layout">
     <article class="card settings-calendar-card">
@@ -4312,6 +4319,66 @@ function renderSiteCalendar(){
   </section>
   <article class="card upcoming-exceptions"><div class="card-header"><div><h2>Excepciones próximas</h2><p>Vista rápida para auditoría y edición.</p></div></div><div class="exception-row"><strong>22 may 2026</strong><span>Victoria</span><b>Horario especial</b><span>08:30 - 13:00</span><button>Editar</button><button>Eliminar</button></div></article>`;
   $("#settingsSite").onchange=e=>{state.settingsSite=e.target.value;toast(`Sede cambiada a ${e.target.value}.`)};
+  $$("[data-edit-schedule]").forEach(b=>b.onclick=()=>{
+    const sede=b.dataset.editSchedule;
+    const sch=state.siteSchedules[sede]||{custom:false,start:"08:30",end:"16:30",maxCitas:6,days:["Lu","Ma","Mi","Ju","Vi"]};
+    const dias=["Lu","Ma","Mi","Ju","Vi","Sa","Do"];
+    openModal({
+      title:"Horario de "+sede,
+      subtitle:"Configura el horario de atención de esta sede",
+      confirm:"Guardar horario",
+      confirmClass:"primary",
+      body:`<div style="display:grid;gap:16px">
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 16px;background:#F7F8FA;border-radius:8px">
+          <div>
+            <strong style="font-size:13px;display:block">¿Usar horario base del sistema?</strong>
+            <span style="font-size:12px;color:var(--muted)">08:30 – 16:30 · Configurado en General</span>
+          </div>
+          <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
+            <input type="checkbox" id="useBaseSchedule" ${!sch.custom?"checked":""} style="width:16px;height:16px;accent-color:var(--brand)">
+            <span style="font-size:13px">Heredar horario base</span>
+          </label>
+        </div>
+        <div id="customScheduleFields" style="${sch.custom?"":"opacity:.4;pointer-events:none"}">
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:12px">
+            <div class="field"><label>Hora inicio</label><input type="time" id="schedStart" value="${sch.start}"></div>
+            <div class="field"><label>Hora fin</label><input type="time" id="schedEnd" value="${sch.end}"></div>
+            <div class="field"><label>Máx. citas/día</label><input type="number" id="schedMax" value="${sch.maxCitas}" min="1" max="30" style="text-align:center"></div>
+          </div>
+          <div class="field"><label>Días de atención</label>
+            <div style="display:flex;gap:8px;flex-wrap:wrap">
+              ${dias.map(d=>`<label style="display:flex;align-items:center;gap:4px;padding:6px 10px;border:1px solid var(--line);border-radius:6px;cursor:pointer;background:${sch.days&&sch.days.includes(d)?"#FCF3F5":"#fff"}">
+                <input type="checkbox" class="sched-day" value="${d}" ${sch.days&&sch.days.includes(d)?"checked":""} style="accent-color:var(--brand)">
+                <span style="font-size:13px">${d}</span>
+              </label>`).join("")}
+            </div>
+          </div>
+        </div>
+        <div class="notice" style="font-size:12px">Los cambios se reflejan en el calendario del portal ciudadano y en la disponibilidad de citas.</div>
+      </div>`,
+      onConfirm:()=>{
+        const useBase=document.getElementById("useBaseSchedule").checked;
+        const start=document.getElementById("schedStart").value||"08:30";
+        const end=document.getElementById("schedEnd").value||"16:30";
+        const max=parseInt(document.getElementById("schedMax").value)||6;
+        const days=[...document.querySelectorAll(".sched-day:checked")].map(c=>c.value);
+        state.siteSchedules[sede]={custom:!useBase,start,end,maxCitas:max,days:days.length?days:["Lu","Ma","Mi","Ju","Vi"]};
+        closeModal();
+        renderSiteCalendar();
+        toast(useBase?`${sede} ahora usa el horario base.`:`Horario propio de ${sede} guardado: ${start} – ${end}.`);
+      }
+    });
+    // Toggle custom fields
+    setTimeout(()=>{
+      const cb=document.getElementById("useBaseSchedule");
+      const fields=document.getElementById("customScheduleFields");
+      if(cb&&fields) cb.onchange=()=>{fields.style.opacity=cb.checked?"0.4":"1";fields.style.pointerEvents=cb.checked?"none":"auto";};
+      // Estilo en checkboxes de días
+      document.querySelectorAll(".sched-day").forEach(c=>{
+        c.onchange=()=>{const lbl=c.closest("label");if(lbl){lbl.style.background=c.checked?"#FCF3F5":"#fff";lbl.style.borderColor=c.checked?"var(--brand)":"var(--line)";}};
+      });
+    },100);
+  });
   $$("[data-settings-day]").forEach(button=>button.onclick=()=>{state.settingsDay=Number(button.dataset.settingsDay);renderSiteCalendar()});
   $("#newException").onclick=$("#addException").onclick=()=>{state.settingsScreen="exception";renderSettings()};
   $("#blockDay").onclick=()=>openModal({title:"Bloquear día",subtitle:`${state.settingsDay} de mayo de 2026`,confirm:"Bloquear",confirmClass:"danger",body:"<p>Se cancelará la disponibilidad del día y las citas existentes requerirán reprogramación.</p>",onConfirm:()=>{closeModal();toast("Día marcado como inhábil.","warning")}});
