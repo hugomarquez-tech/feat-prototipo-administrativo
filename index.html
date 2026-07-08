@@ -878,13 +878,13 @@ const catalogDefinitions = [
   {
     id:"tramites", icon:"clipboard", title:"Trámites", group:"Proceso",
     description:"Tipos de trámite habilitados y su vigencia operativa.",
-    columns:["Clave","Trámite","Aplica a","Vigencia","Estatus"],
+    columns:["Clave","Trámite","Aplica a","Vigencia","Requiere cita","Estatus"],
     rows:[
-      ["EMI","Emisión de certificado","Ciudadanía y servidores públicos","2 años","Activo"],
-      ["REN","Renovación de certificado","Certificados dentro de ventana de renovación","2 años","Activo"],
-      ["REV","Revocación voluntaria","Titulares con certificado vigente","Permanente","Activo"],
-      ["REP","Reposición por pérdida","Según validación administrativa","2 años","Inactivo"],
-      ["ACT","Actualización de datos","Titulares con certificado vigente","2 años","Activo"]
+      ["EMI","Emisión de certificado","Ciudadanía y servidores públicos","2 años","Sí","Activo"],
+      ["REN","Renovación de certificado","Certificados dentro de ventana de renovación","2 años","Sí","Activo"],
+      ["REV","Revocación voluntaria","Titulares con certificado vigente","Permanente","No","Activo"],
+      ["REP","Reposición por pérdida","Según validación administrativa","2 años","Sí","Inactivo"],
+      ["ACT","Actualización de datos","Titulares con certificado vigente","2 años","No","Activo"]
     ]
   },
   {
@@ -1089,7 +1089,7 @@ function renderNavigation(){
           <span>${icon(iconName)}</span>${label}<b class="nav-chevron">${icon("chevron-down")}</b>
         </button>
         <div class="nav-submenu" ${expanded?"":"hidden"}>
-          ${submenu.map(([key,text])=>`<button class="nav-subitem ${(view==="catalogs"?state.activeCatalogNav:state.activeSettingNav)===key&&state.view===view?"active":""}" data-submodule="${view}" data-subkey="${key}"><span></span>${text}</button>`).join("")}
+          ${submenu.map(([key,text])=>`<button class="nav-subitem ${(view==="catalogs"?state.activeCatalogNav:state.activeSettingNav)===key&&state.view===view?"active":""}" onclick="${view==="catalogs"?`selectCatalogSubmodule('${key}')`:`selectSettingSubmodule('${key}')`}"><span style="pointer-events:none"></span><span style="pointer-events:none">${text}</span></button>`).join("")}
         </div>
       </div>`;
     }
@@ -3417,7 +3417,9 @@ function selectCatalogSubmodule(id){
     state.activeCatalogNav="tramites";
     state.catalogSearch="";
     state.catalogGroup="all";
-    navigate("catalogs");
+    state.view="catalogs";
+    renderNavigation();
+    renderCatalogTable("tramites");
     return;
   }
   const catalog=catalogDefinitions.find(item=>item.id===id);
@@ -3426,7 +3428,17 @@ function selectCatalogSubmodule(id){
   state.catalogRecordSearch="";
   state.catalogPage=1;
   state.catalogGroup="all";
-  navigate("catalogs");
+  state.view="catalogs";
+  state.expandedMenus["catalogs"]=true;
+  renderNavigation();
+  renderCatalogTable(id);
+}
+function catalogCellWithCol(value,colName){
+  if(colName==="Requiere cita"){
+    if(value==="Sí") return '<span style="display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:10px;font-size:12px;font-weight:700;background:var(--green-bg);color:var(--green)">'+icon("check-circle")+' Sí</span>';
+    if(value==="No") return '<span style="display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:10px;font-size:12px;font-weight:700;background:#F0F2F5;color:var(--muted)">'+icon("ban")+' No</span>';
+  }
+  return catalogCell(value);
 }
 function catalogCell(value){
   if(["Activo","Activa","Vigente"].includes(value)) return badge(value);
@@ -3475,7 +3487,7 @@ function renderCatalogTable(id){
     ${dataTableToolbar("catalogs","catalogRecordSearch",state.catalogRecordSearch,"exportCatalog",catalog.rows.length)}
     <div class="table-wrap"><table class="catalog-admin-table"><thead><tr><th>No.</th>${visibleColumnIndexes.map(index=>`<th>${catalog.columns[index]}</th>`).join("")}<th>Acciones</th></tr></thead>
       <tbody>${visible.length?visible.map(({row,index},visibleIndex)=>`<tr>
-        <td>${start+visibleIndex+1}</td>${visibleColumnIndexes.map(column=>`<td class="${column===0?"folio":""}">${catalogCell(row[column])}</td>`).join("")}
+        <td>${start+visibleIndex+1}</td>${visibleColumnIndexes.map(column=>`<td class="${column===0?"folio":""}">${catalogCellWithCol(row[column],catalog.columns[column])}</td>`).join("")}
         <td><div class="actions-cell">
           ${isReadOnly
             ?`<button class="action-icon neutral" title="Ver bitácora" onclick="openLogModal('catalogs','CAT-${index}','')">${icon("clock")}</button>`
@@ -4681,10 +4693,11 @@ $("#mainNav").onclick=e=>{
     renderNavigation();
     return;
   }
-  const submodule=e.target.closest("[data-submodule]");
-  if(submodule){
-    if(submodule.dataset.submodule==="catalogs") selectCatalogSubmodule(submodule.dataset.subkey);
-    if(submodule.dataset.submodule==="settings") selectSettingSubmodule(submodule.dataset.subkey);
+  const submodule=e.target.closest("[data-submodule]")||e.target.closest("[data-subkey]");
+  if(submodule&&(submodule.dataset.submodule||submodule.closest("[data-submodule]"))){
+    const btn=submodule.dataset.submodule?submodule:submodule.closest("[data-submodule]");
+    if(btn.dataset.submodule==="catalogs") selectCatalogSubmodule(btn.dataset.subkey);
+    if(btn.dataset.submodule==="settings") selectSettingSubmodule(btn.dataset.subkey);
     return;
   }
   const button=e.target.closest("[data-view]");
